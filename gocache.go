@@ -11,14 +11,26 @@ func main(){
 
 func Get(url string) (resp *Response, err error) {
     
+    resp, err := getFromCache(url) 
+    
+    if err != nil{
+        return http.Get(url) 
+    }
 
+    return   
+}
+
+func getFromCache(url string) (resp *Response, err error) {
     
 
-}
+    
+} 
+
 
 func getDirectory(url string) (dir string) {
 	urlTokens := strings.Split(url, "/")
-	strippedUrl := urlTokens[3:]
+    // 3 because we need to strip away 'http:', ' ', and hostname
+    strippedUrl := urlTokens[3:] 
 	dir = strings.Join(strippedUrl,"/")
 	return 
 }
