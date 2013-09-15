@@ -8,7 +8,15 @@ import(
     "strings"
     "log"
     "encoding/json" 
+    "bytes"
 )
+
+type Response struct{
+    Header http.Header  // html header, nice to have
+    Body []byte         // byte encoded page
+    ContentLength int64 // length of body
+}
+
 
 func main(){
     fmt.Println("hello");
@@ -92,21 +100,36 @@ func getFromCache(url string) (resp *http.Response, err error) {
 
 // Read cache entry from file
 func readFromFile(file *os.File) (resp *http.Response) {
-    
-    buf := make([]byte, 1024)
-    
-    for {
-        _, err := file.Read(buf)
-        if err != nil{
-            break
-        }
-    }
+    size := 4096
 
-    err := json.Unmarshal(buf,resp)
+    buf := make([]byte, size)
+    
+    n, err := file.Read(buf)
+
+    if err != nil{
+        log.Println("Reading file got:", err, "after",n,"bytes"); 
+        return
+    }
+        
+    log.Println("Read",n,"bytes")
+
+    log.Println(buf); 
+
+
+    // Must trim buffer before unmarshaling it. This is because of 
+    // the unmarshaling failing if entire buffer is returned
+    buf = bytes.Trim(buf[0:], string(0))    
+
+
+    log.Println(buf); 
+
+    err = json.Unmarshal(buf,resp)
 
     if err != nil {
-        log.Print(err) 
+        log.Print("Unmarshaling gone wrong: ", err) 
     }
+
+    cant unmarshal into goddamn resp struct
 
 
     return
