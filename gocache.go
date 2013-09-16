@@ -1,4 +1,4 @@
-package main
+package gocache
 
 import(
     "fmt"
@@ -11,6 +11,7 @@ import(
     "bytes"
     "io/ioutil"
     //"io"
+    "path"
 )
 
 type Entry struct{
@@ -58,27 +59,37 @@ func writeToCache(url string, resp *http.Response){
     b, err := json.Marshal(cacheEntry)
 
     if err != nil {
-        log.Println(err)
+        log.Println("Could not marshal response ", err)
+        return 
     }
     
     filename := getFilePath(url)
+
+    err = createDirectories(filename)
+
+    if err != nil{
+        log.Println("Could not create directories ", err)
+        return
+    }
+
     file, err := os.Create(filename)
     
     if err != nil {
-        log.Println(err)
-        return
+        log.Println("could not create cache file ", err)
+        return 
     }
 
     // Close and check for error on exit 
     defer func() {
         if err := file.Close(); err != nil {
-            log.Println(err)
+            
+            log.Println("Could not close file ", err)
         }
     }()
-        
     _, err = file.Write(b)
     if err != nil{
-        log.Println(err)
+        
+        log.Println("Could not write to cache file ", err)
     }
     
     log.Println("Successfully written to cache"); 
@@ -186,4 +197,22 @@ func getFilePath(url string) (dir string) {
     strippedUrl := urlTokens[3:] 
 	dir = strings.Join(strippedUrl,"/")
 	return 
+}
+
+func createDirectories(filename string) error {
+    
+    filepath := path.Dir(filename)
+    directories := strings.Split(filepath, "/") 
+
+
+    p := "" 
+    for i := range directories {
+        p += directories[i] + "/"
+        err := os.Mkdir(p, 0755) 
+        if err != nil {
+            return err
+        }
+    }
+
+    return nil
 }
