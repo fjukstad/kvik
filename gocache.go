@@ -9,12 +9,12 @@ import(
     "log"
     "encoding/json" 
     "bytes"
+    "io/ioutil"
 )
 
-type Response struct{
-    Header http.Header  // html header, nice to have
-    Body []byte         // byte encoded page
-    ContentLength int64 // length of body
+type Entry struct{
+    Response *http.Response
+    Content []byte
 }
 
 
@@ -27,7 +27,7 @@ func main(){
 func Get(url string) (resp *http.Response, err error) {
     
     resp, err = getFromCache(url) 
-    
+   
     if err != nil{
         log.Println(url,"could not be served out of cache.", err)
         return getFromWeb(url) 
@@ -50,8 +50,10 @@ func getFromWeb(url string) (resp *http.Response, err error){
 func writeToCache(url string, resp *http.Response){
     
     log.Println("Writing response to cache")
+    
+    cacheEntry := generateCacheEntry(resp)
 
-    b, err := json.Marshal(resp)
+    b, err := json.Marshal(cacheEntry)
 
     if err != nil {
         log.Println(err)
@@ -80,6 +82,27 @@ func writeToCache(url string, resp *http.Response){
     log.Println("Successfully written to cache"); 
 }
 
+func generateCacheEntry(resp *http.Response) Entry {
+
+    body, err := ioutil.ReadAll(resp.Body) 
+
+    if err != nil {
+        log.Print("Reading response body went bad. ", err); 
+    }
+    
+    //n := bytes.Index(body, []byte{0})
+    //content := string(body[:n]) 
+    
+    //entry.Content = body
+    //entry.Response = res
+
+    entry := Entry{resp, body}
+    
+    return entry
+
+}
+
+
 // Try to fetch contents of url from cache
 func getFromCache(url string) (resp *http.Response, err error) {
     
@@ -91,16 +114,17 @@ func getFromCache(url string) (resp *http.Response, err error) {
         return 
     }
     
-    resp = readFromFile(file)
+    entry := readFromFile(file)
 
     fmt.Println(file)
+    log.Println(entry) 
     return
 
 } 
 
 // Read cache entry from file
-func readFromFile(file *os.File) (resp *http.Response) {
-    size := 4096
+func readFromFile(file *os.File) (entry *Entry) {
+    size := 8192*32
 
     buf := make([]byte, size)
     
@@ -123,17 +147,35 @@ func readFromFile(file *os.File) (resp *http.Response) {
 
     log.Println(buf); 
 
-    err = json.Unmarshal(buf,resp)
+    entry = new(Entry)
+
+    err = json.Unmarshal(buf, entry)
 
     if err != nil {
         log.Print("Unmarshaling gone wrong: ", err) 
+       // log.Print("buf is now: ", buf)
+       // log.Print("and resp is :", entry); 
     }
 
-    cant unmarshal into goddamn resp struct
-
+    entry.Print()
 
     return
 }
+
+func (entry *Entry) Print () {
+    
+    n := bytes.Index(entry.Content, []byte{0})
+    log.Print("God damn n: ",n)
+    content := string(entry.Content) 
+    
+    log.Print("Content: ", content) 
+
+    log.Panic("stop here")
+
+
+
+}
+
 
 func getFilePath(url string) (dir string) {
 	urlTokens := strings.Split(url, "/")
