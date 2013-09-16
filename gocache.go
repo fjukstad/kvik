@@ -10,6 +10,7 @@ import(
     "encoding/json" 
     "bytes"
     "io/ioutil"
+    //"io"
 )
 
 type Entry struct{
@@ -32,8 +33,9 @@ func Get(url string) (resp *http.Response, err error) {
         log.Println(url,"could not be served out of cache.", err)
         return getFromWeb(url) 
     }
-
-    return   
+    
+    log.Print("Request to ", url, " served out of cache") 
+    return 
 }
 
 // Fetch contents of url from web and write to cache
@@ -96,6 +98,8 @@ func generateCacheEntry(resp *http.Response) Entry {
     //entry.Content = body
     //entry.Response = res
 
+    resp.Body = nil
+
     entry := Entry{resp, body}
     
     return entry
@@ -114,16 +118,22 @@ func getFromCache(url string) (resp *http.Response, err error) {
         return 
     }
     
-    entry := readFromFile(file)
+//    entry := new(Entry)
 
-    fmt.Println(file)
-    log.Println(entry) 
+    entry, err := readFromFile(file)
+    
+    if err != nil{
+        return
+    }
+
+    resp = entry.GenerateHttpResponse() 
+
     return
 
 } 
 
 // Read cache entry from file
-func readFromFile(file *os.File) (entry *Entry) {
+func readFromFile(file *os.File) (entry *Entry, err error) {
     size := 8192*32
 
     buf := make([]byte, size)
@@ -132,32 +142,22 @@ func readFromFile(file *os.File) (entry *Entry) {
 
     if err != nil{
         log.Println("Reading file got:", err, "after",n,"bytes"); 
-        return
+        return entry, errors.New("Reading file went wrong") 
     }
         
-    log.Println("Read",n,"bytes")
-
-    log.Println(buf); 
-
 
     // Must trim buffer before unmarshaling it. This is because of 
     // the unmarshaling failing if entire buffer is returned
     buf = bytes.Trim(buf[0:], string(0))    
 
 
-    log.Println(buf); 
-
     entry = new(Entry)
-
     err = json.Unmarshal(buf, entry)
 
     if err != nil {
         log.Print("Unmarshaling gone wrong: ", err) 
-       // log.Print("buf is now: ", buf)
-       // log.Print("and resp is :", entry); 
+        return entry, errors.New("Unmarshaling gone wrong")
     }
-
-    entry.Print()
 
     return
 }
@@ -165,14 +165,17 @@ func readFromFile(file *os.File) (entry *Entry) {
 func (entry *Entry) Print () {
     
     n := bytes.Index(entry.Content, []byte{0})
-    log.Print("God damn n: ",n)
-    content := string(entry.Content) 
-    
+    content := string(entry.Content[:n]) 
     log.Print("Content: ", content) 
 
-    log.Panic("stop here")
+}
 
+func (entry *Entry) GenerateHttpResponse() (resp *http.Response){
 
+    resp = entry.Response
+    //resp.Body = new(io.ReadCloser) 
+
+    return resp
 
 }
 
