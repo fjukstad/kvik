@@ -16,7 +16,7 @@ import(
 
 type Entry struct{
     Response *http.Response
-    Content []byte
+    Content string
 }
 
 
@@ -43,7 +43,7 @@ func Get(url string) (resp *http.Response, err error) {
 func getFromWeb(url string) (resp *http.Response, err error){
     resp, err = http.Get(url) 
     
-    log.Println("From web got response:" , resp) 
+    //log.Println("From web got response:" , resp) 
 
     if err != nil{
         return
@@ -114,14 +114,24 @@ func generateCacheEntry(resp *http.Response) Entry {
 
     if err != nil {
         log.Print("Reading response body went bad. ", err); 
+    
     }
 
+    //log.Println("Generating cache entry from:",string(body[:10]))
+
+
+    var resp2 http.Response = http.Response{}
+    resp2 = *resp
+
     // Note the assignment. Since it's a pointer we need a new copy
-    Response := resp
-    Content := body
+    Response := &resp2
+    Content := string(body)
     
 
     entry := Entry{Response, Content} 
+    
+    entry.Response.Body = nil
+
     return entry
 
 }
@@ -154,7 +164,11 @@ func getFromCache(url string) (resp *http.Response, err error) {
 
 // Read cache entry from file
 func readFromFile(file *os.File) (entry *Entry, err error) {
-    size := 8192*32
+    fileinfo, err := file.Stat() 
+    var size int
+    size = int(fileinfo.Size())
+
+    log.Println("Creating buffer of size: ", fileinfo.Size())
 
     buf := make([]byte, size)
     
@@ -184,18 +198,18 @@ func readFromFile(file *os.File) (entry *Entry, err error) {
 
 func (entry *Entry) Print () {
     
-    n := bytes.Index(entry.Content, []byte{0})
-    content := string(entry.Content[:n]) 
-    log.Print("Content: ", content) 
+    //n := bytes.Index(entry.Content, []byte{0})
+    //content := string(entry.Content[:n]) 
+    log.Print("Content: ", entry.Content) 
 
 }
 
 func (entry *Entry) GenerateHttpResponse() (resp *http.Response){
 
     resp = entry.Response
-    resp.Body = nopCloser{bytes.NewBuffer(entry.Content)} 
+    resp.Body = nopCloser{bytes.NewBufferString(entry.Content)} 
 
-    log.Println("HTTP response to return:", resp)
+    //log.Println("HTTP response to return:", resp)
 
     return resp
 
