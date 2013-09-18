@@ -56,8 +56,6 @@ func getFromWeb(url string) (resp *http.Response, err error){
 
 func writeToCache(url string, resp *http.Response){
     
-    log.Println("Writing response to cache")
-    
     cacheEntry := generateCacheEntry(resp)
 
     b, err := json.Marshal(cacheEntry)
@@ -105,7 +103,7 @@ func writeToCache(url string, resp *http.Response){
         log.Println("Could not write to cache file ", err)
     }
     
-    log.Println("Successfully written to cache"); 
+    log.Println(url, "successfully written to cache"); 
 }
 
 func generateCacheEntry(resp *http.Response) Entry {
@@ -117,19 +115,17 @@ func generateCacheEntry(resp *http.Response) Entry {
     
     }
 
-    //log.Println("Generating cache entry from:",string(body[:10]))
-
-
-    var resp2 http.Response = http.Response{}
-    resp2 = *resp
 
     // Note the assignment. Since it's a pointer we need a new copy
+    // This stuff is really ugly and should be changed later. 
+    var resp2 http.Response = http.Response{}
+    resp2 = *resp
+    
     Response := &resp2
     Content := string(body)
-    
-
     entry := Entry{Response, Content} 
     
+    // Cannot marshal the body from get go
     entry.Response.Body = nil
 
     return entry
@@ -148,8 +144,6 @@ func getFromCache(url string) (resp *http.Response, err error) {
         return 
     }
     
-//    entry := new(Entry)
-
     entry, err := readFromFile(file)
     
     if err != nil{
@@ -167,8 +161,6 @@ func readFromFile(file *os.File) (entry *Entry, err error) {
     fileinfo, err := file.Stat() 
     var size int
     size = int(fileinfo.Size())
-
-    log.Println("Creating buffer of size: ", fileinfo.Size())
 
     buf := make([]byte, size)
     
@@ -209,7 +201,6 @@ func (entry *Entry) GenerateHttpResponse() (resp *http.Response){
     resp = entry.Response
     resp.Body = nopCloser{bytes.NewBufferString(entry.Content)} 
 
-    //log.Println("HTTP response to return:", resp)
 
     return resp
 
@@ -228,14 +219,20 @@ func createDirectories(filename string) error {
     
     filepath := path.Dir(filename)
     directories := strings.Split(filepath, "/") 
-
-
+    
     p := "" 
     for i := range directories {
         p += directories[i] + "/"
         err := os.Mkdir(p, 0755) 
+
         if err != nil {
-            return err
+            pe, _ := err.(*os.PathError) 
+
+            if ! strings.Contains(pe.Error(),"file exists") {
+                log.Println("Mkdir failed miserably: ", err) 
+                return err
+            }
+
         }
     }
 
