@@ -23,7 +23,7 @@ with
 
     gocache.Get(url) 
   
-and you're good to go. The files are stored in the working directory of your go-app under a _cache_ directory. 
+and you're good to go. The files are stored in the working directory of your go app under a _cache_ directory. 
 
 
 # Example 
