@@ -43,20 +43,32 @@ func Get(url string) (resp *http.Response, err error) {
 func getFromWeb(url string) (resp *http.Response, err error){
     resp, err = http.Get(url) 
     
-    //log.Println("From web got response:" , resp) 
-
     if err != nil{
         return
     }
+    var resp2 http.Response
+    resp2 = *resp
 
-    writeToCache(url, resp)   
+    // Draining the body
+    
+    body, err := ioutil.ReadAll(resp.Body) 
+
+    if err != nil {
+        log.Print("Reading response body went bad. ", err); 
+    
+    }
+
+    writeToCache(url, body, &resp2)   
+
+    resp.Body = nopCloser{bytes.NewBufferString(string(body))} 
+
 
     return 
 }
 
-func writeToCache(url string, resp *http.Response){
+func writeToCache(url string, body []byte, resp *http.Response){
     
-    cacheEntry := generateCacheEntry(resp)
+    cacheEntry := generateCacheEntry(resp, body)
 
     b, err := json.Marshal(cacheEntry)
 
@@ -106,25 +118,23 @@ func writeToCache(url string, resp *http.Response){
     log.Println(url, "successfully written to cache"); 
 }
 
-func generateCacheEntry(resp *http.Response) Entry {
+func generateCacheEntry(resp *http.Response, body []byte ) Entry {
 
+    /*
     body, err := ioutil.ReadAll(resp.Body) 
 
     if err != nil {
         log.Print("Reading response body went bad. ", err); 
     
     }
+    */
 
-
-    // Note the assignment. Since it's a pointer we need a new copy
-    // This stuff is really ugly and should be changed later. 
-    var resp2 http.Response = http.Response{}
-    resp2 = *resp
-    
-    Response := &resp2
+    Response := resp
     Content := string(body)
     entry := Entry{Response, Content} 
     
+
+
     // Cannot marshal the body from get go
     entry.Response.Body = nil
 
@@ -227,18 +237,17 @@ func createDirectories(filename string) error {
 
         if err != nil {
             pe, _ := err.(*os.PathError) 
-
+            
+            // if folder exists, continue to the next one
             if ! strings.Contains(pe.Error(),"file exists") {
                 log.Println("Mkdir failed miserably: ", err) 
                 return err
             }
-
         }
     }
 
     return nil
 }
-
 
 
 /* Below are from: 
