@@ -10,8 +10,8 @@ import(
     "encoding/json" 
     "bytes"
     "io/ioutil"
-    //"io"
     "path"
+    "io"
 )
 
 type Entry struct{
@@ -21,7 +21,7 @@ type Entry struct{
 
 
 func main(){
-    fmt.Println("hello");
+    fmt.Println("Testing web cache");
     url := "http://blog.golang.org/error-handling-and-go"
     Get(url)
 }
@@ -43,10 +43,14 @@ func Get(url string) (resp *http.Response, err error) {
 func getFromWeb(url string) (resp *http.Response, err error){
     resp, err = http.Get(url) 
     
+    log.Println("From web got response:" , resp) 
+
     if err != nil{
         return
     }
+
     writeToCache(url, resp)   
+
     return 
 }
 
@@ -63,17 +67,25 @@ func writeToCache(url string, resp *http.Response){
         return 
     }
     
+
     filename := getFilePath(url)
+    
+    // Set up any directory needed to write the file. 
+    // e.g. vg.no/first/second/file will be stored as
+    // cache/first/second/file 
 
     err = createDirectories(filename)
-
     if err != nil{
-        log.Println("Could not create directories ", err)
-        return
+        pe, _ := err.(*os.PathError) 
+
+        if ! strings.Contains(pe.Error(),"file exists") {
+            log.Println("Could not create directories ", err)
+            return
+        }
     }
 
+    // Create file 
     file, err := os.Create(filename)
-    
     if err != nil {
         log.Println("could not create cache file ", err)
         return 
@@ -86,9 +98,10 @@ func writeToCache(url string, resp *http.Response){
             log.Println("Could not close file ", err)
         }
     }()
+
+    // Write file 
     _, err = file.Write(b)
     if err != nil{
-        
         log.Println("Could not write to cache file ", err)
     }
     
@@ -102,17 +115,13 @@ func generateCacheEntry(resp *http.Response) Entry {
     if err != nil {
         log.Print("Reading response body went bad. ", err); 
     }
-    
-    //n := bytes.Index(body, []byte{0})
-    //content := string(body[:n]) 
-    
-    //entry.Content = body
-    //entry.Response = res
 
-    resp.Body = nil
-
-    entry := Entry{resp, body}
+    // Note the assignment. Since it's a pointer we need a new copy
+    Response := resp
+    Content := body
     
+
+    entry := Entry{Response, Content} 
     return entry
 
 }
@@ -184,7 +193,9 @@ func (entry *Entry) Print () {
 func (entry *Entry) GenerateHttpResponse() (resp *http.Response){
 
     resp = entry.Response
-    //resp.Body = new(io.ReadCloser) 
+    resp.Body = nopCloser{bytes.NewBuffer(entry.Content)} 
+
+    log.Println("HTTP response to return:", resp)
 
     return resp
 
@@ -195,7 +206,7 @@ func getFilePath(url string) (dir string) {
 	urlTokens := strings.Split(url, "/")
     // 3 because we need to strip away 'http:', ' ', and hostname
     strippedUrl := urlTokens[3:] 
-	dir = strings.Join(strippedUrl,"/")
+	dir = "cache/"+strings.Join(strippedUrl,"/")
 	return 
 }
 
@@ -216,3 +227,17 @@ func createDirectories(filename string) error {
 
     return nil
 }
+
+
+
+/* Below are from: 
+    https://groups.google.com/forum/#!topic/golang-nuts/J-Y4LtdGNSw
+*/
+
+type nopCloser struct { 
+    io.Reader 
+} 
+
+func (nopCloser) Close() error { 
+    return nil
+} 
