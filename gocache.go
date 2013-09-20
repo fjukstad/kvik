@@ -219,8 +219,8 @@ func (entry *Entry) GenerateHttpResponse() (resp *http.Response){
 
 func getFilePath(url string) (dir string) {
 	urlTokens := strings.Split(url, "/")
-    // 3 because we need to strip away 'http:', ' ', and hostname
-    strippedUrl := urlTokens[3:] 
+    // 2 because we need to strip away 'http:', ' '
+    strippedUrl := urlTokens[2:] 
 	dir = "cache/"+strings.Join(strippedUrl,"/")
 	return 
 }

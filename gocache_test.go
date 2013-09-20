@@ -22,7 +22,20 @@ func Test_Get_1(t *testing.T) {
     
 }
 
-func Test_Get_2(t *testing.T) {
+func Test_Get_2(t *testing.T){
+    url := "http://blog.golang.org/error-handling-and-go"
+    _, err := Get(url)
+    
+    if err != nil{
+        t.Error("Get Failed:",err)
+        t.FailNow()
+    }
+
+}
+
+
+
+func Test_Get_3(t *testing.T) {
 
     badurl := "htt://"
 
