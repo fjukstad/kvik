@@ -31,11 +31,11 @@ func Get(url string) (resp *http.Response, err error) {
     resp, err = getFromCache(url) 
    
     if err != nil{
-        log.Println(url,"could not be served out of cache.", err)
+        //log.Println(url,"could not be served out of cache.", err)
         return getFromWeb(url) 
     }
     
-    log.Print("Request to ", url, " served out of cache") 
+    //log.Print("Request to ", url, " served out of cache") 
     return 
 }
 
@@ -115,7 +115,7 @@ func writeToCache(url string, body []byte, resp *http.Response){
         log.Println("Could not write to cache file ", err)
     }
     
-    log.Println(url, "successfully written to cache"); 
+    //log.Println(url, "successfully written to cache"); 
 }
 
 func generateCacheEntry(resp *http.Response, body []byte ) Entry {
@@ -174,10 +174,10 @@ func readFromFile(file *os.File) (entry *Entry, err error) {
 
     buf := make([]byte, size)
     
-    n, err := file.Read(buf)
+    _, err = file.Read(buf)
 
     if err != nil{
-        log.Println("Reading file got:", err, "after",n,"bytes"); 
+        //log.Println("Reading file got:", err, "after",n,"bytes"); 
         return entry, errors.New("Reading file went wrong") 
     }
         
