@@ -13,6 +13,3 @@
 [submodule "src/src/nowac/websocket-broadcaster"]
 	path = src/src/nowac/websocket-broadcaster
 	url = git@ice-git.cs.uit.no:fjukstad/nowac-websocket-broadcaster.git
-[submodule "doc"]
-	path = doc
-	url = git@ice-git.cs.uit.no:fjukstad/master-thesis.git
