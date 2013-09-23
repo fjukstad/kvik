@@ -1,3 +1,3 @@
 [submodule "src/src/nowac/kegg"]
 	path = src/src/nowac/kegg
-	url = git@vvgitlab.cs.uit.np:nowac_kegg.git
+	url = git@vvgitlab.cs.uit.no:nowac_kegg.git
