@@ -16,6 +16,3 @@
 [submodule "src/src/nowac/dataset"]
 	path = src/src/nowac/dataset
 	url = git@ice-git.cs.uit.no:fjukstad/nowac-dataset.git
-[submodule "src/src/nowac/kegg"]
-	path = src/src/nowac/kegg
-	url = git@ice-git.cs.uit.no:fjukstad/nowac-kegg.git
