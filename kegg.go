@@ -1,7 +1,5 @@
 package kegg
 
-// Comment that is supposed to show up somewhere else
-
 import(
     //"net/http"
     "log"
