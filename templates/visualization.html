@@ -1,0 +1,26 @@
+{{ define "title" }}
+    Gene Visualizer
+{{ end }}
+
+{{ define "content" }}
+
+<div class="jumbotron">
+    <h2> 
+        Nodes: Genes </br>
+        Edges: Common Pathways </br>
+    </h2>
+    <small>
+    <ul class="list-inline">
+        {{ range $index, $element := .Genes }}
+        <li>{{$element}}</li> 
+        {{end}}
+    </ul>
+    </small>
+    <div id="container"> </div>
+    <script type="text/javascript" src="/js/pathway_graph.js"></script>
+
+</div>
+
+
+
+{{ end }}

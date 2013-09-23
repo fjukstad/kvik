@@ -1,0 +1,29 @@
+{{ define "title" }}
+    Demo
+{{ end }}
+
+{{ define "content" }}
+<script src="/js/gene_submitter.js"></script>
+
+
+<div class="jumbotron">
+    <h1> Demo time! </h1>
+
+    <form id="geneForm" method="GET">
+        <fieldset>
+            <legend> Data from Gophers </legend>
+            <select multiple class="form-control" id="geneSelect"
+                name="geneSelect" size="10">
+            {{range $index, $element := .Genes }}
+                <option value="{{$element}}" > {{$element}} </option>
+            {{end}}
+            </select>
+                <button id="geneFormSubmit" type="submit" class="btn btn-primary">Submit</button>
+            </legend>
+        </fieldset>
+    </form>
+</div>
+
+
+
+{{ end }}
