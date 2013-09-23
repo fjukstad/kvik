@@ -16,3 +16,6 @@
 [submodule "doc"]
 	path = doc
 	url = git@ice-git.cs.uit.no:fjukstad/master-thesis.git
+[submodule "src/src/nowac/dataset"]
+	path = src/src/nowac/dataset
+	url = git@ice-git.cs.uit.no:fjukstad/nowac-dataset.git
