@@ -4,3 +4,6 @@
 [submodule "src/src/nowac/backend"]
 	path = src/src/nowac/backend
 	url = git@ice-git.cs.uit.no:fjukstad/nowac-backend.git
+[submodule "src/src/nowac/webapp"]
+	path = src/src/nowac/webapp
+	url = git@ice-git.cs.uit.no:fjukstad/nowac-webapp.git
