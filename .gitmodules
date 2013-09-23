@@ -7,3 +7,6 @@
 [submodule "src/src/nowac/webapp"]
 	path = src/src/nowac/webapp
 	url = git@ice-git.cs.uit.no:fjukstad/nowac-webapp.git
+[submodule "src/src/nowac/graph"]
+	path = src/src/nowac/graph
+	url = git@ice-git.cs.uit.no:fjukstad/nowac-graph.git
