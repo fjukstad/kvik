@@ -60,9 +60,6 @@ func Init() Kegg{
 
     kegg := Kegg{genes, pathways} 
     
-
-
-
     return kegg
 }
 
@@ -289,10 +286,19 @@ func downloadPathway(keggId string) (Pathway)  {
 
     url := "http://rest.kegg.jp/get/"+keggId
 
-    _ = readLinesFromURL(url) 
+
+    lines := readLinesFromURL(url) 
     
-    // log.Println(lines)
+    log.Print("Got pathways:")
+    log.Println(lines)
+    log.Print("More to come:")
 
     
     return p 
+}
+
+func createPathwayGraph (keggId string) (g *gographer.Graph){
+
+
+
 }
