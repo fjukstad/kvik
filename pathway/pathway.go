@@ -2,7 +2,6 @@ package main
 
 import (
     "log"
-   // "github.com/fjukstad/gographer"
     "github.com/fjukstad/gocache"
     "io/ioutil"
     "encoding/xml"
@@ -23,10 +22,10 @@ type KeggPathway struct {
 
 type KeggEntry struct {
     //  XMLName xml.Name        `xml:"entry"`
-    Id string               `xml:"id, attr"`
-    Name string             `xml:"name, attr"`
-    Type string             `xml:"type, attr"`
-    Link string             `xml:"link, attr"`
+    Id string               `xml:"id,attr"`
+    Name string             `xml:"name,attr"`
+    Type string             `xml:"type,attr"`
+    Link string             `xml:"link,attr"`
     Graphics KeggGraphics   `xml:"graphics"`
 
 }
@@ -34,23 +33,23 @@ type KeggEntry struct {
 type KeggRelation struct {
     // XMLName xml.Name        `xml:"relation"`
 
-    Entry1 string           `xml:"entry1, attr"`
-    Entry2 string           `xml:"entry2, attr"`
-    Type string             `xml:"type, attr"`
+    Entry1 string           `xml:"entry1,attr"`
+    Entry2 string           `xml:"entry2,attr"`
+    Type string             `xml:"type,attr"`
     Subtypes [] KeggSubtype `xml:"relation>subtype"`
 }
 
 type KeggGraphics struct {
     // XMLName xml.Name `xml:"graphics"`
 
-    Name string         `xml:"name, attr"`
-    Fgcolor string      `xml:"fgcolor, attr"`
-    Bgcolor string      `xml:"bgcolor, attr"`
-    Type string         `xml:"type, attr"`
-    X string            `xml:"x, attr"`
-    Y string            `xml:"y, attr"`
-    Width string        `xml:"width, attr"`
-    Height string       `xml:"height, attr"`
+    Name string         `xml:"name,attr"`
+    Fgcolor string      `xml:"fgcolor,attr"`
+    Bgcolor string      `xml:"bgcolor,attr"`
+    Type string         `xml:"type,attr"`
+    X string            `xml:"x,attr"`
+    Y string            `xml:"y,attr"`
+    Width string        `xml:"width,attr"`
+    Height string       `xml:"height,attr"`
 
 }
 
