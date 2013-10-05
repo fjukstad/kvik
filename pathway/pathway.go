@@ -3,8 +3,10 @@ package main
 import (
     "log"
     "github.com/fjukstad/gocache"
+    "github.com/fjukstad/gographer"
     "io/ioutil"
     "encoding/xml"
+    "strconv"
 )
 
 
@@ -21,7 +23,6 @@ type KeggPathway struct {
 }
 
 type KeggEntry struct {
-    //  XMLName xml.Name        `xml:"entry"`
     Id string               `xml:"id,attr"`
     Name string             `xml:"name,attr"`
     Type string             `xml:"type,attr"`
@@ -31,8 +32,6 @@ type KeggEntry struct {
 }
 
 type KeggRelation struct {
-    // XMLName xml.Name        `xml:"relation"`
-
     Entry1 string           `xml:"entry1,attr"`
     Entry2 string           `xml:"entry2,attr"`
     Type string             `xml:"type,attr"`
@@ -40,8 +39,6 @@ type KeggRelation struct {
 }
 
 type KeggGraphics struct {
-    // XMLName xml.Name `xml:"graphics"`
-
     Name string         `xml:"name,attr"`
     Fgcolor string      `xml:"fgcolor,attr"`
     Bgcolor string      `xml:"bgcolor,attr"`
@@ -54,8 +51,6 @@ type KeggGraphics struct {
 }
 
 type KeggSubtype struct {
-    // XMLName xml.Name `xml:"subtype"`
-    
     Name string     `xml:"name,attr"`
     Value string    `xml:"value,attr"`
 }
@@ -99,7 +94,7 @@ func (pathway *KeggPathway) Print() {
     log.Println("Relations:", pathway.Relations)
 }
 
-func createPathwayGraph(keggId string)  {
+func createPathwayGraph(keggId string) (graph *gographer.Graph) {
 
     url := "http://rest.kegg.jp/get/"+keggId+"/kgml"
     pw := getMap(url)
@@ -113,26 +108,35 @@ func createPathwayGraph(keggId string)  {
 
     pathway.Print() 
 
+    graph = gographer.New() 
 
-    //log.Print(string(pw))
-    /*
-    for i := range(pathway.Relations) {
-        rel := pathway.Relations[i]
-        log.Println(rel)
-        log.Println(rel.Entry1)
-        log.Println(rel.Entry2)
-    }
 
+    // Generate some nodes
     for j := range(pathway.Entries) {
         ent := pathway.Entries[j]
-        log.Println(ent)
+        id, _ := strconv.Atoi(ent.Id)
+        name := ent.Name
+        t, _ := strconv.Atoi(ent.Type) 
+        size := 1
+        graph.AddNode(id,name,t,size)
     }
-    */
+
+    // Generate some edges
+    for i := range(pathway.Relations) {
+        rel := pathway.Relations[i]
+        source, _ := strconv.Atoi(rel.Entry1)
+        target, _ := strconv.Atoi(rel.Entry2)
+        weight := 19
+        graph.AddEdge(source, target, i, weight)  
+    }
     
+    // graph.Visualize()
+    return 
 }
 
 
 
 func main() {
-    createPathwayGraph("hsa05200")
+    graph := createPathwayGraph("hsa05200")
+    graph.Visualize()
 }
