@@ -1,4 +1,4 @@
-package main
+package kegg
 
 import (
     "log"
@@ -135,8 +135,9 @@ func createPathwayGraph(keggId string) (graph *gographer.Graph) {
 }
 
 
-
+/*
 func main() {
     graph := createPathwayGraph("hsa05200")
     graph.Visualize()
 }
+*/
