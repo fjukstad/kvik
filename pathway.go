@@ -7,8 +7,24 @@ import (
     "io/ioutil"
     "encoding/xml"
     "strconv"
+    "io"
+    "fmt"
+    "encoding/csv"
+    "strings"
 )
 
+type Pathway struct {
+    Id string
+    Name string
+    Class string
+    Pathway_Map string
+    Diseases [] string
+    Drugs []string
+    Organism string
+    Genes []string
+    Compounds [] string
+    
+}
 
 type KeggPathway struct {
     XMLName xml.Name            `xml:"pathway"`
@@ -54,22 +70,6 @@ type KeggSubtype struct {
     Name string     `xml:"name,attr"`
     Value string    `xml:"value,attr"`
 }
-/*
-func downloadPathway(keggId string) (KeggPathway) {
-   
-    p := Pathway {}
-
-    url := "http://rest.kegg.jp/get/"+keggId
-
-    lines := readLinesFromURL(url) 
-    
-    log.Print("Got pathways:")
-    log.Println(lines)
-    log.Print("More to come:")
-
-    return p  
-}
-*/
 
 func getMap(url string) ([]byte) {
     response, err := gocache.Get(url)
@@ -134,10 +134,140 @@ func createPathwayGraph(keggId string) (graph *gographer.Graph) {
     return 
 }
 
+func GetPathway(id string) Pathway {
+    baseURL := "http://rest.kegg.jp/get/"
+    url := baseURL + id
+    response, err := gocache.Get(url)
+    if err != nil{
+        log.Panic("Cannot download pathway:", err)
+    }
 
-/*
-func main() {
-    graph := createPathwayGraph("hsa05200")
-    graph.Visualize()
+    pathway := parsePathwayResponse(response.Body) 
+
+    return pathway
+    
 }
-*/
+
+func (p Pathway) Print() {
+    fmt.Println("\nPathway") 
+    fmt.Println("\tId:", p.Id)
+    fmt.Println("\tName:", p.Name)
+    fmt.Println("\tClass:", p.Class)
+    fmt.Println("\tPathway map:", p.Pathway_Map)
+    fmt.Println("\tDiseases:", p.Diseases)
+    fmt.Println("\tDrugs:", p.Drugs)
+    fmt.Println("\tOrganism:", p.Organism)
+    fmt.Println("\tGenes:", p.Genes)
+    fmt.Println("\tCompounds:", p.Compounds)
+    fmt.Println("")
+}
+
+
+func parsePathwayResponse(response io.ReadCloser) Pathway {
+
+
+    tsv := csv.NewReader(response) 
+    tsv.Comma = '\t'
+    tsv.Comment = '#'
+    tsv.LazyQuotes = true
+    tsv.TrailingComma = true
+    tsv.TrimLeadingSpace = false
+
+    records, err := tsv.ReadAll()
+    
+    if err != nil {
+        log.Panic("Error reading records:", err)
+    }
+
+    p := Pathway{}
+    tmp := make([] string, 0) 
+    current := ""
+    for i := range records {
+        
+        line := strings.Split(records[i][0]," ")
+        
+        switch line[0] {
+        case "ENTRY":
+            a := strings.Join(line[7:], " ")
+            b :=  strings.Split(a, " ")[0]
+            p.Id = b
+    
+        case "NAME":
+            p.Name = strings.Join(line[8:], " ") 
+            
+        case "CLASS":
+            p.Class = strings.Join(line[8:], " ")
+
+        case "PATHWAY_MAP":
+            p.Pathway_Map = strings.Join(line[1:], " ")             
+
+        case "DISEASE":
+            current = "DISEASE"
+        
+            a := strings.Join(line[5:], " ")
+            tmp = append(tmp, a)
+
+        case "DRUG":
+            p.Diseases = tmp
+            tmp  = make([]string, 0)
+            current = "DRUG"
+            a := strings.Join(line[8:], " ")
+            tmp = append(tmp, a)
+            
+
+        case "ORGANISM":
+            p.Drugs = tmp
+
+            p.Organism = strings.Join(line[4:], " ")
+
+        case "GENE":
+            current = "GENE"
+            tmp = make([]string,0)
+            a := strings.Join(line[8:], " ")
+            b :=  strings.Split(a, " ")[0]
+            tmp = append(tmp, b)
+
+        case "COMPOUND":
+            p.Genes = tmp
+            current = "COMPOUND"
+            tmp = make([]string, 0)
+            a := strings.Join(line[8:], " ")
+            tmp = append(tmp, a)
+
+        case "REFERENCE":
+            p.Compounds = tmp
+            current = "REFERENCE"
+            break
+
+        default:
+            if(current == "DISEASE"){
+                a := strings.Join(line[12:], " ")
+                tmp = append(tmp, a) 
+            }
+            if(current == "DRUG"){
+                a := strings.Join(line[0:], " ")
+                b := strings.Replace(a, "    ", "",-1)
+                tmp = append(tmp, b) 
+            }
+            if(current == "GENE"){
+                a := strings.Join(line[0:], " ")
+                a = strings.Replace(a, "    ", "",-1)
+                b :=  strings.Split(a, " ")[0]
+                tmp = append(tmp, b)
+
+            }
+            if(current == "COMPOUND"){
+                a := strings.Join(line[0:], " ")
+                a = strings.Replace(a, "    ", "",-1)
+
+                tmp = append(tmp, a)
+
+            }
+
+        }
+    }
+    return p
+
+}
+
+

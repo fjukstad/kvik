@@ -2,15 +2,16 @@ package main
 
 import (
     "nowac/kegg"
-    "log"
 )
 
 func main(){
 
-    geneId := "hsa:10458"
+    geneId := "10458"
     gene := kegg.GetGene(geneId);
-
-    log.Print("get:",geneId)
-    log.Print(gene)
+    gene.Print()
    
+
+    pathwayId := "hsa05200"
+    pathway := kegg.GetPathway(pathwayId); 
+    pathway.Print() 
 }

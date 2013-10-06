@@ -16,8 +16,8 @@ type Gene struct {
     Definition string
     Orthology string
     Organism string
-    Pathway []string
-    Class []string
+    Pathways []string
+    Classes []string
     Position string
     Motif string
     DBLinks map[string]string
@@ -31,9 +31,8 @@ type Sequence struct {
     Sequence string
 }
 
-func GetGene(id string) string {
-
-    baseURL := "http://rest.kegg.jp/get/"
+func GetGene(id string) Gene {
+    baseURL := "http://rest.kegg.jp/get/hsa:"
     url := baseURL + id
     
     response, err := gocache.Get(url)
@@ -47,10 +46,9 @@ func GetGene(id string) string {
     }
     */
 
-    _ = parseGeneResponse(response.Body) 
+    gene := parseGeneResponse(response.Body) 
     
-
-    return "hei"
+    return gene
 }
 
 func (g Gene) Print() {
@@ -60,8 +58,8 @@ func (g Gene) Print() {
     fmt.Println("\tDefinition:", g.Definition) 
     fmt.Println("\tOrthology:", g.Orthology)
     fmt.Println("\tOrganism:", g.Organism)
-    fmt.Println("\tPathway:", g.Pathway)
-    fmt.Println("\tClass:", g.Class)
+    fmt.Println("\tPathways:", g.Pathways)
+    fmt.Println("\tClasses:", g.Classes)
     fmt.Println("\tPosition:", g.Position)
     fmt.Println("\tMotif:", g.Motif)
     fmt.Println("\tDBLinks:", g.DBLinks)
@@ -123,14 +121,14 @@ func parseGeneResponse(response io.ReadCloser) Gene {
         
         case "CLASS":
             current = "CLASS"
-            gene.Pathway = tmp
+            gene.Pathways = tmp
             tmp = make([]string, 0)
             a := strings.Join(line[7:], " ")
             tmp = append(tmp, a)
         
         case "POSITION":
             current = "POSITION"
-            gene.Class = tmp
+            gene.Classes = tmp
             gene.Position = strings.Join(line[4:], " ")
 
         case "MOTIF":
@@ -197,9 +195,6 @@ func parseGeneResponse(response io.ReadCloser) Gene {
                 b := strings.Replace(a, "    ", "",-1)
                 sequence += b
             }
-
-
-
         }
     }
     return gene
