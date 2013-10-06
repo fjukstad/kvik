@@ -10,23 +10,17 @@ import (
     "flag"
 )
 
-type Dataset struct {
-    Genes []string
-    Exprs map[string] []int 
-}
-
 type InputList struct {
     Input []string
 }
 
+type Selection struct {
+    Selection []string
+}
 
 type Page struct {
     Title string
     Body []byte
-}
-
-type Selection struct {
-    Genes [] string
 }
 
 var defaultTemplatePaths = []string{
@@ -84,27 +78,6 @@ func aboutHandler(w http.ResponseWriter, r *http.Request) {
 
 const lenPath = len("/demo/")
 
-/*
-func demoHandler(w http.ResponseWriter, r *http.Request) {
-
-    selectedGenes := r.URL.Path[lenPath:]
-    fmt.Println("title of page: ", selectedGenes)  
-
-    // If user has selected genes, display them
-    if len(selectedGenes) > 1 {
-        fmt.Println(parseGeneInput(selectedGenes))
-        formattedGenes := Selection{parseGeneInput(selectedGenes)}
-
-        renderTemplate(demoVisualizationTemplate, w, formattedGenes)
-        return
-    }
-    fmt.Println(w)
-    fmt.Println(r) 
-    genes := keggInterface.GetNFirstGeneIDs(100)
-    ds := Dataset{genes, nil}
-    renderTemplate(demoTemplate, w, ds) 
-}
-*/
 
 func demoHandler(w http.ResponseWriter, r *http.Request){
     // Get selected pathways (if any) 
@@ -113,6 +86,8 @@ func demoHandler(w http.ResponseWriter, r *http.Request){
     
     // if user has selected pathways render a visualization
     if len(selectedPathways) > 1{
+        selection := Selection{parsePathwayInput(selectedPathways)}
+        renderTemplate(demoVisualizationTemplate, w, selection)
         return
     }
 
@@ -122,6 +97,23 @@ func demoHandler(w http.ResponseWriter, r *http.Request){
     input := InputList{pathways}
 
     renderTemplate(demoTemplate, w, input)
+}
+
+func parsePathwayInput(input string) ([] string) {
+        // Remove any unwanted characters 
+	a := strings.Replace(input, "%3A", ":", -1)
+	a = strings.Replace(a, "&", "", -1)
+	a = strings.Replace(a, "=", "", -1)
+	
+	// Split into separate hsa:... strings
+	b := strings.Split(a, "pathwaySelect")
+		
+	// Clear out first empty item 
+	b = b[1:len(b)]
+    
+    return b
+
+
 }
 
 func parseGeneInput(input string) ([] string) {

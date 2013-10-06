@@ -1,7 +1,4 @@
 
-/* 
- * Ok, the $.get() thing don't need anything except theurl..
- */ 
 
 $(function() {
     $('#pathwayFormSubmit').click(function(e){
@@ -15,10 +12,9 @@ $(function() {
 
 
 function getPathways() {
-    console.log("gene url in progress"); 
-    var pathways = $('#geneSelect').serialize()
-    // var result = 'http://localhost:8080/api/dataset/selectGenes/'+genes;
-    var result = "/demo/"+genes
+    console.log("Fetching those pathways for you"); 
+    var pathways = $('#pathwaySelect').serialize()
+    var result = "/demo/"+pathways
     
     window.open(result,'name','toolbar=0,status=0');
     
