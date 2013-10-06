@@ -7,9 +7,11 @@ import (
     "encoding/csv"
     "strings"
     "fmt"
+    "strconv"
 )
 
 type Gene struct {
+    Id string
     Name string
     Definition string
     Orthology string
@@ -17,6 +19,7 @@ type Gene struct {
     Pathway []string
     Class []string
     Position string
+    Motif string
     DBLinks map[string]string
     Structure string
     AASEQ Sequence
@@ -44,21 +47,27 @@ func GetGene(id string) string {
     }
     */
 
-    gene := parseGeneResponse(response.Body) 
+    _ = parseGeneResponse(response.Body) 
     
-    log.Print(gene)
 
     return "hei"
 }
 
 func (g Gene) Print() {
     fmt.Println("\nGene") 
+    fmt.Println("\tId:", g.Id)
     fmt.Println("\tName:", g.Name)
     fmt.Println("\tDefinition:", g.Definition) 
     fmt.Println("\tOrthology:", g.Orthology)
     fmt.Println("\tOrganism:", g.Organism)
     fmt.Println("\tPathway:", g.Pathway)
-    
+    fmt.Println("\tClass:", g.Class)
+    fmt.Println("\tPosition:", g.Position)
+    fmt.Println("\tMotif:", g.Motif)
+    fmt.Println("\tDBLinks:", g.DBLinks)
+    fmt.Println("\tStructure:", g.Structure)
+    fmt.Println("\tAASEQ:", g.AASEQ)
+    fmt.Println("\tNTSEQ:", g.NTSEQ)
     fmt.Println("")
 }
 
@@ -79,24 +88,120 @@ func parseGeneResponse(response io.ReadCloser) Gene {
     }
     gene := Gene{}
 
+    tmp := make([]string, 0)
+    current := ""
+    sequence := "" 
     for i := range records {
         
         line := strings.Split(records[i][0]," ")
 
         switch line[0] {
+        case "ENTRY":
+            // parsing to extract id
+            a := strings.Join(line[7:], " ")
+            b :=  strings.Split(a, " ")[0]
+            gene.Id = b
+
         case "NAME":
             gene.Name = strings.Join(line[8:], " ") 
+
         case "DEFINITION":
             gene.Definition = strings.Join(line[2:]," ") 
+        
         case "ORTHOLOGY":
             gene.Orthology = strings.Join(line[3:], " ") 
+        
         case "ORGANISM": 
             gene.Organism = strings.Join(line[4:], " ")
+        
         case "PATHWAY": 
+            current = "PATHWAY"
+            // Parsing to extract the hsa12345 string
+            a := strings.Join(line[5:], " ")
+            b :=  strings.Split(a, " ")[0]
+            tmp = append(tmp, b)
+        
+        case "CLASS":
+            current = "CLASS"
+            gene.Pathway = tmp
+            tmp = make([]string, 0)
+            a := strings.Join(line[7:], " ")
+            tmp = append(tmp, a)
+        
+        case "POSITION":
+            current = "POSITION"
+            gene.Class = tmp
+            gene.Position = strings.Join(line[4:], " ")
+
+        case "MOTIF":
+            gene.Motif = strings.Join(line[7:], " ")
+
+        case "DBLINKS": 
+            current = "DBLINKS"
+            tmp = make([] string, 0) 
+            a := strings.Join(line[5:], " ")
+            tmp = append(tmp, a) 
+            e := strings.Split(a, ":")
+            gene.DBLinks = make(map[string]string)
+            gene.DBLinks[e[0]] = e[1]
+
+        case "STRUCTURE": 
+            current = "STRUCTURE"
+            gene.Structure = strings.Join(line[3:], " ")
+
+        case "AASEQ":
+            current = "AASEQ"
+            a := strings.Join(line[7:], " ")
+            length, err := strconv.Atoi(a)
+            if err != nil{
+                log.Panic("AASEQ PARSING ERROR:", err);
+            }
+            gene.AASEQ = Sequence{length, ""}
+        
+        case "NTSEQ":
+            gene.AASEQ.Sequence = sequence
+            current = "NTSEQ"
+            sequence =""
+            a := strings.Join(line[7:], " ")
+            length, err := strconv.Atoi(a)
+            if err != nil{
+                log.Panic("NTSEQ PARSING ERROR:", err);
+            }
+            gene.NTSEQ = Sequence{length, ""}
+
+        case "///":
+            gene.NTSEQ.Sequence = sequence
+
+        default:
+            if(current == "PATHWAY"){
+                // Again some fancy parsing to extract hsa1234 string
+                a := strings.Join(line[12:], " ")
+                b :=  strings.Split(a, " ")[0]
+                tmp = append(tmp, b)
+            }
+            if(current == "CLASS"){
+                // Parsing, not very pretty...
+                a := strings.Join(line[0:], " ")
+                b := strings.Replace(a, "    ", "",-1)
+                tmp = append(tmp, b)
+            }
+            if(current == "DBLINKS"){
+                a := strings.Join(line[0:], " ")
+                b := strings.Replace(a, "    ", "",-1)
+                e := strings.Split(b, ":")
+                gene.DBLinks[e[0]] = e[1]
+            }
+            if(current == "AASEQ" ||
+                current == "NTSEQ" ){
+                a := strings.Join(line[0:], " ")
+                b := strings.Replace(a, "    ", "",-1)
+                sequence += b
+            }
+
+
 
         }
     }
-    gene.Print()
     return gene
 }
 
