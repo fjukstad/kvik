@@ -9,16 +9,16 @@
 <div class="jumbotron">
     <h1> Demo time! </h1>
 
-    <form id="geneForm" method="GET">
+    <form id="pathwayForm" method="GET">
         <fieldset>
-            <legend> Data from Gophers </legend>
-            <select multiple class="form-control" id="geneSelect"
-                name="geneSelect" size="10">
-            {{range $index, $element := .Genes }}
+            <legend> Select pathways for visualization </legend>
+            <select multiple class="form-control" id="pathwaySelect"
+                name="pathwaySelect" size="10">
+            {{range $index, $element := .Input }}
                 <option value="{{$element}}" > {{$element}} </option>
             {{end}}
             </select>
-                <button id="geneFormSubmit" type="submit" class="btn btn-primary">Submit</button>
+                <button id="pathwayFormSubmit" type="submit" class="btn btn-primary">Submit</button>
             </legend>
         </fieldset>
     </form>

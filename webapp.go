@@ -15,6 +15,11 @@ type Dataset struct {
     Exprs map[string] []int 
 }
 
+type InputList struct {
+    Input []string
+}
+
+
 type Page struct {
     Title string
     Body []byte
@@ -55,7 +60,6 @@ var demoVisualizationTemplate = template.Must(template.ParseFiles(
 ))
 
 
-var keggInterface kegg.Kegg
 
 func renderTemplate (t *template.Template, w http.ResponseWriter, 
                                                 d interface{}){
@@ -80,6 +84,7 @@ func aboutHandler(w http.ResponseWriter, r *http.Request) {
 
 const lenPath = len("/demo/")
 
+/*
 func demoHandler(w http.ResponseWriter, r *http.Request) {
 
     selectedGenes := r.URL.Path[lenPath:]
@@ -99,7 +104,25 @@ func demoHandler(w http.ResponseWriter, r *http.Request) {
     ds := Dataset{genes, nil}
     renderTemplate(demoTemplate, w, ds) 
 }
+*/
 
+func demoHandler(w http.ResponseWriter, r *http.Request){
+    // Get selected pathways (if any) 
+    selectedPathways := r.URL.Path[lenPath:]
+    log.Print("title of page:", selectedPathways)
+    
+    // if user has selected pathways render a visualization
+    if len(selectedPathways) > 1{
+        return
+    }
+
+    // if user has not selected any pathways, fetch
+    // availible pathways from db and display them to the user
+    pathways := kegg.GiveMeSomePathways()
+    input := InputList{pathways}
+
+    renderTemplate(demoTemplate, w, input)
+}
 
 func parseGeneInput(input string) ([] string) {
     
@@ -118,16 +141,8 @@ func parseGeneInput(input string) ([] string) {
 
 }
 
-
-func Init() {
-    keggInterface = kegg.Init() 
-}
-
-
 func main() {
 
-    Init() 
-    
 
     // cmd line flags
     var ip = flag.String("ip", "localhost", "ip to run on")
