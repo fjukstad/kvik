@@ -1,8 +1,11 @@
-
-var wsURL = "ws://"+getVisServerAddress(); 
-
-console.log("WS Server:", wsURL);
-
+var wsURL
+window.onload = function() {
+    serverAddr = getVisServerAddress();
+    wsURL = "ws://"+serverAddr; 
+    console.log("visualization server is at:", wsURL); 
+    console.log("Starting visualization..."); 
+    loadCy(); 
+};
 
 function getVisServerAddress() {
     var baseURL = "http://"+window.location.hostname+":8080"
@@ -12,7 +15,6 @@ function getVisServerAddress() {
     var url = baseURL+visType+selectedPathways;
     var serverURL; 
 
-    console.log("querying:" , url); 
 
     $.ajax({
         async: false,
@@ -107,4 +109,13 @@ $(loadCy = function(){
     $('#cy').cytoscape(options); 
 });
 
+// Adding custom css to page 
+function addCSS(cssPath) {
+    linkElement = document.createElement("link");
+    linkElement.rel = "stylesheet";
+    linkElement.href = cssPath; 
+
+    document.head.appendChild(linkElement);
+}
+addCSS("/css/pathway-visualizer.css"); 
 
