@@ -113,7 +113,6 @@ func parsePathwayInput(input string) ([] string) {
     
     return b
 
-
 }
 
 func parseGeneInput(input string) ([] string) {
@@ -163,7 +162,7 @@ func main() {
     http.Handle("/lib/", http.StripPrefix("/lib/",
                 http.FileServer(http.Dir("lib"))))
 
-    fmt.Println("Webserver started on localhost ", address) 
+    fmt.Println("Webserver started on", address) 
     err := http.ListenAndServe(address, nil)
     if err != nil {
         log.Panic("Could not start webapp! ", err.Error())
