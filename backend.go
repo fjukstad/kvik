@@ -43,10 +43,11 @@ type NOWACService struct {
 func (serv NOWACService) NewPathwayGraph(Pathways string) string {
     addAccessControlAllowOriginHeader(serv)     
     log.Print("Pathways:", parsePathwayInput(Pathways));
+    
     pws := parsePathwayInput(Pathways); 
-    handler := kegg.PathwayGraphFrom(pws[0]) 
+    handlerAddress := kegg.PathwayGraphFrom(pws[0]) 
 
-    return handler
+    return handlerAddress+"/"+pws[0]
     
 }
 
