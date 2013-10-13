@@ -19,3 +19,6 @@
 [submodule "src/src/nowac/kegg"]
 	path = src/src/nowac/kegg
 	url = git@ice-git.cs.uit.no:fjukstad/nowac-kegg.git
+[submodule "misc/ieee-vis-2013"]
+	path = misc/ieee-vis-2013
+	url = git@ice-git.cs.uit.no:fjukstad/ieee-vis-2013.git
