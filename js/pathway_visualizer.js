@@ -34,7 +34,7 @@ function getVisServerAddress() {
 $(loadCy = function(){
     options = {
         layout: {
-            name: 'random', 
+            //name: 'arbor', 
            // gravity: true,
             liveUpdate: true,
             maxSimulationtime: 1000,
