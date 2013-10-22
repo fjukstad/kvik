@@ -34,8 +34,8 @@ function getVisServerAddress() {
 $(loadCy = function(){
     options = {
         layout: {
-            //name: 'arbor', 
-           // gravity: true,
+            name: 'random', 
+            gravity: true,
             liveUpdate: true,
             maxSimulationtime: 1000,
         },
@@ -65,12 +65,43 @@ $(loadCy = function(){
             nodes: [],
             edges : []
         },
-
+            
         ready: function(){
             cy = this;
             console.log("ready");
             graph = new Graph(cy); 
             
+            cy.on('mouseover', 'node', function(d){
+                info = GetInfo(d.cyTarget.data());
+        
+                // remove old info bod
+                document.getElementById('info-panel').innerHTML = '';
+    
+                // Set up new info box
+                var panelDiv = document.createElement('div');
+                panelDiv.className = 'panel panel-default';
+    
+                var panelHeadingDiv = document.createElement('div');
+                panelHeadingDiv.id = 'info-panel-heading';
+                panelHeadingDiv.className = 'panel-heading';
+                var str = '<h5>'+info.Name+'</h5>'
+                panelHeadingDiv.innerHTML = str
+
+                var panelBodyDiv = document.createElement('div');
+                panelBodyDiv.id = 'info-panel-body';
+                panelBodyDiv.className = 'panel-body';
+                panelBodyDiv.innerHTML = GenerateInfoPanel(info)
+
+
+                panelDiv.appendChild(panelHeadingDiv);
+                panelDiv.appendChild(panelBodyDiv);
+
+                document.getElementById('info-panel').appendChild(panelDiv);
+
+                // write some contents to it
+            });
+
+
             // Load data from JSON 
             var socket = new WebSocket(wsURL); 
             socket.onmessage = function(m){
@@ -107,7 +138,37 @@ $(loadCy = function(){
 
 
     $('#cy').cytoscape(options); 
+
 });
+
+
+function GenerateInfoPanel(info){
+    var str = '<table class="table" style="word-wrap: break-word;table-layout:fixed">';
+
+    str += '<thead><tr><th style="width: 10%"></th><th style="width: 90%"></th></tr></thead>'
+    str += '<tbody>'
+    str += '<tr><td>Id:</td><td>hsa:' + info.Id + '</td><td>'
+    str += '<tr><td>Definition:</td><td>' + info.Definition + '</td><td>'
+    str += '<tr><td>Orthology:</td><td>' + info.Orthology + '</td><td>'
+    str += '<tr><td>Organism:</td><td>' + info.Organism + '</td><td>'
+    str += '<tr><td>Pathways:</td><td>' + info.Pathways + '</td><td>'
+    str += '<tr><td>Diseases:</td><td>' + info.Diseases + '</td><td>'
+    str += '<tr><td>Modules:</td><td>' + info.Modules + '</td><td>'
+    str += '<tr><td>Drug target:</td><td>' + info.Drug_Target + '</td><td>'
+    str += '<tr><td>Classes:</td><td>' + info.Classes + '</td><td>'
+    str += '<tr><td>Position:</td><td>' + info.Position + '</td><td>'
+    str += '<tr><td>Motif:</td><td>' + info.Motif + '</td><td>'
+    str += '<tr><td>DB Links:</td><td>' + info.DBLinks + '</td><td>'
+    str += '<tr><td>Structure:</td><td>' + info.Structure + '</td><td>'
+    str += '<tr><td>AASeq:</td><td>' + info.AASEQ.Sequence + '</td><td>'
+    str += '<tr><td>NTSeq:</td><td>' + info.NTSEQ.Sequence + '</td><td>'
+    str += '</tbody>'
+
+    str += '</table>';
+
+    return str
+    
+}
 
 // Adding custom css to page 
 function addCSS(cssPath) {
@@ -118,4 +179,6 @@ function addCSS(cssPath) {
     document.head.appendChild(linkElement);
 }
 addCSS("/css/pathway-visualizer.css"); 
+
+
 

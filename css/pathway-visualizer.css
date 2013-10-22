@@ -1,6 +1,6 @@
 #cy {
     height: 500px;
-    width: 500px;
+    width: 700px;
     position: absolute;
     left: 100;
     top: 100;
@@ -9,4 +9,8 @@
 #jumbotron{
     height: 100%;
     width: 100%;
+}
+
+#info-panel{
+    word-wrap: break-word;
 }
