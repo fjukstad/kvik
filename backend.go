@@ -38,6 +38,38 @@ type NOWACService struct {
                                     path:"/new/graph/pathway/{Pathways:string}"
                                     output:"string"`
 
+    getInfo gorest.EndPoint `method:"GET"
+                            path:"/info/{Items:string}/{InfoType:string}"
+                            output:"string"`
+                            
+
+}
+
+func (serv NOWACService) GetInfo(Items string, InfoType string) string {
+
+    //TODO: implement different info types such as name/sequence/ etc
+    
+    addAccessControlAllowOriginHeader(serv)     
+
+    log.Println("now fetchign items", Items);
+    log.Println("for info type:", InfoType);
+
+    if(strings.Contains(Items, "hsa")){
+        log.Println("this here is a gene!");
+        // will get the first gene in the list Items. Could be more than one
+        // but for starters we'll do with just one. 
+        
+        geneIdString := strings.Split(Items, " ")[0]
+        geneId := strings.Split(geneIdString, ":")[1]
+
+        gene := kegg.GetGene(geneId)
+        return kegg.GeneToString(gene)
+    }
+    
+
+    return Items;
+
+
 }
 
 func (serv NOWACService) NewPathwayGraph(Pathways string) string {
