@@ -96,7 +96,15 @@ $(loadCy = function(){
                 panelDiv.appendChild(panelHeadingDiv);
                 panelDiv.appendChild(panelBodyDiv);
 
+               // var visDiv = document.createElement('div');
+               // visDiv.innerHTML  = GetVis(info.Id); 
+               //document.getElementById('contents').appendChild(visDiv);
+
+                //$(GetVis(info.Id)).appendTo(".row"); 
+
                 document.getElementById('info-panel').appendChild(panelDiv);
+
+                $(GetVis(info.Id)).appendTo(".visman"); 
 
                 // write some contents to it
             });
@@ -147,6 +155,10 @@ function GenerateInfoPanel(info){
 
     str += '<thead><tr><th style="width: 10%"></th><th style="width: 90%"></th></tr></thead>'
     str += '<tbody>'
+
+    str += '<tr><td>Expression:</td><td><div class="visman"></div></td></tr>';
+
+
     str += '<tr><td>Id:</td><td>hsa:' + info.Id + '</td><td>'
     str += '<tr><td>Definition:</td><td>' + info.Definition + '</td><td>'
     str += '<tr><td>Orthology:</td><td>' + info.Orthology + '</td><td>'
