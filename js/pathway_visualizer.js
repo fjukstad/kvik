@@ -7,6 +7,8 @@ window.onload = function() {
     loadCy(); 
 };
 
+var prevSelection;
+
 function getVisServerAddress() {
     var baseURL = "http://"+window.location.hostname+":8080"
     var visType = "/new/graph/pathway/"
@@ -72,42 +74,71 @@ $(loadCy = function(){
             graph = new Graph(cy); 
             
             cy.on('mouseover', 'node', function(d){
+
+                // update visuals of nodes
+                if(prevSelection !== undefined){
+                    prevSelection.cyTarget.css('background-color', 'steelblue');
+                }
+                d.cyTarget.css('background-color', '#2CA25F');
+                prevSelection = d;
+
+                // Determine selected node, can be gene/pathway/compound
+                node = d.cyTarget.data();
+                nodeType = node.name.split(":");
+
+
                 info = GetInfo(d.cyTarget.data());
+
+
+                if(nodeType[0] === 'hsa'){
+                    console.log("The selected node was a gene!");
+
+                    // remove old info body
+                    document.getElementById('info-panel').innerHTML = '';
         
-                // remove old info bod
-                document.getElementById('info-panel').innerHTML = '';
-    
-                // Set up new info box
-                var panelDiv = document.createElement('div');
-                panelDiv.className = 'panel panel-default';
-    
-                var panelHeadingDiv = document.createElement('div');
-                panelHeadingDiv.id = 'info-panel-heading';
-                panelHeadingDiv.className = 'panel-heading';
-                var str = '<h5>'+info.Name+'</h5>'
-                panelHeadingDiv.innerHTML = str
+                    // Set up new info box
+                    var panelDiv = document.createElement('div');
+                    panelDiv.className = 'panel panel-default';
+        
+                    var panelHeadingDiv = document.createElement('div');
+                    panelHeadingDiv.id = 'info-panel-heading';
+                    panelHeadingDiv.className = 'panel-heading';
+                    var str = '<h5>'+info.Name+'</h5>'
+                    panelHeadingDiv.innerHTML = str
 
-                var panelBodyDiv = document.createElement('div');
-                panelBodyDiv.id = 'info-panel-body';
-                panelBodyDiv.className = 'panel-body';
-                panelBodyDiv.innerHTML = GenerateInfoPanel(info)
+                    var panelBodyDiv = document.createElement('div');
+                    panelBodyDiv.id = 'info-panel-body';
+                    panelBodyDiv.className = 'panel-body';
+                    panelBodyDiv.innerHTML = GenerateInfoPanel(info)
 
 
-                panelDiv.appendChild(panelHeadingDiv);
-                panelDiv.appendChild(panelBodyDiv);
+                    panelDiv.appendChild(panelHeadingDiv);
+                    panelDiv.appendChild(panelBodyDiv);
 
-               // var visDiv = document.createElement('div');
-               // visDiv.innerHTML  = GetVis(info.Id); 
-               //document.getElementById('contents').appendChild(visDiv);
+                    document.getElementById('info-panel').appendChild(panelDiv);
 
-                //$(GetVis(info.Id)).appendTo(".row"); 
+                    $(GetVis(info.Id)).appendTo(".visman"); 
 
-                document.getElementById('info-panel').appendChild(panelDiv);
+                }
+                if(nodeType[0] === 'path'){
+                    console.log("The selected node was a pathway!");
+                }
+                if(nodeType[0] === 'cpd'){
+                    console.log("The selected node was a compund!");
+                }
 
-                $(GetVis(info.Id)).appendTo(".visman"); 
+
+
+                
+
+        
+
+
 
                 // write some contents to it
             });
+
+
 
 
             // Load data from JSON 
@@ -155,10 +186,7 @@ function GenerateInfoPanel(info){
 
     str += '<thead><tr><th style="width: 10%"></th><th style="width: 90%"></th></tr></thead>'
     str += '<tbody>'
-
     str += '<tr><td>Expression:</td><td><div class="visman"></div></td></tr>';
-
-
     str += '<tr><td>Id:</td><td>hsa:' + info.Id + '</td><td>'
     str += '<tr><td>Definition:</td><td>' + info.Definition + '</td><td>'
     str += '<tr><td>Orthology:</td><td>' + info.Orthology + '</td><td>'
