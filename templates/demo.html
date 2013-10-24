@@ -22,6 +22,20 @@
             </legend>
         </fieldset>
     </form>
+
+        <form id="geneForm" method="GET">
+        <fieldset>
+            <legend> Select pathways for visualization </legend>
+            <select multiple class="form-control" id="pathwaySelect"
+                name="pathwaySelect" size="10">
+            {{range $index, $element := .Input }}
+                <option value="{{$element}}" > {{$element}} </option>
+            {{end}}
+            </select>
+                <button id="pathwayFormSubmit" type="submit" class="btn btn-primary">Submit</button>
+            </legend>
+        </fieldset>
+    </form>
 </div>
 
 
