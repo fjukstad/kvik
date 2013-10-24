@@ -8,6 +8,9 @@ import (
     "strings"
     "code.google.com/p/gorest" 
     "nowac/kegg"
+    "time"
+    "math/rand"
+    "strconv"
 ) 
 
 func main () {
@@ -53,7 +56,7 @@ func (serv NOWACService) GetGeneVis(Gene string) string {
     addAccessControlAllowOriginHeader(serv)     
     
     log.Print("Returning the VIS code for gene: ", Gene)
-    code := GeneVisCode(Gene)
+    code := ParallelCoordinates(len(Gene))//GeneVisCode(Gene)
     log.Print("Returning:", code) 
     return code
 }
@@ -209,4 +212,60 @@ func GeneVisCode(gene string) string {
 
     return vis
     
+}
+
+
+func ParallelCoordinates(numGenes int) string {
+
+    ds := GenerateDataset(30,5)
+    log.Println("dataset:", ds)
+
+    // Header, containing all other js 
+    header := `
+        <script src="http://syntagmatic.github.io/parallel-coordinates/d3.parcoords.js"></script>
+        <link rel="stylesheet" type="text/css" href="http://syntagmatic.github.io/parallel-coordinates/d3.parcoords.css">
+        <div id="example" class="parcoords" style="width:360px;height:150px"></div>
+
+        <script>`
+    
+    // dataset to be used, just random numbers now
+    dataset := `var data = `+ds
+    
+    // rest of the vis code
+    vis := `
+        var pc = d3.parcoords()("#example")
+          .data(data)
+          .render()
+          .ticks(3)
+          .createAxes();
+          .brushable()  // enable brushing
+          .interactive()  // command line mode
+        </script>
+    `
+    return header+dataset+vis
+
+}
+
+func GenerateDataset(rows, columns int) string {
+    
+    dataset := "[\n"
+    max := 100
+
+    for i := 0; i < rows; i++ {
+        dataset += "[" + strconv.Itoa(i) + ","
+        r := rand.New(rand.NewSource(time.Now().UnixNano()))
+        for j := 0; j < columns; j++ {
+            
+            dataset += strconv.Itoa(r.Intn(max))
+            
+            if j < columns - 1 {
+                dataset += ","
+            }
+        }
+
+        dataset += "],\n"
+    }
+    dataset += "];\n"
+    
+    return dataset
 }
