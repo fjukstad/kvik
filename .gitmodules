@@ -22,3 +22,19 @@
 [submodule "misc/ieee-vis-2013"]
 	path = misc/ieee-vis-2013
 	url = git@ice-git.cs.uit.no:fjukstad/ieee-vis-2013.git
+
+[submodule "src/src/github.com/davecheney/profile"]
+	path = src/src/github.com/davecheney/profile
+	url = git@github.com:davecheney/profile.git
+
+[submodule "src/src/github.com/fjukstad/gocache"]
+	path = "src/src/github.com/fjukstad/gocache"
+	url = git@github.com:fjukstad/gocache.git
+
+[submodule "src/src/github.com/fjukstad/gographer"]
+	path = "src/src/github.com/fjukstad/gographer"
+	url = git@github.com:fjukstad/gographer.git
+
+[submodule "src/src/github.com/fjukstad/gowebsocket"]
+	path = "src/src/github.com/fjukstad/gowebsocket"
+	url = git@github.com:fjukstad/gowebsocket.git
