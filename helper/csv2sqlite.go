@@ -64,28 +64,72 @@ func insertIntoDB(db *sql.DB, csvFilename string) {
             log.Panic(err) 
         }
         
+        // First 
         if(firstRow){ 
-            log.Print(record) 
+            
             firstRow = false
-            // WARNING: Dropping check of error on line below!!!! 
-            secondRow, _ := reader.Read() 
-            createTableWithColumns(tableName, record, secondRow)
+            
+            columnNames := record
+            
+            record, err := reader.Read() 
+            
+            if err != nil {
+                log.Panic(err)
+            }
+
+            createTableWithColumns(db, tableName, columnNames, record)
         }
+
+        insertIntoTable(db,tableName,record) 
     }
 } 
 
-func createTableWithColumns(tableName string, columnNames, firstRow [] string) {
 
-    /*
-    sql := `
-        create table `+tableName+`(
-    */
+func insertIntoTable(db *sql.DB, tableName string, record []string) {
 
-    for i := range firstRow { 
-        item := firstRow[i]
+
+    tx, err := db.Begin()
+    if err != nil{
+        log.Panic(err)
+    }
+
+    stmt, err := tx.Prepare("insert into "+tablename+"(id,name,age) values(?,?,?)")
+    if err != nil { 
+        log.Panic(err)
+    }
+
+    defer stmt.Close()
+    log.Print("Should insert ", record, "into table '", tableName, "'")
+
+
+}
+
+func createTableWithColumns(db *sql.DB, tableName string, columnNames, firstRow [] string) {
+
+    
+    sql := `create table `+tableName+` (`
+    
+
+    types := make([]string, len(firstRow))
+    for i, item := range firstRow { 
         item = strings.TrimSpace(item)
         t := determineType(item)
-        log.Print(item," is ",t)
+        types[i] = t
+    }
+    
+    for i, columnName := range columnNames { 
+        sql += columnName + " " + types[i] 
+        if(i < len(columnNames) - 1) {
+            sql += ","
+        }
+    }
+
+    sql += ");"
+    log.Print(sql)
+
+    _, err := db.Exec(sql)
+    if err != nil {
+        log.Print(err,":", sql)
     }
 
 }
@@ -102,11 +146,11 @@ func determineType(item string) string {
     // Try float
     _, err = strconv.ParseFloat(item, 32)
     if err == nil {
-        return "float"
+        return "real"
     }
 
     // All else fails, its a string
-    return "string" 
+    return "text" 
 
 }
 /*
