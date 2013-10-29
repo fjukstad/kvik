@@ -38,3 +38,6 @@
 [submodule "src/src/github.com/fjukstad/gowebsocket"]
 	path = "src/src/github.com/fjukstad/gowebsocket"
 	url = git@github.com:fjukstad/gowebsocket.git
+[submodule "src/src/nowac/datastore"]
+	path = src/src/nowac/datastore
+	url = git@ice-git.cs.uit.no:fjukstad/nowac-datastore.git
