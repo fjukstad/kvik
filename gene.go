@@ -8,21 +8,25 @@ import (
     "strings"
     "fmt"
     "strconv"
+    "encoding/json"
 )
 
 type Gene struct {
-    Id string
-    Name string
-    Definition string
-    Orthology string
-    Organism string
+    Id string                   
+    Name string                 
+    Definition string           
+    Orthology string            
+    Organism string             
     Pathways []string
+    Modules []string 
+    Diseases []string
+    Drug_Target string
     Classes []string
     Position string
     Motif string
     DBLinks map[string]string
     Structure string
-    AASEQ Sequence
+    AASEQ Sequence              
     NTSEQ Sequence
 }
 
@@ -47,8 +51,21 @@ func GetGene(id string) Gene {
     */
 
     gene := parseGeneResponse(response.Body) 
+
+    gene.Print()
     
     return gene
+}
+
+func GeneToString(g Gene) string{
+
+    b, err := json.Marshal(g)
+    if err != nil {
+        log.Panic("Marshaling went bad: ", err)
+    }
+
+    return string(b)
+
 }
 
 func (g Gene) Print() {
@@ -118,10 +135,41 @@ func parseGeneResponse(response io.ReadCloser) Gene {
             a := strings.Join(line[5:], " ")
             b :=  strings.Split(a, " ")[0]
             tmp = append(tmp, b)
-        
-        case "CLASS":
-            current = "CLASS"
+
+        case "DISEASE":
+            current = "DISEASE"
             gene.Pathways = tmp
+            tmp = make([]string, 0)
+            a := strings.Join(line[5:], " ")
+            tmp = append(tmp, a)
+        case "MODULE":
+            current = "MODULE"
+            gene.Pathways = tmp
+            tmp = make([]string, 0)
+            a := strings.Join(line[6:], " ")
+            tmp = append(tmp, a)
+
+        case "DRUG_TARGET":
+            current = "DRUG_TARGET"
+            gene.Pathways = tmp
+            tmp = make([]string, 0)
+            a := strings.Join(line[1:], " ")
+            gene.Drug_Target = a
+
+        case "CLASS":
+            if(current == "PATHWAY"){
+                gene.Pathways = tmp
+            }
+            if(current == "DISEASE"){
+                gene.Diseases = tmp
+            }
+            
+            if(current == "MODULE"){
+                gene.Modules = tmp
+            }
+
+
+            current = "CLASS"
             tmp = make([]string, 0)
             a := strings.Join(line[7:], " ")
             tmp = append(tmp, a)
@@ -177,7 +225,10 @@ func parseGeneResponse(response io.ReadCloser) Gene {
                 b :=  strings.Split(a, " ")[0]
                 tmp = append(tmp, b)
             }
-            if(current == "CLASS"){
+            if(current == "CLASS" ||
+                current == "DISEASE" ||
+                current == "MODULE" ||
+                current == "DRUG_TARGET"){
                 // Parsing, not very pretty...
                 a := strings.Join(line[0:], " ")
                 b := strings.Replace(a, "    ", "",-1)

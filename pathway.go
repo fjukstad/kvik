@@ -11,6 +11,8 @@ import (
     "fmt"
     "encoding/csv"
     "strings"
+    "math/rand"
+    "time"
 )
 
 type Pathway struct {
@@ -94,9 +96,10 @@ func (pathway *KeggPathway) Print() {
     log.Println("Relations:", pathway.Relations)
 }
 
-func createPathwayGraph(keggId string) (graph *gographer.Graph) {
+func createPathwayGraph(keggId string, inputGraph *gographer.Graph){
 
     url := "http://rest.kegg.jp/get/"+keggId+"/kgml"
+    // url := "http://localhost:8000/public/pathway.kgml"
     pw := getMap(url)
     
     pathway := new(KeggPathway)
@@ -106,10 +109,6 @@ func createPathwayGraph(keggId string) (graph *gographer.Graph) {
         log.Panic("Could not unmarshal KGML ", err)
     }
 
-    pathway.Print() 
-
-    graph = gographer.New() 
-
 
     // Generate some nodes
     for j := range(pathway.Entries) {
@@ -118,7 +117,8 @@ func createPathwayGraph(keggId string) (graph *gographer.Graph) {
         name := ent.Name
         t, _ := strconv.Atoi(ent.Type) 
         size := 1
-        graph.AddNode(id,name,t,size)
+        log.Println("entry:", ent)
+        inputGraph.AddNode(id,name,t,size)
     }
 
     // Generate some edges
@@ -127,16 +127,16 @@ func createPathwayGraph(keggId string) (graph *gographer.Graph) {
         source, _ := strconv.Atoi(rel.Entry1)
         target, _ := strconv.Atoi(rel.Entry2)
         weight := 19
-        graph.AddEdge(source, target, i, weight)  
+        inputGraph.AddEdge(source, target, i, weight)  
     }
     
-    // graph.Visualize()
     return 
 }
 
 func GetPathway(id string) Pathway {
     baseURL := "http://rest.kegg.jp/get/"
     url := baseURL + id
+    
     response, err := gocache.Get(url)
     if err != nil{
         log.Panic("Cannot download pathway:", err)
@@ -161,6 +161,47 @@ func (p Pathway) Print() {
     fmt.Println("\tCompounds:", p.Compounds)
     fmt.Println("")
 }
+
+func GiveMeSomePathways() [] string {
+    pw := []string{
+        "hsa05200",
+        "hsa04915",
+        "hsa04612",
+        "hsa04062",
+        "hsa04660",
+        "hsa04630",
+        "hsa04151",
+        "hsa04310",
+        "hsa04662",
+    }
+    return pw
+}
+
+func PathwayGraphFrom(pathway string) string {
+    //pw := GetPathway(pathway) 
+    
+    // Set up graph 
+    port := getRandomPort() 
+    graph := gographer.NewGraphAt(":"+strconv.Itoa(port))
+
+    // Create a graph from pathways. Will add nodes and
+    // edges and all that jazz
+    createPathwayGraph(pathway, graph) 
+    
+    // Return address where client can retrieve graph
+    // TODO: maybe the graph initialization (after wsserver setup) 
+    // can be done in a go routine? 
+
+    return graph.ServerInfo() 
+}
+
+// TODO: Should store ports used for visualization gateways
+
+func getRandomPort() int {
+    r := rand.New(rand.NewSource(time.Now().UnixNano()))
+    return 1024 + r.Intn(45000)
+}
+
 
 
 func parsePathwayResponse(response io.ReadCloser) Pathway {

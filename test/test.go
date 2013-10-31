@@ -14,4 +14,5 @@ func main(){
     pathwayId := "hsa05200"
     pathway := kegg.GetPathway(pathwayId); 
     pathway.Print() 
+
 }
