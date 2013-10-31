@@ -16,7 +16,7 @@ function getPathways() {
     var pathways = $('#pathwaySelect').serialize()
     var result = "/demo/"+pathways
     
-    window.open(result,'name','toolbar=0,status=0');
+    window.open(result,'name','toolbar=0,status=0,height=700,width=1300');
     
     return result; 
 }

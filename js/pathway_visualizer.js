@@ -39,7 +39,7 @@ $(loadCy = function(){
             name: 'random', 
             gravity: true,
             liveUpdate: true,
-            maxSimulationtime: 1000,
+            maxSimulationtime: 500,
         },
         
         showOverlay: false,
@@ -50,10 +50,12 @@ $(loadCy = function(){
             .css({
                 'content': 'data(name)',
                 'text-valign': 'right',
+                'text-overflow': 'ellipsis',
+                'overflow': 'hidden',
                 'background-color': 'steelblue',
                 'text-outline-width': 0,
                 'text-outline-color': '#ccc',
-                'text-opacity': 0.5,
+                'text-opacity': 0.0,
                 'text-color': '#ccc',
                 'height': 10,
                 'width': 10, 
@@ -74,23 +76,30 @@ $(loadCy = function(){
             graph = new Graph(cy); 
             
             cy.on('mouseover', 'node', function(d){
-
                 // update visuals of nodes
                 if(prevSelection !== undefined){
                     prevSelection.cyTarget.css('background-color', 'steelblue');
+                    prevSelection.cyTarget.css('text-opacity', '0.0');
                 }
                 d.cyTarget.css('background-color', '#2CA25F');
-                prevSelection = d;
+                d.cyTarget.css('text-opacity', '0.5');
 
+                prevSelection = d;
+            });
+
+            cy.on('cxttap', 'node', function(d){
+
+                console.log("right click", d);
                 // Determine selected node, can be gene/pathway/compound
                 node = d.cyTarget.data();
                 nodeType = node.name.split(":");
 
 
-                info = GetInfo(d.cyTarget.data());
 
 
                 if(nodeType[0] === 'hsa'){
+                    info = GetInfo(d.cyTarget.data());
+                    
                     console.log("The selected node was a gene!");
 
                     // remove old info body
@@ -119,25 +128,93 @@ $(loadCy = function(){
 
                     $(GetVis(info.Id)).appendTo(".visman"); 
 
+
+                
                 }
+
                 if(nodeType[0] === 'path'){
                     console.log("The selected node was a pathway!");
                 }
                 if(nodeType[0] === 'cpd'){
                     console.log("The selected node was a compund!");
                 }
-
-
+                    
 
                 
+                console.log("Neighbors: ", d.cyTarget.edges());
 
-        
+                d.cyTarget.edges().css({
+                    'line-color': 'red'
+                });
 
 
-
-                // write some contents to it
             });
 
+
+
+            cy.on('select', 'node', function(d){
+                d.cyTarget.css('background-color', '#FEC44F');
+
+                
+                if(d.type === 'select') { 
+
+                    console.log("highlighted nodes: ", cy.elements("node:selected"));
+
+                    // remove old info body
+                    document.getElementById('info-panel').innerHTML = '';
+        
+                    // Set up new info box
+                    var panelDiv = document.createElement('div');
+                    panelDiv.className = 'panel panel-default';
+        
+                    var panelHeadingDiv = document.createElement('div');
+                    panelHeadingDiv.id = 'info-panel-heading';
+                    panelHeadingDiv.className = 'panel-heading';
+                    var str = '<h5> Time series for selected genes </h5>'
+                    panelHeadingDiv.innerHTML = str
+
+                    var panelBodyDiv = document.createElement('div');
+                    panelBodyDiv.id = 'info-panel-body';
+                    panelBodyDiv.className = 'panel-body';
+                    panelBodyDiv.innerHTML = GenerateParallelPanel()
+
+
+                    panelDiv.appendChild(panelHeadingDiv);
+                    panelDiv.appendChild(panelBodyDiv);
+
+                    document.getElementById('info-panel').appendChild(panelDiv);
+
+                    $(GetParallelVis()).appendTo(".parallel"); 
+                }
+                
+            });
+
+            cy.on('unselect', 'node', function(d){
+                d.cyTarget.css('background-color', 'steelblue');
+            });
+
+            cy.on('mouseup', '', function(d) {
+            });
+    
+
+            cy.on('zoom', function(d){
+                var zoomLevel = cy.zoom();
+                if(zoomLevel >= 1.5){
+                    cy.nodes().animate({
+                      css: { 'text-opacity': '0.5' } }
+                    , {
+                      duration: 0
+                    });
+                }
+                else {
+                    cy.nodes().animate({
+                      css: { 'text-opacity': '0.0' } }
+                    , {
+                      duration: 0
+                    });
+                }
+
+                });
 
 
 
@@ -183,8 +260,7 @@ $(loadCy = function(){
 
 function GenerateInfoPanel(info){
     var str = '<table class="table" style="word-wrap: break-word;table-layout:fixed">';
-
-    str += '<thead><tr><th style="width: 10%"></th><th style="width: 90%"></th></tr></thead>'
+    str += '<thead><tr><th style="width: 20%"></th><th style="width: 80%"></th></tr></thead>'
     str += '<tbody>'
     str += '<tr><td>Expression:</td><td><div class="visman"></div></td></tr>';
     str += '<tr><td>Id:</td><td>hsa:' + info.Id + '</td><td>'
@@ -203,11 +279,19 @@ function GenerateInfoPanel(info){
     str += '<tr><td>AASeq:</td><td>' + info.AASEQ.Sequence + '</td><td>'
     str += '<tr><td>NTSeq:</td><td>' + info.NTSEQ.Sequence + '</td><td>'
     str += '</tbody>'
-
     str += '</table>';
-
     return str
-    
+}
+
+function GenerateParallelPanel() {
+    var str = '<table class="table" style="word-wrap: break-word;table-layout:fixed">';
+    str += '<thead><tr><th style="width: 20%"></th><th style="width: 80%"></th></tr></thead>'
+    str += '<tbody>' 
+    str += '<tr><td>Expression :</td><td><div class="parallel"></div></td></tr>';
+    str += '</tbody>'
+    str += '</table>';
+    return str
+
 }
 
 // Adding custom css to page 
