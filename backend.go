@@ -48,16 +48,33 @@ type NOWACService struct {
     getGeneVis gorest.EndPoint `method:"GET"
                             path:"/vis/{Gene:string}"
                             output:"string"`
-                      
+     getParallelVis gorest.EndPoint `method:"GET"
+                            path:"/parallel/"
+                            output:"string"`
+                       
 
 }
+
+
+
+func (serv NOWACService) GetParallelVis() string {
+    addAccessControlAllowOriginHeader(serv)     
+    
+
+    code := ParallelCoordinates(10)
+
+    log.Print("Returning parallel coordinates:", code);
+
+    return code
+}
+
 
 func (serv NOWACService) GetGeneVis(Gene string) string {
     addAccessControlAllowOriginHeader(serv)     
     
     log.Print("Returning the VIS code for gene: ", Gene)
-    code := ParallelCoordinates(len(Gene))//GeneVisCode(Gene)
-    log.Print("Returning:", code) 
+
+    code := Barchart() // GeneVisCode(Gene) // ParallelCoordinates(len(Gene))//GeneVisCode(Gene)
     return code
 }
 
@@ -123,7 +140,83 @@ func parsePathwayInput(input string) ([] string) {
 }
 
 
+func Barchart() string {
+    vis := `
+    <style>
+        .chart rect {
+           fill: steelblue;
+           stroke: white;
+         }
+
+    
+    </style>
+    <body>
+    <script src="http://d3js.org/d3.v2.min.js?2.10.0"></script>
+    <script
+    src="https://raw.github.com/mbostock/d3/master/lib/colorbrewer/colorbrewer.js"></script>
+    <script>
+
+     function next() {
+       return {
+             time: ++t,
+             value: v = ~~Math.max(10, Math.min(90, v + 10 * (Math.random() - .5)))
+           };
+         }
+
+        var t = 1297110663, // start time (seconds since epoch)
+          v = 70, // start value (subscribers)
+          data = d3.range(25).map(next); // starting dataset
+
+         var w = 20,
+             h = 80;
+         
+        var colorScale = d3.scale.category20();
+        /*
+        var colorScale = d3.scale.ordinal() 
+            .domain(data)
+            .range(colorbrewer.YlGn[9]);
+        */
+
+         var x = d3.scale.linear()
+             .domain([0, 1])
+             .range([0, w]);
+         
+         var y = d3.scale.linear()
+             .domain([0, 100])
+             .rangeRound([0, h]);
+
+         var chart = d3.select(".visman").append("svg")
+            .attr("class", "chart")
+            .attr("width", w * data.length - 1)
+            .attr("height", h);
+
+         chart.selectAll("rect")
+             .data(data)
+             .enter().append("rect")
+             .attr("x", function(d, i) { return x(i) - .5; })
+             .attr("y", function(d) { return h - y(d.value) - .5; })
+             .attr("width", w)
+             .attr("height", function(d) { return y(d.value); })
+             //.style("fill", function(d, i) { return colorScale(d.value); });
+             
+
+         chart.append("line")
+             .attr("x1", 0)
+             .attr("x2", w * data.length)
+             .attr("y1", h - .5)
+             .attr("y2", h - .5)
+             .style("stroke", "#ccc");
+
+    </script>`
+
+    return vis;
+
+
+}
+
 func GeneVisCode(gene string) string {
+
+    
     vis := `<style>
 
 
@@ -164,11 +257,11 @@ func GeneVisCode(gene string) string {
     var x = d3.scale.linear()
         .domain([0, 1])
         .range([0, width]);
-
+    
+    
     // Generate a histogram using twenty uniformly-spaced bins.
-    var data = d3.layout.histogram()
-        .bins(x.ticks(20))
-        (values);
+    var data = d3.layout.histogram().bins(x.ticks(20))
+    (values);
 
     var y = d3.scale.linear()
         .domain([0, d3.max(data, function(d) { return d.y; })])
@@ -217,15 +310,14 @@ func GeneVisCode(gene string) string {
 
 func ParallelCoordinates(numGenes int) string {
 
-    ds := GenerateDataset(30,5)
-    log.Println("dataset:", ds)
+    ds := GenerateDataset(150,7)
 
     // Header, containing all other js 
     header := `
+        <div id="example" class="parcoords" style="width:450px;height:150px"></div>
+        <!--- Parallel coordinates -->
         <script src="http://syntagmatic.github.io/parallel-coordinates/d3.parcoords.js"></script>
         <link rel="stylesheet" type="text/css" href="http://syntagmatic.github.io/parallel-coordinates/d3.parcoords.css">
-        <div id="example" class="parcoords" style="width:360px;height:150px"></div>
-
         <script>`
     
     // dataset to be used, just random numbers now
@@ -237,7 +329,7 @@ func ParallelCoordinates(numGenes int) string {
           .data(data)
           .render()
           .ticks(3)
-          .createAxes();
+          .createAxes()
           .brushable()  // enable brushing
           .interactive()  // command line mode
         </script>
@@ -267,5 +359,21 @@ func GenerateDataset(rows, columns int) string {
     }
     dataset += "];\n"
     
+    return dataset
+}
+
+
+func GenerateRandomValues(numValues int) string {
+
+    dataset := "["
+    max := 1000
+    r := rand.New(rand.NewSource(time.Now().UnixNano()))
+    for i := 0; i < numValues; i++ {
+        dataset += strconv.Itoa(r.Intn(max))
+        if i < numValues - 1 {
+            dataset += ","
+        }
+    }
+    dataset += "];"
     return dataset
 }
