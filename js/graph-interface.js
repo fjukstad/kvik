@@ -13,7 +13,8 @@ function Graph(cy){
             console.log("attempted to add node (",n.id,") which exists.."); 
             return
         }
-
+        console.log("Adding edge:",n); 
+        n.graphics.name = n.graphics.name.split(" ")
         var no = {
             group: 'nodes',
             data: { 
@@ -22,8 +23,8 @@ function Graph(cy){
                 graphics: n.graphics,
             },
             position: {
-                x: Math.random() * 100,
-                y: Math.random() * 100
+                x: n.graphics.x,
+                y: n.graphics.y
             }
         };
 

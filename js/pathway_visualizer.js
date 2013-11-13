@@ -48,16 +48,26 @@ $(loadCy = function(){
         style: cytoscape.stylesheet()
             .selector('node')
             .css({
-                'content': 'data(name)',
-                'text-valign': 'right',
-                'background-color': 'data(graphics.fgcolor)',
-                'text-outline-width': 0,
-                'text-outline-color': '#ccc',
-                'text-opacity': 0.5,
-                'text-color': '#ccc',
+                'content': 'data(graphics.name)',
+                'text-valign': 'center',
+                'background-color': 'data(graphics.bgcolor)',
+                'border-color': 'data(graphics.fgcolor)',
+                'border-opacity': '1',
+                'border-width': '1',
+                'text-outline-width': '0',
+                'text-outline-color': '#fff',
+                'text-opacity': 0.9,
+                'color': '#000',
                 'shape': 'data(graphics.shape)',
                 'height': 'data(graphics.height)',
                 'width': 'data(graphics.width)', 
+            })
+            .selector(':selected')
+            .css({
+                'background-color': '#000',
+                'line-color': '#000',
+                'target-arrow-color': '#000',
+                'text-outline-color': '#000'
             })
             .selector('edge')
             .css({
@@ -76,11 +86,17 @@ $(loadCy = function(){
             cy.on('mouseover', 'node', function(d){
                 // update visuals of nodes
                 if(prevSelection !== undefined){
-                    prevSelection.cyTarget.css('background-color', 'steelblue');
-                    prevSelection.cyTarget.css('text-opacity', '0.0');
+                    //prevSelection.cyTarget.css('background-color', 'steelblue');
+                    //prevSelection.cyTarget.css('text-opacity', '0.0');
                 }
-                d.cyTarget.css('background-color', '#2CA25F');
-                d.cyTarget.css('text-opacity', '0.5');
+                //d.cyTarget.css('background-color', '#2CA25F');
+                //d.cyTarget.css('text-opacity', '0.5');
+                d.cyTarget.css({
+                    'height': 'data(graphics.height + 50)',
+                    'width': 'data(graphics.width + 50) ', 
+                })
+
+
 
                 prevSelection = d;
             });
@@ -149,7 +165,7 @@ $(loadCy = function(){
 
 
             cy.on('select', 'node', function(d){
-                d.cyTarget.css('background-color', '#FEC44F');
+                //d.cyTarget.css('background-color', '#FEC44F');
 
                 
                 if(d.type === 'select') { 
@@ -186,7 +202,7 @@ $(loadCy = function(){
             });
 
             cy.on('unselect', 'node', function(d){
-                d.cyTarget.css('background-color', 'steelblue');
+                //d.cyTarget.css('background-color', 'steelblue');
             });
 
             cy.on('mouseup', '', function(d) {
@@ -195,6 +211,7 @@ $(loadCy = function(){
 
             cy.on('zoom', function(d){
                 var zoomLevel = cy.zoom();
+                /*
                 if(zoomLevel >= 1.5){
                     cy.nodes().animate({
                       css: { 'text-opacity': '0.5' } }
@@ -204,12 +221,13 @@ $(loadCy = function(){
                 }
                 else {
                     cy.nodes().animate({
-                      css: { 'text-opacity': '0.0' } }
+                      css: { 'text-opacity': '0.5' } }
                     , {
                       duration: 0
                     });
                 }
 
+                */
                 });
 
 
