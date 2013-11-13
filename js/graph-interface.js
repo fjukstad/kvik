@@ -19,8 +19,7 @@ function Graph(cy){
             data: { 
                 id: ''+ n.id,
                 name: JSON.parse(n.name),
-                weight: 10,
-                height: 10,
+                graphics: n.graphics,
             },
             position: {
                 x: Math.random() * 100,
@@ -63,7 +62,7 @@ function Graph(cy){
     };
 
     var update = function() {
-        cy.layout(); 
+        //cy.layout(); 
     }
 }
 

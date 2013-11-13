@@ -36,8 +36,8 @@ function getVisServerAddress() {
 $(loadCy = function(){
     options = {
         layout: {
-            name: 'random', 
-            gravity: true,
+            name: 'preset', 
+            //gravity: true,
             liveUpdate: true,
             maxSimulationtime: 500,
         },
@@ -50,22 +50,20 @@ $(loadCy = function(){
             .css({
                 'content': 'data(name)',
                 'text-valign': 'right',
-                'text-overflow': 'ellipsis',
-                'overflow': 'hidden',
-                'background-color': 'steelblue',
+                'background-color': 'data(graphics.fgcolor)',
                 'text-outline-width': 0,
                 'text-outline-color': '#ccc',
-                'text-opacity': 0.0,
+                'text-opacity': 0.5,
                 'text-color': '#ccc',
-                'height': 10,
-                'width': 10, 
+                'shape': 'data(graphics.shape)',
+                'height': 'data(graphics.height)',
+                'width': 'data(graphics.width)', 
             })
             .selector('edge')
             .css({
                 'target-arrow-shape': 'triangle'
         }),
         elements : {
-            
             nodes: [],
             edges : []
         },
@@ -93,8 +91,6 @@ $(loadCy = function(){
                 // Determine selected node, can be gene/pathway/compound
                 node = d.cyTarget.data();
                 nodeType = node.name.split(":");
-
-
 
 
                 if(nodeType[0] === 'hsa'){
