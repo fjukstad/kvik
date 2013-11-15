@@ -38,7 +38,7 @@ func main() {
 
 // Will create a table from csv file and insert into given db
 func insertIntoDB(db *sql.DB, csvFilename string) {
-    log.Print("Inserting ", csvFilename)
+    log.Print("Creating database from file: ", csvFilename)
 
     file, err := os.Open(csvFilename)
     if err != nil {
@@ -52,8 +52,17 @@ func insertIntoDB(db *sql.DB, csvFilename string) {
 
     tableName := strings.Split(csvFilename,".")[0]
 
-    log.Print("TableName:", tableName) 
+    log.Print("Tablename: ", tableName) 
     
+    transaction, err := db.Begin()
+    if err != nil{
+
+        log.Panic("Transaction begin:", err)
+    }
+    
+    var columnNames [] string
+    var stmt *sql.Stmt
+
     for {
 
         record, err := reader.Read() 
@@ -63,49 +72,97 @@ func insertIntoDB(db *sql.DB, csvFilename string) {
         } else if err != nil {
             log.Panic(err) 
         }
-        
+
+        columnNames = record
         // First 
         if(firstRow){ 
             
             firstRow = false
             
-            columnNames := record
-            
             record, err := reader.Read() 
             
             if err != nil {
-                log.Panic(err)
+                log.Print(columnNames)
+                log.Panic("Reader.read(): ", err)
             }
-
+            
             createTableWithColumns(db, tableName, columnNames, record)
-        }
+            stmt = prepareInsert(transaction, tableName, columnNames)
+            defer stmt.Close()
+            
+            insertIntoTable(stmt, record) 
+            continue
 
-        insertIntoTable(db,tableName,record) 
+        } else {
+            insertIntoTable(stmt, record) 
+        }
     }
+    transaction.Commit()
+    
 } 
 
+func prepareInsert(transaction *sql.Tx , tableName string, 
+        columnNames [] string) *sql.Stmt  {
 
-func insertIntoTable(db *sql.DB, tableName string, record []string) {
-
-
-    tx, err := db.Begin()
-    if err != nil{
-        log.Panic(err)
+    // Generate prepare statement
+    sql := "insert into "+tableName+" ("
+    for i, columnName := range columnNames { 
+        sql += columnName 
+        if(i < len(columnNames) - 1) {
+            sql += ","
+        }
     }
 
-    stmt, err := tx.Prepare("insert into "+tablename+"(id,name,age) values(?,?,?)")
+    sql += ") values(" + strings.Repeat("?,", len(columnNames))
+    sql = strings.Trim(sql, ",") + ")"
+    
+
+    stmt, err := transaction.Prepare(sql)
     if err != nil { 
-        log.Panic(err)
+        log.Panic("Transaction prepare: " , err)
     }
 
-    defer stmt.Close()
-    log.Print("Should insert ", record, "into table '", tableName, "'")
 
+    return stmt
+
+}
+
+func insertIntoTable(stmt *sql.Stmt, record []string) {
+
+    var err error
+    // Generate arguments from record
+    args := make([]interface{}, len(record))
+    for i, v := range(record) {
+        switch determineType(v) {
+        case "integer":
+            args[i], err = strconv.Atoi(v)
+            if(err != nil){
+                log.Panic(err)
+            }
+        case "text":
+            args[i] = v
+        case "real":
+            args[i], err = strconv.ParseFloat(v, 32)
+            if(err != nil){
+                log.Panic(err)
+            }
+        }
+    }
+
+    log.Print("Arguments:", args)
+
+    // Execute query
+    _, err = stmt.Exec(args...)
+    if err != nil {
+
+        log.Fatal("stmt.Exec: ", err)
+    }
+
+//    log.Print("Should insert ", record, "into table '", tableName, "'")
 
 }
 
 func createTableWithColumns(db *sql.DB, tableName string, columnNames, firstRow [] string) {
-
     
     sql := `create table `+tableName+` (`
     
@@ -153,64 +210,3 @@ func determineType(item string) string {
     return "text" 
 
 }
-/*
-    os.Remove("./foo.db")
-
-    db, err := sql.Open("sqlite3", "./foo.db")
-    if err != nil {
-            log.Panic(err)
-    }
-
-    defer db.Close()
-
-    sql := `
-        create table foo (id integer not null primary key, name text, age integer);
-        delete from foo;
-        `
-    _, err = db.Exec(sql)
-    if err != nil {
-            log.Printf("%q: %s\n", err, sql)
-            return
-    }
-
-    tx, err := db.Begin()
-    if err != nil{
-        log.Panic(err)
-    }
-
-    stmt, err := tx.Prepare("insert into foo(id,name,age) values(?,?,?)")
-    if err != nil { 
-        log.Panic(err)
-    }
-
-    defer stmt.Close()
-
-    for i := 0; i < 100; i ++ {
-        _, err = stmt.Exec(i, fmt.Sprintf("item %d",i), i*2)
-        if err != nil{
-            log.Panic(err) 
-        } 
-    } 
-
-    tx.Commit() 
-
-    rows, err := db.Query("select id, name, age from foo") 
-    if err != nil {
-        log.Panic(err)
-    } 
-
-    fmt.Println("Extracting from db:")
-    for rows.Next() {
-        var id int
-        var name string
-        var age int
-        rows.Scan(&id, &name, &age)
-        fmt.Println("id =",id,"name =",name,"age =",age)
-    }
-
-    rows.Close()
-
-
-
-}
-*/
