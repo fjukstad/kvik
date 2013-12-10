@@ -13,6 +13,7 @@ import (
 
 type RestService struct  {
 
+    // REST service details
     gorest.RestService `root:"/"
                         consumes:"application/json"
                         produces: "application/json" `
@@ -21,10 +22,16 @@ type RestService struct  {
                                     path:"/gene/{Id:int}"
                                     output:"[]float64"`
 
+
+    // Dataset holding nowac data
+    Dataset Dataset
+
 }
 
+// Get gene expression for given gene
 func (serv RestService) GeneExpression(Id int) []float64 {
-    output := make([]float64, 10)
+    log.Print("Returning gene expression for gene ", Id)
+    output := serv.Dataset.Exprs.GeneExpression[serv.Dataset.Exprs.Genes[0]]
     return output 
 
 }
@@ -42,7 +49,11 @@ func main() {
     ds.PrintDebugInfo()
 
     log.Print("Starting datastore at ", *ip, *port)
-    gorest.RegisterService(new(RestService))
+    restService := new(RestService)
+    restService.Dataset = ds
+
+    gorest.RegisterService(restService)
+
     http.Handle("/", gorest.Handle())
     http.ListenAndServe(*port, nil)
 
