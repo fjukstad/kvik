@@ -33,7 +33,7 @@ type Expression struct {
     GeneExpression map[string] [] float64
 }
 
-func newDataset( path string ) Dataset {
+func NewDataset( path string ) Dataset {
 
     exprsFilename := path + "/exprs.csv"
     bgFilename := path + "/background.csv"
@@ -106,12 +106,19 @@ func generateExpressionDataset(filename string) (Expression, error) {
     exprs.IdExpression = IdExpression
     exprs.GeneExpression = GeneExpression
 
-    log.Print("Dataset generated with ", len(exprs.IdExpression["900336_3"]),
+    return exprs, nil
+}
+
+func (ds Dataset) PrintDebugInfo() {
+    exprs := ds.Exprs
+
+    log.Print("Generated dataset with ", len(exprs.IdExpression["900229_1"]),
                 " genes and ",len(exprs.GeneExpression[exprs.Genes[0]]),
                 " case/ctrl pairs")
 
-    return exprs, nil
+
 }
+
 
 func generateBackgroundDataset(filename string) (Background, error) { 
     

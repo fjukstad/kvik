@@ -3,21 +3,51 @@ package main
 import (
     "log"
     "flag"
+    "code.google.com/p/gorest"
+    "net/http"
 /*
     "runtime/pprof"
     "os"
 */
 )
 
+type RestService struct  {
+
+    gorest.RestService `root:"/"
+                        consumes:"application/json"
+                        produces: "application/json" `
+    
+    geneExpression gorest.EndPoint `method:"GET"
+                                    path:"/gene/{Id:int}"
+                                    output:"[]float64"`
+
+}
+
+func (serv RestService) GeneExpression(Id int) []float64 {
+    output := make([]float64, 10)
+    return output 
+
+}
+
 func main() {
     
     var path = flag.String("path", "data" , "path where data files are stored")
+    var ip = flag.String("ip", "localhost", "ip to run on")
+    var port = flag.String("port", ":8888" ,"port to run on")
+
     flag.Parse()
     
-    log.Print("Generating dataset from directory: "+*path)
+    ds := NewDataset(*path)
     
+    ds.PrintDebugInfo()
 
-    newDataset(*path)
+    log.Print("Starting datastore at ", *ip, *port)
+    gorest.RegisterService(new(RestService))
+    http.Handle("/", gorest.Handle())
+    http.ListenAndServe(*port, nil)
+
+
+
 /*
     
 // Profiling
