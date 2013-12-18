@@ -11,6 +11,7 @@ import (
     "time"
     "math/rand"
     "strconv"
+    "github.com/fjukstad/gocache"    
 ) 
 
 func main () {
@@ -48,11 +49,61 @@ type NOWACService struct {
     getGeneVis gorest.EndPoint `method:"GET"
                             path:"/vis/{Gene:string}"
                             output:"string"`
+
      getParallelVis gorest.EndPoint `method:"GET"
                             path:"/parallel/"
                             output:"string"`
-                       
 
+    datastore gorest.EndPoint `method:"GET"
+                                path:"/datastore/{...:string}"
+                                output:"string"`
+
+
+}
+
+// Handles any requests to the Datastore. Will simply make the request to the
+// datastore and return the result
+func (serv NOWACService) Datastore(args ...string) string {
+    
+    addAccessControlAllowOriginHeader(serv)         
+
+    requestURL := serv.Context.Request().URL.Path
+
+    // Where the datastore is running, this would be Stallo in later versions
+    datastoreBaseURL := "http://localhost:8888/"
+
+    URL := datastoreBaseURL + strings.Trim(requestURL, "/datastore")
+
+    // NOTE: We are not caching results here, this could have been done, but
+    // since we're doing work with a test dataset caching is not done.
+    resp, err := http.Get(URL)
+    if err != nil {
+        log.Print("request to datastore failed. ",err)
+        serv.ResponseBuilder().SetResponseCode(404).Overide(true)
+        return ":("
+    }
+    
+    // WARNING: int64 -> int conversion. may crash and burn if more than 2^32
+    // - 1 bytes were read. Response from Datastore will typically be much
+    // shorter than this, so its not an issue. 
+    respLength := int(resp.ContentLength) 
+
+
+    // Read the response from the body and return it as a string. 
+    response := make([]byte, respLength)
+    _, err = resp.Body.Read(response)
+    if err != nil {
+        log.Print("reading response from datastore failed. ", err)
+        serv.ResponseBuilder().SetResponseCode(404).Overide(true)
+        return ":("
+    }
+
+    // Set response code to what was returned from Datastore. 
+    // Will ensure that if a 404 is returned by datastore this is also passed
+    // along
+    serv.ResponseBuilder().SetResponseCode(resp.StatusCode).Overide(false)
+    
+    return string(response)
 }
 
 
@@ -85,11 +136,7 @@ func (serv NOWACService) GetInfo(Items string, InfoType string) string {
     
     addAccessControlAllowOriginHeader(serv)     
 
-    log.Println("now fetchign items", Items);
-    log.Println("for info type:", InfoType);
-
     if(strings.Contains(Items, "hsa")){
-        log.Println("this here is a gene!");
         // will get the first gene in the list Items. Could be more than one
         // but for starters we'll do with just one. 
         
@@ -108,7 +155,6 @@ func (serv NOWACService) GetInfo(Items string, InfoType string) string {
 
 func (serv NOWACService) NewPathwayGraph(Pathways string) string {
     addAccessControlAllowOriginHeader(serv)     
-    log.Print("Pathways:", parsePathwayInput(Pathways));
     
     pws := parsePathwayInput(Pathways); 
     handlerAddress := kegg.PathwayGraphFrom(pws[0]) 
@@ -142,6 +188,7 @@ func parsePathwayInput(input string) ([] string) {
 
 func Barchart() string {
     vis := `
+
     <style>
         .chart rect {
            fill: steelblue;
@@ -341,11 +388,12 @@ func ParallelCoordinates(numGenes int) string {
 func GenerateDataset(rows, columns int) string {
     
     dataset := "[\n"
-    max := 100
+    //max := 100
 
     for i := 0; i < rows; i++ {
         dataset += "[" + strconv.Itoa(i) + ","
-        r := rand.New(rand.NewSource(time.Now().UnixNano()))
+        //r := rand.New(rand.NewSource(time.Now().UnixNano()))
+        /*
         for j := 0; j < columns; j++ {
             
             dataset += strconv.Itoa(r.Intn(max))
@@ -354,12 +402,32 @@ func GenerateDataset(rows, columns int) string {
                 dataset += ","
             }
         }
-
         dataset += "],\n"
+        */
+        
     }
     dataset += "];\n"
     
     return dataset
+}
+
+
+func GetGeneExpression(id int) string {
+
+    datastore := "localhost:8888"
+    
+    query := "/gene/"+strconv.Itoa(id)
+    url := datastore+query
+    response, err := gocache.Get(url)
+    
+    if err != nil {
+        log.Panic("could not download expression ", err)
+    }
+
+    log.Print(response)
+
+    return "dick"
+
 }
 
 
