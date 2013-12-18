@@ -5,6 +5,8 @@ import (
     "flag"
     "code.google.com/p/gorest"
     "net/http"
+    "math/rand"
+    "time"
 /*
     "runtime/pprof"
     "os"
@@ -19,9 +21,12 @@ type RestService struct  {
                         produces: "application/json" `
     
     geneExpression gorest.EndPoint `method:"GET"
-                                    path:"/gene/{Id:int}"
+                                    path:"/gene/{Id:string}"
                                     output:"[]float64"`
 
+    avgDiff gorest.EndPoint `method:"GET"
+                            path:"/gene/{Id:string}/avg"
+                            output:"float64"`
 
     // Dataset holding nowac data
     Dataset Dataset
@@ -29,11 +34,18 @@ type RestService struct  {
 }
 
 // Get gene expression for given gene
-func (serv RestService) GeneExpression(Id int) []float64 {
+func (serv RestService) GeneExpression(Id string) []float64 {
     log.Print("Returning gene expression for gene ", Id)
-    output := serv.Dataset.Exprs.GeneExpression[serv.Dataset.Exprs.Genes[0]]
-    return output 
+    gene := serv.Dataset.Exprs.Genes[0]
+    exprs := serv.Dataset.Exprs.GeneExpression[gene]
+    return exprs 
 
+}
+
+func (serv RestService) AvgDiff(Id string) float64 {
+    r := rand.New(rand.NewSource(time.Now().UnixNano()))
+    avg := r.Float64() * 100
+    return avg
 }
 
 func main() {
