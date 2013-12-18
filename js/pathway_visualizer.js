@@ -9,6 +9,10 @@ window.onload = function() {
 
 var prevSelection;
 
+var color = d3.scale.linear()
+    .domain([0, 100])
+    .range(["red", "green"]);
+
 function getVisServerAddress() {
     var baseURL = "http://"+window.location.hostname+":8080"
     var visType = "/new/graph/pathway/"

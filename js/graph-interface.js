@@ -6,6 +6,10 @@ var nodes = [];
 var edges = []; 
 var graph; 
 
+var color = d3.scale.linear()
+    .domain([0, 100])
+    .range(["yellow", "purple"]);
+
 function Graph(cy){
     this.addNode = function(n){
         
@@ -13,8 +17,18 @@ function Graph(cy){
             console.log("attempted to add node (",n.id,") which exists.."); 
             return
         }
+        
+
         console.log("Adding edge:",n); 
         n.graphics.name = n.graphics.name.split(" ")
+        
+        // Fetch coloring if node is a gene
+        if(n.graphics.shape == "rectangle"){
+            // gene name but strip away any colon
+            gene = JSON.parse(n.name).replace(":", "")
+            n.graphics.bgcolor = color(AvgDiff(gene))
+        }
+
         var no = {
             group: 'nodes',
             data: { 
@@ -50,7 +64,7 @@ function Graph(cy){
         }; 
 
         edges.push(ed); 
-        cy.add(ed); 
+        //cy.add(ed); 
 
     }
 

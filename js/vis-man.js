@@ -45,3 +45,27 @@ function GetParallelVis() {
     return viscode;
 
 }
+
+// Fetches avg diff from datastore
+function AvgDiff(gene) {
+    
+    var baseURL = "http://"+window.location.hostname+":8080/datastore/gene/";
+    url = baseURL + gene + "/avg"
+
+    var avg
+    $.ajax({
+        async: false,
+        cache: true,
+        type: "GET",
+        url: url,
+        dataType: "text",
+        success: function(data) {
+            avg = data;
+        }
+    });
+
+    console.log("got avg diff: ", avg)
+
+    return avg;
+
+}
