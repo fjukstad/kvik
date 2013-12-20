@@ -56,9 +56,11 @@ func main() {
 
     flag.Parse()
     
-    ds := NewDataset(*path)
+    ds := Dataset{} // := NewDataset(*path)
+
+    log.Print("dataset found at ", *path)
     
-    ds.PrintDebugInfo()
+    //ds.PrintDebugInfo()
 
     log.Print("Starting datastore at ", *ip, *port)
     restService := new(RestService)
