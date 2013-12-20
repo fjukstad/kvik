@@ -9,9 +9,7 @@ window.onload = function() {
 
 var prevSelection;
 
-var color = d3.scale.linear()
-    .domain([0, 100])
-    .range(["red", "green"]);
+
 
 function getVisServerAddress() {
     var baseURL = "http://"+window.location.hostname+":8080"
@@ -41,20 +39,19 @@ $(loadCy = function(){
     options = {
         layout: {
             name: 'preset', 
-            //gravity: true,
-            liveUpdate: true,
-            maxSimulationtime: 500,
+            fit: true,
         },
         
         showOverlay: false,
-        minZoom: 0.5,
-        maxZoom: 2,
+        minZoom: 0.2,
+        maxZoom: 5,
         style: cytoscape.stylesheet()
             .selector('node')
             .css({
                 'content': 'data(graphics.name)',
                 'text-valign': 'center',
                 'background-color': 'data(graphics.bgcolor)',
+                'background-image': 'data(graphics.bgimage)',
                 'border-color': 'data(graphics.fgcolor)',
                 'border-opacity': '1',
                 'border-width': '1',
@@ -86,7 +83,8 @@ $(loadCy = function(){
             cy = this;
             console.log("ready");
             graph = new Graph(cy); 
-            
+                    
+
             cy.on('mouseover', 'node', function(d){
                 // update visuals of nodes
                 if(prevSelection !== undefined){
@@ -173,7 +171,7 @@ $(loadCy = function(){
 
                 
                 if(d.type === 'select') { 
-
+                    /*
                     console.log("highlighted nodes: ", cy.elements("node:selected"));
 
                     // remove old info body
@@ -201,7 +199,9 @@ $(loadCy = function(){
                     document.getElementById('info-panel').appendChild(panelDiv);
 
                     $(GetParallelVis()).appendTo(".parallel"); 
+                    */
                 }
+
                 
             });
 
@@ -233,7 +233,6 @@ $(loadCy = function(){
 
                 */
                 });
-
 
 
             // Load data from JSON 

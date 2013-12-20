@@ -19,8 +19,19 @@ function Graph(cy){
         }
         
 
-        console.log("Adding edge:",n); 
+        console.log("Adding node:",n); 
         n.graphics.name = n.graphics.name.split(" ")
+        if(n.name === "\"bg\"") {
+            console.log("MY LORD!!!!!!!!!!", n.name)
+            n.graphics.bgimage = n.graphics.name[0];
+            n.graphics.bgcolor = "#fff"
+            n.graphics.name = ""
+        }
+        else{
+            n.graphics.bgimage = "";
+        }
+
+//        n.background-image = "http://www.genome.jp/kegg/pathway/hsa/hsa04915.png"
         
         // Fetch coloring if node is a gene
         if(n.graphics.shape == "rectangle"){
@@ -29,17 +40,20 @@ function Graph(cy){
             n.graphics.bgcolor = color(AvgDiff(gene))
         }
 
+
         var no = {
             group: 'nodes',
             data: { 
                 id: ''+ n.id,
                 name: JSON.parse(n.name),
-                graphics: n.graphics,
+                graphics: n.graphics, 
+                //background-image: "test.png",
             },
             position: {
                 x: n.graphics.x,
                 y: n.graphics.y
-            }
+            },
+            grabbable:false,
         };
 
         nodes.push(no);
