@@ -98,7 +98,9 @@ func (pathway *KeggPathway) Print() {
 
 func createPathwayGraph(keggId string, inputGraph *gographer.Graph){
 
-    url := "http://rest.kegg.jp/get/"+keggId+"/kgml"
+    baseURL := "http://rest.kegg.jp/get/"+keggId
+    url := baseURL + "/kgml"
+    
     // url := "http://localhost:8000/public/pathway.kgml"
     pw := getMap(url)
     
@@ -110,6 +112,24 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph){
     }
 
 
+
+    // First create a node that will serve as a background image to the pathway
+    inputGraph.AddGraphicNode(
+        0,
+        "bg",
+        0,
+        1,
+        "http://www.genome.jp/kegg/pathway/hsa/" +keggId + ".png",
+        "#fff",
+        "#fff",
+        "rectangle",
+        622,
+        483,
+        1244,
+        966)
+        
+
+
     // Generate some nodes
     for j := range(pathway.Entries) {
         ent := pathway.Entries[j]
@@ -117,9 +137,23 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph){
         name := ent.Name
         t, _ := strconv.Atoi(ent.Type) 
         size := 1
-        log.Println("entry:", ent)
-        inputGraph.AddNode(id,name,t,size)
+        graphics := ent.Graphics
+
+        description := strings.Split(graphics.Name, ", ")[0]
+        fgcolor := graphics.Fgcolor
+        bgcolor := graphics.Bgcolor
+        shape := graphics.Type
+        x, _ := strconv.Atoi(graphics.X)
+        y, _ := strconv.Atoi(graphics.Y)
+        height, _ := strconv.Atoi(graphics.Height)
+        width, _ := strconv.Atoi(graphics.Width)
+    
+        
+        inputGraph.AddGraphicNode(id,name,t,size,description,fgcolor,bgcolor,shape,
+                            x,y,height,width)
     }
+
+
 
     // Generate some edges
     for i := range(pathway.Relations) {
