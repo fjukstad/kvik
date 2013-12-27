@@ -57,7 +57,32 @@ func GetGene(id string) Gene {
     return gene
 }
 
-func GeneToString(g Gene) string{
+type GenePathways struct {
+    GeneId string
+    Pathways []string
+}
+
+// Fetch pathways for a specific gene
+func Pathways(g Gene) GenePathways {
+ 
+    pws := GenePathways{g.Id, g.Pathways} 
+    return pws 
+
+}
+
+
+// TODO: 
+
+func PathwaysJSON(pws GenePathways) string {
+    b, err := json.Marshal(pws) 
+    if err != nil {
+        log.Panic("marshaling went bad: ", err)
+    }
+    return string(b)
+}
+
+
+func GeneJSON(g Gene) string{
 
     b, err := json.Marshal(g)
     if err != nil {
