@@ -12,6 +12,7 @@ import (
     "math/rand"
     "strconv"
     "github.com/fjukstad/gocache"    
+    "encoding/json"
 ) 
 
 func main () {
@@ -59,11 +60,70 @@ type NOWACService struct {
                                 output:"string"`
     
     pathways gorest.EndPoint    `method:"GET"
-                                path:"/info/{Gene:string}"
+                                path:"/info/gene/{Gene:string}/pathways"
                                 output:"string"`
 
+    commonPathways gorest.EndPoint  `method:"GET"
+                                    path:"/info/pathway/{Pathways:string}"
+                                    output:"string"`
+
+    pathwayGeneCount gorest.EndPoint    `method:"GET"
+                                        path:"/info/gene/{Genes:string}/commonpathways"
+                                        output:"string"`
+}
+
+type PWMap struct {
+    Map map[string] int
+}
+
+// Returns a list of pathways and the frequency of given genes. I.e.
+// how many of the given genes are represented in different pathways
+// Genes is a string that looks like "hsa:123+hsa:321+..."
+func (serv NOWACService) PathwayGeneCount (Genes string) string {
+
+	PathwayMap := make(map[string] int, 0)
+
+    log.Print(Genes)
+    geneList := strings.Split(Genes, " ")
+
+    // for every gene get its list of pathways
+    for _, g := range geneList {    
+        
+        geneId := strings.Split(g, ":")[1]
+        gene := kegg.GetGene(geneId)
+        pws := kegg.Pathways(gene)
+    
+        // for each of its pathways, increment the counter for number
+        // of genes represented in this pathway. 
+        for _, p := range pws.Pathways {
+            if PathwayMap[p] != 0 {
+                PathwayMap[p]++
+            } else {
+                PathwayMap[p] = 1
+            }
+        }
+
+        log.Println("gene", g)
+    }
+    
+    log.Println(PathwayMap)
+
+    b, err := json.Marshal(PathwayMap)
+    if err != nil {
+        log.Panic("marshaling went bad: ",err)
+    }
+
+
+    return string(b)
+}
+
+func (serv NOWACService) CommonPathways(Pathways string) string {
+    
+    return "Not implemented yet"
 
 }
+
+
 
 // Will return a list of pathways for a given gene 
 func (serv NOWACService) Pathways (Gene string) string {
