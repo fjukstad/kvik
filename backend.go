@@ -50,14 +50,29 @@ type NOWACService struct {
                             path:"/vis/{Gene:string}"
                             output:"string"`
 
-     getParallelVis gorest.EndPoint `method:"GET"
+    getParallelVis gorest.EndPoint `method:"GET"
                             path:"/parallel/"
                             output:"string"`
 
     datastore gorest.EndPoint `method:"GET"
                                 path:"/datastore/{...:string}"
                                 output:"string"`
+    
+    pathways gorest.EndPoint    `method:"GET"
+                                path:"/info/{Gene:string}"
+                                output:"string"`
 
+
+}
+
+// Will return a list of pathways for a given gene 
+func (serv NOWACService) Pathways (Gene string) string {
+    
+    geneIdString := strings.Split(Gene, " ")[0]
+    geneId := strings.Split(geneIdString, ":")[1]
+    gene := kegg.GetGene(geneId)
+    pws := kegg.Pathways(gene)
+    return kegg.PathwaysJSON(pws)
 
 }
 
@@ -129,7 +144,8 @@ func (serv NOWACService) GetGeneVis(Gene string) string {
     return code
 }
 
-
+// Returns all information possible for a gene. This includes stuff
+// like id,name,definition etc etc. 
 func (serv NOWACService) GetInfo(Items string, InfoType string) string {
 
     //TODO: implement different info types such as name/sequence/ etc
@@ -144,7 +160,7 @@ func (serv NOWACService) GetInfo(Items string, InfoType string) string {
         geneId := strings.Split(geneIdString, ":")[1]
 
         gene := kegg.GetGene(geneId)
-        return kegg.GeneToString(gene)
+        return kegg.GeneJSON(gene)
     }
     
 
