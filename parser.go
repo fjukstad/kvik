@@ -6,6 +6,7 @@ import (
     "encoding/csv"
     "io"
     "strconv"
+    "path"
 
 )
 
@@ -15,6 +16,7 @@ type Dataset struct {
 }
 
 type Background struct {
+
     IdInfo map[string] Info    
 }
 
@@ -50,6 +52,7 @@ func NewDataset( path string ) Dataset {
     
     ds := Dataset{bg, exprs}
 
+
     return ds
     
 }
@@ -81,6 +84,9 @@ func generateExpressionDataset(filename string) (Expression, error) {
         }
         if firstRow {
             exprs.Genes = record
+            
+            probesToGenes(record, filename) 
+
             // the lengths here are maybe a bit off?
             IdExpression = make(map[string][]float64, len(record)-1)
             GeneExpression = make(map[string][]float64, len(record)-1)
@@ -109,13 +115,84 @@ func generateExpressionDataset(filename string) (Expression, error) {
     return exprs, nil
 }
 
+func probesToGenes(probes [] string, filename string) {
+    
+    // assumes that filename has an extension
+    path := path.Dir(filename) + "/"
+    log.Print(path)
+
+
+    p2gfilename := path + "probe2gene.csv"
+
+
+    p2g, err := getProbeToGeneMapping(p2gfilename) 
+
+    if err != nil {
+        log.Panic("Could not read probe 2 gene mappings! ", err)
+    } 
+
+
+    log.Print(p2g)
+
+    genes := make([] string, len(probes))
+
+    for i , probeId := range(probes) {
+        genes[i] = p2g[probeId]
+    }
+
+    log.Print(genes)
+
+}
+
+func getProbeToGeneMapping(filename string) (map[string] string, error) { 
+ 
+    // Note the 50 000 below. We'll have less than 50 000 genes, but if this
+    // fails, then the whole thing breaks apart. 
+
+    p2g := make(map[string] string, 50000)
+
+    p2gfile, err := os.Open(filename)
+    if err != nil {
+        return p2g, err
+    }  
+    defer p2gfile.Close() 
+
+    reader := csv.NewReader(p2gfile) 
+    firstRow := true
+
+    for {
+
+        record, err := reader.Read() 
+        
+        if err == io.EOF{
+            break
+        } else if err != nil {
+            log.Panic(err) 
+        }
+        if firstRow {
+            log.Print("Found headers: ", record)
+            firstRow = false
+        }
+        
+        probeId := record[1]
+        geneId := record[2]
+
+        p2g[probeId] = geneId
+
+    }
+
+
+    return p2g, err
+
+} 
+
+
 func (ds Dataset) PrintDebugInfo() {
     exprs := ds.Exprs
 
     log.Print("Generated dataset with ", len(exprs.IdExpression["900229_1"]),
                 " genes and ",len(exprs.GeneExpression[exprs.Genes[0]]),
                 " case/ctrl pairs")
-
 
 }
 
