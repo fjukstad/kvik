@@ -83,9 +83,8 @@ func generateExpressionDataset(filename string) (Expression, error) {
             log.Panic(err) 
         }
         if firstRow {
-            exprs.Genes = record
+            exprs.Genes = probesToGenes(record, filename) 
             
-            probesToGenes(record, filename) 
 
             // the lengths here are maybe a bit off?
             IdExpression = make(map[string][]float64, len(record)-1)
@@ -115,12 +114,10 @@ func generateExpressionDataset(filename string) (Expression, error) {
     return exprs, nil
 }
 
-func probesToGenes(probes [] string, filename string) {
+func probesToGenes(probes [] string, filename string) [] string {
     
     // assumes that filename has an extension
     path := path.Dir(filename) + "/"
-    log.Print(path)
-
 
     p2gfilename := path + "probe2gene.csv"
 
@@ -132,15 +129,14 @@ func probesToGenes(probes [] string, filename string) {
     } 
 
 
-    log.Print(p2g)
-
     genes := make([] string, len(probes))
 
     for i , probeId := range(probes) {
         genes[i] = p2g[probeId]
     }
 
-    log.Print(genes)
+
+    return genes
 
 }
 
@@ -170,7 +166,6 @@ func getProbeToGeneMapping(filename string) (map[string] string, error) {
             log.Panic(err) 
         }
         if firstRow {
-            log.Print("Found headers: ", record)
             firstRow = false
         }
         
