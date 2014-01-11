@@ -36,7 +36,7 @@ function Graph(cy){
         // Fetch coloring if node is a gene
         if(n.graphics.shape == "rectangle"){
             // gene name but strip away any colon
-            gene = JSON.parse(n.name).replace(":", "")
+            gene = n.graphics.name[0]
             n.graphics.bgcolor = color(AvgDiff(gene))
         }
 
