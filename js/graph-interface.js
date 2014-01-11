@@ -37,6 +37,8 @@ function Graph(cy){
         if(n.graphics.shape == "rectangle"){
             // gene name but strip away any colon
             gene = n.graphics.name[0]
+            id = JSON.parse(n.name).replace(":", "")
+            console.log(gene, id)
             n.graphics.bgcolor = color(AvgDiff(gene))
         }
 

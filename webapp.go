@@ -50,7 +50,7 @@ var demoTemplate = template.Must(template.ParseFiles(
 ))
 
 var demoVisualizationTemplate = template.Must(template.ParseFiles(
-    append(emptyTemplatePath, demoVisualizationTemplatePath)...
+    append(defaultTemplatePaths, demoVisualizationTemplatePath)...
 ))
 
 
