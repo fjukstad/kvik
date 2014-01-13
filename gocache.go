@@ -49,6 +49,8 @@ func getFromWeb(url string) (resp *http.Response, err error){
     var resp2 http.Response
     resp2 = *resp
 
+    defer resp.Body.Close()
+
     // Draining the body
     
     body, err := ioutil.ReadAll(resp.Body) 
@@ -104,10 +106,10 @@ func writeToCache(url string, body []byte, resp *http.Response){
     // Close and check for error on exit 
     defer func() {
         if err := file.Close(); err != nil {
-            
             log.Println("Could not close file ", err)
         }
     }()
+
 
     // Write file 
     _, err = file.Write(b)
@@ -119,21 +121,10 @@ func writeToCache(url string, body []byte, resp *http.Response){
 }
 
 func generateCacheEntry(resp *http.Response, body []byte ) Entry {
-
-    /*
-    body, err := ioutil.ReadAll(resp.Body) 
-
-    if err != nil {
-        log.Print("Reading response body went bad. ", err); 
-    
-    }
-    */
-
     Response := resp
     Content := string(body)
     entry := Entry{Response, Content} 
     
-
 
     // Cannot marshal the body from get go
     entry.Response.Body = nil
@@ -153,7 +144,7 @@ func getFromCache(url string) (resp *http.Response, err error) {
         err = errors.New("File '"+filename+"' not Found") 
         return 
     }
-    
+
     entry, err := readFromFile(file)
     
     if err != nil{
