@@ -36,10 +36,21 @@ function Graph(cy){
         // Fetch coloring if node is a gene
         if(n.graphics.shape == "rectangle"){
             // gene name but strip away any colon
-            gene = n.graphics.name[0]
-            id = JSON.parse(n.name).replace(":", "")
-            console.log(gene, id)
-            n.graphics.bgcolor = color(AvgDiff(gene))
+            gene = n.name
+            id = JSON.parse(n.name)
+            ids = JSON.parse(n.name).split(" ")
+            
+            console.log(gene, ids, ids[0])
+            // If more than gene is present in the node. Fetch all of them
+            // and do some clever stuff 
+            if (ids.length > 0) {
+                n.graphics.bgcolor = color(AvgDiff(ids[0]))
+            }
+            else {
+
+                n.graphics.bgcolor = color(AvgDiff(ids[0]))
+
+            }
         }
 
 
