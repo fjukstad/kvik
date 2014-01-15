@@ -8,11 +8,12 @@ import (
     "strings"
     "code.google.com/p/gorest" 
     "nowac/kegg"
-    "time"
-    "math/rand"
+//    "time"
+//    "math/rand"
     "strconv"
-    "github.com/fjukstad/gocache"    
+   // "github.com/fjukstad/gocache"    
     "encoding/json"
+    "io/ioutil"
 ) 
 
 func main () {
@@ -51,9 +52,6 @@ type NOWACService struct {
                             path:"/vis/{Gene:string}"
                             output:"string"`
 
-    getParallelVis gorest.EndPoint `method:"GET"
-                            path:"/parallel/"
-                            output:"string"`
 
     datastore gorest.EndPoint `method:"GET"
                                 path:"/datastore/{...:string}"
@@ -151,12 +149,17 @@ func (serv NOWACService) Datastore(args ...string) string {
 
     // NOTE: We are not caching results here, this could have been done, but
     // since we're doing work with a test dataset caching is not done.
+
+    //NOTE: http.GET(URL) failed when the number of these calls were really
+    //frequent. now trying gocache. 
     resp, err := http.Get(URL)
     if err != nil {
         log.Print("request to datastore failed. ",err)
         serv.ResponseBuilder().SetResponseCode(404).Overide(true)
         return ":("
     }
+
+    defer resp.Body.Close()
     
     // WARNING: int64 -> int conversion. may crash and burn if more than 2^32
     // - 1 bytes were read. Response from Datastore will typically be much
@@ -183,16 +186,6 @@ func (serv NOWACService) Datastore(args ...string) string {
 
 
 
-func (serv NOWACService) GetParallelVis() string {
-    addAccessControlAllowOriginHeader(serv)     
-    
-
-    code := ParallelCoordinates(10)
-
-    log.Print("Returning parallel coordinates:", code);
-
-    return code
-}
 
 
 func (serv NOWACService) GetGeneVis(Gene string) string {
@@ -200,9 +193,84 @@ func (serv NOWACService) GetGeneVis(Gene string) string {
     
     log.Print("Returning the VIS code for gene: ", Gene)
 
-    code := Barchart() // GeneVisCode(Gene) // ParallelCoordinates(len(Gene))//GeneVisCode(Gene)
+    code := GeneExpression(Gene) // Barchar() // ParallelCoordinates(len(Gene))//GeneVisCode(Gene)
     return code
 }
+
+
+func GeneExpression(geneid string) string {
+    
+    id, err := strconv.Atoi(geneid)
+    if err != nil {
+        log.Panic("that was not a gene id: ", geneid, " ", err)
+    }
+    ds := GetGeneExpression(id) 
+    
+    // Header, containing all other js 
+    header := `
+        <style>
+
+        .chart div {
+          font: 10px sans-serif;
+          background-color: steelblue;
+          text-align: right;
+          padding: 3px;
+          margin: 1px;
+          color: white;
+        }
+
+        </style>
+        <div class="chart"></div>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script>`
+            
+    // dataset to be used, just random numbers now
+    dataset := `var data = `+ds
+    
+    // rest of the vis code
+    vis := `
+        var w = 500;
+        var h = 100;
+
+        var x = d3.scale.linear()
+            .domain([0, d3.max(data)])
+            .range([0, h]);
+
+        var svg = d3.select(".chart")
+                    .append("svg")
+                    .attr("width", w)
+                    .attr("height", h);
+
+        svg.selectAll("rect")
+           .data(data)
+           .enter()
+           .append("rect")
+            .attr("x", function(d, i) {
+                return i * 3;  //Bar width of 20 plus 1 for padding
+            })
+
+         .attr("y", function(d) {
+            return h - x(d);  //Height minus data value
+        })
+        .attr("fill", function(d){
+            return color(d);
+        })
+        
+            .attr("width", 2)
+           .attr("height", function(d) {
+            return x(d);
+            });
+
+            
+
+        </script>
+    `
+
+    return header+dataset+vis
+
+
+} 
+
 
 // Returns all information possible for a gene. This includes stuff
 // like id,name,definition etc etc. 
@@ -262,262 +330,31 @@ func parsePathwayInput(input string) ([] string) {
 }
 
 
-func Barchart() string {
-    vis := `
-
-    <style>
-        .chart rect {
-           fill: steelblue;
-           stroke: white;
-         }
-
-    
-    </style>
-    <body>
-    <script src="http://d3js.org/d3.v2.min.js?2.10.0"></script>
-    <script
-    src="https://raw.github.com/mbostock/d3/master/lib/colorbrewer/colorbrewer.js"></script>
-    <script>
-
-     function next() {
-       return {
-             time: ++t,
-             value: v = ~~Math.max(10, Math.min(90, v + 10 * (Math.random() - .5)))
-           };
-         }
-
-        var t = 1297110663, // start time (seconds since epoch)
-          v = 70, // start value (subscribers)
-          data = d3.range(25).map(next); // starting dataset
-
-         var w = 20,
-             h = 80;
-         
-        var colorScale = d3.scale.category20();
-        /*
-        var colorScale = d3.scale.ordinal() 
-            .domain(data)
-            .range(colorbrewer.YlGn[9]);
-        */
-
-         var x = d3.scale.linear()
-             .domain([0, 1])
-             .range([0, w]);
-         
-         var y = d3.scale.linear()
-             .domain([0, 100])
-             .rangeRound([0, h]);
-
-         var chart = d3.select(".visman").append("svg")
-            .attr("class", "chart")
-            .attr("width", w * data.length - 1)
-            .attr("height", h);
-
-         chart.selectAll("rect")
-             .data(data)
-             .enter().append("rect")
-             .attr("x", function(d, i) { return x(i) - .5; })
-             .attr("y", function(d) { return h - y(d.value) - .5; })
-             .attr("width", w)
-             .attr("height", function(d) { return y(d.value); })
-             //.style("fill", function(d, i) { return colorScale(d.value); });
-             
-
-         chart.append("line")
-             .attr("x1", 0)
-             .attr("x2", w * data.length)
-             .attr("y1", h - .5)
-             .attr("y2", h - .5)
-             .style("stroke", "#ccc");
-
-    </script>`
-
-    return vis;
-
-
-}
-
-func GeneVisCode(gene string) string {
-
-    
-    vis := `<style>
-
-
-    body {
-      font: 10px sans-serif;
-    }
-
-    .bar rect {
-      fill: steelblue;
-      shape-rendering: crispEdges;
-    }
-
-    .bar text {
-      fill: #fff;
-    }
-
-    .axis path, .axis line {
-      fill: none;
-      stroke: #000;
-      shape-rendering: crispEdges;
-    }
-
-    </style>
-    <body>
-    <script src="http://d3js.org/d3.v2.min.js?2.10.0"></script>
-    <script>
-
-    // Generate an Irwin–Hall distribution of 10 random variables.
-    var values = d3.range(1000).map(d3.random.irwinHall(10));
-
-    // A formatter for counts.
-    var formatCount = d3.format(",.0f");
-
-    var margin = {top: 10, right: 30, bottom: 30, left: 30},
-        width = 500 - margin.left - margin.right,
-        height = 250 - margin.top - margin.bottom;
-
-    var x = d3.scale.linear()
-        .domain([0, 1])
-        .range([0, width]);
-    
-    
-    // Generate a histogram using twenty uniformly-spaced bins.
-    var data = d3.layout.histogram().bins(x.ticks(20))
-    (values);
-
-    var y = d3.scale.linear()
-        .domain([0, d3.max(data, function(d) { return d.y; })])
-        .range([height, 0]);
-
-    var xAxis = d3.svg.axis()
-        .scale(x)
-        .orient("bottom");
-
-    var svg = d3.select(".visman").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var bar = svg.selectAll(".bar")
-        .data(data)
-      .enter().append("g")
-        .attr("class", "bar")
-        .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
-
-    bar.append("rect")
-        .attr("x", 1)
-        .attr("width", x(data[0].dx) - 1)
-        .attr("height", function(d) { return height - y(d.y); });
-
-    bar.append("text")
-        .attr("dy", ".75em")
-        .attr("y", 6)
-        .attr("x", x(data[0].dx) / 2)
-        .attr("text-anchor", "middle")
-        .text(function(d) { return formatCount(d.y); });
-
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
-
-    </script>
-    `
-
-    return vis
-    
-}
-
-
-func ParallelCoordinates(numGenes int) string {
-
-    ds := GenerateDataset(150,7)
-
-    // Header, containing all other js 
-    header := `
-        <div id="example" class="parcoords" style="width:450px;height:150px"></div>
-        <!--- Parallel coordinates -->
-        <script src="http://syntagmatic.github.io/parallel-coordinates/d3.parcoords.js"></script>
-        <link rel="stylesheet" type="text/css" href="http://syntagmatic.github.io/parallel-coordinates/d3.parcoords.css">
-        <script>`
-    
-    // dataset to be used, just random numbers now
-    dataset := `var data = `+ds
-    
-    // rest of the vis code
-    vis := `
-        var pc = d3.parcoords()("#example")
-          .data(data)
-          .render()
-          .ticks(3)
-          .createAxes()
-          .brushable()  // enable brushing
-          .interactive()  // command line mode
-        </script>
-    `
-    return header+dataset+vis
-
-}
-
-func GenerateDataset(rows, columns int) string {
-    
-    dataset := "[\n"
-    //max := 100
-
-    for i := 0; i < rows; i++ {
-        dataset += "[" + strconv.Itoa(i) + ","
-        //r := rand.New(rand.NewSource(time.Now().UnixNano()))
-        /*
-        for j := 0; j < columns; j++ {
-            
-            dataset += strconv.Itoa(r.Intn(max))
-            
-            if j < columns - 1 {
-                dataset += ","
-            }
-        }
-        dataset += "],\n"
-        */
-        
-    }
-    dataset += "];\n"
-    
-    return dataset
-}
-
-
 func GetGeneExpression(id int) string {
 
-    datastore := "localhost:8888"
+    datastore := "http://localhost:8888"
     
     query := "/gene/"+strconv.Itoa(id)
     url := datastore+query
-    response, err := gocache.Get(url)
+    response, err := http.Get(url)
     
     if err != nil {
         log.Panic("could not download expression ", err)
     }
 
-    log.Print(response)
+    defer response.Body.Close()
 
-    return "dick"
+	exprs, err := ioutil.ReadAll(response.Body)
+    if err != nil {
+        log.Panic("Could not read expression ", err) 
+    } 
+    
+    log.Print(string(exprs))
+
+    
+    return string(exprs)
 
 }
 
 
-func GenerateRandomValues(numValues int) string {
 
-    dataset := "["
-    max := 1000
-    r := rand.New(rand.NewSource(time.Now().UnixNano()))
-    for i := 0; i < numValues; i++ {
-        dataset += strconv.Itoa(r.Intn(max))
-        if i < numValues - 1 {
-            dataset += ","
-        }
-    }
-    dataset += "];"
-    return dataset
-}
