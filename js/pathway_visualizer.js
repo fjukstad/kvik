@@ -103,9 +103,8 @@ $(loadCy = function(){
                 prevSelection = d;
             });
 
-            cy.on('cxttap', 'node', function(d){
+            cy.on('select', 'node', function(d){
 
-                console.log("right click", d);
                 // Determine selected node, can be gene/pathway/compound
                 node = d.cyTarget.data();
                 nodeType = node.name.split(":");
@@ -153,7 +152,6 @@ $(loadCy = function(){
                     console.log("The selected node was a compund!");
                 }
                     
-
                 
                 console.log("Neighbors: ", d.cyTarget.edges());
 
@@ -206,7 +204,7 @@ $(loadCy = function(){
             });
 
             cy.on('unselect', 'node', function(d){
-                //d.cyTarget.css('background-color', 'steelblue');
+               // d.cyTarget.css('background-color', 'steelblue');
             });
 
             cy.on('mouseup', '', function(d) {
@@ -280,7 +278,7 @@ function GenerateInfoPanel(info){
     str += '<thead><tr><th style="width: 20%"></th><th style="width: 80%"></th></tr></thead>'
     str += '<tbody>'
     str += '<tr><td>Expression:</td><td><div class="visman"></div></td></tr>';
-    str += '<tr><td>Id:</td><td>hsa:' + info.Id + '</td><td>'
+    //str += '<tr><td>Id:</td><td>hsa:' + info.Id + '</td><td>'
     str += '<tr><td>Definition:</td><td>' + info.Definition + '</td><td>'
     str += '<tr><td>Orthology:</td><td>' + info.Orthology + '</td><td>'
     str += '<tr><td>Organism:</td><td>' + info.Organism + '</td><td>'
@@ -293,8 +291,8 @@ function GenerateInfoPanel(info){
     str += '<tr><td>Motif:</td><td>' + info.Motif + '</td><td>'
     str += '<tr><td>DB Links:</td><td>' + info.DBLinks + '</td><td>'
     str += '<tr><td>Structure:</td><td>' + info.Structure + '</td><td>'
-    str += '<tr><td>AASeq:</td><td>' + info.AASEQ.Sequence + '</td><td>'
-    str += '<tr><td>NTSeq:</td><td>' + info.NTSEQ.Sequence + '</td><td>'
+    //str += '<tr><td>AASeq:</td><td>' + info.AASEQ.Sequence + '</td><td>'
+    //str += '<tr><td>NTSeq:</td><td>' + info.NTSEQ.Sequence + '</td><td>'
     str += '</tbody>'
     str += '</table>';
     return str

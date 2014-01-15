@@ -7,8 +7,8 @@ var edges = [];
 var graph; 
 
 var color = d3.scale.linear()
-    .domain([0, 100])
-    .range(["yellow", "purple"]);
+    .domain([0, 1, 1500])
+    .range(["white", "yellow", "purple"]);
 
 function Graph(cy){
     this.addNode = function(n){
