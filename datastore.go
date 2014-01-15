@@ -5,8 +5,8 @@ import (
     "flag"
     "code.google.com/p/gorest"
     "net/http"
-    "math/rand"
-    "time"
+    "nowac/kegg"
+    "strings"
 /*
     "runtime/pprof"
     "os"
@@ -36,17 +36,58 @@ type RestService struct  {
 // Get gene expression for given gene
 func (serv RestService) GeneExpression(Id string) []float64 {
     log.Print("Returning gene expression for gene ", Id)
-    gene := serv.Dataset.Exprs.Genes[0]
-    exprs := serv.Dataset.Exprs.GeneExpression[gene]
+    id := strings.Trim(Id, "hsa:")
+    gene := kegg.GetGene(id)
+    log.Print("hsa:",id," ==> ", gene.Name)
+    name := strings.Split(gene.Name, ", ")[0]
+    
+    exprs := serv.Dataset.Exprs.GeneExpression[name]
     return exprs 
-
 }
 
 func (serv RestService) AvgDiff(Id string) float64 {
-    r := rand.New(rand.NewSource(time.Now().UnixNano()))
-    avg := r.Float64() * 100
+
+    //log.Print("Average difference in gene expression for gene ", Id[0] )
+
+
+    //log.Print("Expression: ", serv.Dataset.Exprs.IdExpression[Id[0]])
+    //log.Print(serv.Dataset.Exprs.Genes)
+
+    id := strings.Trim(Id, "hsa:")
+    gene := kegg.GetGene(id)
+
+    log.Print("hsa:",id," ==> ", gene.Name)
+    
+    name := strings.Split(gene.Name, ", ")[0]
+
+    log.Print(name) 
+
+    
+
+    exprs := serv.Dataset.Exprs.GeneExpression[name]
+        
+    if(len(exprs) == 0){
+        log.Print("Expression values for gene ", name, " not found")
+        return 0
+    }
+
+    avg := avg(exprs)
+
+    log.Print("Avg expression for gene ", name," = ",avg)
     return avg
 }
+
+func avg(nums [] float64) float64 {
+    
+    var total float64
+
+    for _, num := range(nums) {
+        total += num
+    }
+
+    return total / float64(len(nums))
+
+} 
 
 func main() {
     
