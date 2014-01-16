@@ -79,8 +79,12 @@ func ReadablePathwayNames(ids [] string) [] string {
 
     pathways := make([] string, len(ids)) 
 
+    for i, id := range ids {
         pw := GetPathway(id) 
+        pathways[i] = pw.Name
+    }
 
+    return pathways
 
 
 } 
