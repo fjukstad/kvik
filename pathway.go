@@ -22,6 +22,7 @@ type Pathway struct {
     Pathway_Map string
     Diseases [] string
     Drugs []string
+    DBLinks [] string
     Organism string
     Genes []string
     Compounds [] string
@@ -72,6 +73,18 @@ type KeggSubtype struct {
     Name string     `xml:"name,attr"`
     Value string    `xml:"value,attr"`
 }
+
+
+func ReadablePathwayNames(ids [] string) [] string { 
+
+    pathways := make([] string, len(ids)) 
+
+        pw := GetPathway(id) 
+
+
+
+} 
+
 
 func getMap(url string) ([]byte) {
     response, err := gocache.Get(url)
@@ -282,6 +295,15 @@ func parsePathwayResponse(response io.ReadCloser) Pathway {
             a := strings.Join(line[5:], " ")
             tmp = append(tmp, a)
 
+        case "DBLINKS": 
+            p.Diseases = tmp    
+            current = "DBLINKS" 
+            
+            a := strings.Join(line[5:], " ")
+            tmp  = make([]string, 0)
+            tmp = append(tmp, a)
+            
+
         case "DRUG":
             p.Diseases = tmp
             tmp  = make([]string, 0)
@@ -293,6 +315,12 @@ func parsePathwayResponse(response io.ReadCloser) Pathway {
         case "ORGANISM":
             p.Drugs = tmp
 
+            if current == "DISEASE" {
+                p.Drugs = tmp
+            }
+            if current == "DBLINKS" {
+                p.DBLinks = tmp
+            }   
             p.Organism = strings.Join(line[4:], " ")
 
         case "GENE":
@@ -307,6 +335,8 @@ func parsePathwayResponse(response io.ReadCloser) Pathway {
             current = "COMPOUND"
             tmp = make([]string, 0)
             a := strings.Join(line[8:], " ")
+            a := strings.Join(line[4:], " ")
+
             tmp = append(tmp, a)
 
         case "REFERENCE":
