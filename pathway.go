@@ -13,6 +13,9 @@ import (
     "strings"
     "math/rand"
     "time"
+    "net/http"
+    "image/png"
+
 )
 
 type Pathway struct {
@@ -26,7 +29,6 @@ type Pathway struct {
     Organism string
     Genes []string
     Compounds [] string
-    
 }
 
 type KeggPathway struct {
@@ -128,22 +130,41 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph){
         log.Panic("Could not unmarshal KGML ", err)
     }
 
+    imgurl := "http://www.genome.jp/kegg/pathway/hsa/" +keggId + ".png"
 
+    log.Print("downloading image...")
+    resp, err := http.Get(imgurl) 
+    if err != nil {
+        log.Panic("Image could not be downloaded ", err)
+    }
 
+    log.Print("image downloaded....") 
+    img, err := png.Decode(resp.Body)
+
+    if err != nil {
+        log.Panic("Image could not be decoded ", err)
+    }
+
+    imgrect := img.Bounds()
+
+    sizeX := imgrect.Max.X - imgrect.Min.X 
+    sizeY := imgrect.Max.Y - imgrect.Min.Y
+
+    log.Print("Image is : ", sizeX, sizeY)
     // First create a node that will serve as a background image to the pathway
     inputGraph.AddGraphicNode(
         0,
         "bg",
         0,
         1,
-        "http://www.genome.jp/kegg/pathway/hsa/" +keggId + ".png",
+        imgurl,
         "#fff",
         "#fff",
         "rectangle",
-        622,
-        483,
-        1244,
-        966)
+        sizeX/2,
+        sizeY/2,
+        sizeX,
+        sizeY)
         
 
 
@@ -187,6 +208,8 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph){
 func GetPathway(id string) Pathway {
     baseURL := "http://rest.kegg.jp/get/"
     url := baseURL + id
+
+    log.Print(url)
     
     response, err := gocache.Get(url)
     if err != nil{
@@ -317,8 +340,6 @@ func parsePathwayResponse(response io.ReadCloser) Pathway {
             
 
         case "ORGANISM":
-            p.Drugs = tmp
-
             if current == "DISEASE" {
                 p.Drugs = tmp
             }
@@ -338,7 +359,6 @@ func parsePathwayResponse(response io.ReadCloser) Pathway {
             p.Genes = tmp
             current = "COMPOUND"
             tmp = make([]string, 0)
-            a := strings.Join(line[8:], " ")
             a := strings.Join(line[4:], " ")
 
             tmp = append(tmp, a)
