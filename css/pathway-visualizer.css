@@ -2,8 +2,9 @@
     height: 700px;
     width: 700px;
     position: absolute;
-    left: 100;
-    top: 100;
+    left: 4em;
+    top: 1em;
+    border:1px solid #AAAAAA;
 }
 
 #jumbotron{

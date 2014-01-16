@@ -69,3 +69,28 @@ function AvgDiff(gene) {
     return avg;
 
 }
+
+
+function GetPathwayName(id) {
+    var baseURL = "http://"+window.location.hostname+":8080/info/pathway/"
+        url =  baseURL+id+"/name"
+
+    var name
+    $.ajax({
+        async: false,
+        cache: true,
+        type: "GET",
+        url: url,
+        dataType: "text",
+        success: function(data) {
+            name = data;
+        }
+    });
+
+    console.log("name: ", name)
+
+    return name;
+
+    
+
+} 

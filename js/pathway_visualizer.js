@@ -274,15 +274,19 @@ $(loadCy = function(){
 
 
 function GenerateInfoPanel(info){
+
+    pathwayLinks = CreatePathwayLinks(info.Pathways)
+
+
     var str = '<table class="table" style="word-wrap: break-word;table-layout:fixed">';
     str += '<thead><tr><th style="width: 20%"></th><th style="width: 80%"></th></tr></thead>'
     str += '<tbody>'
     str += '<tr><td>Expression:</td><td><div class="visman"></div></td></tr>';
-    //str += '<tr><td>Id:</td><td>hsa:' + info.Id + '</td><td>'
+    str += '<tr><td>Id:</td><td>hsa:' + info.Id + '</td><td>'
     str += '<tr><td>Definition:</td><td>' + info.Definition + '</td><td>'
     str += '<tr><td>Orthology:</td><td>' + info.Orthology + '</td><td>'
-    str += '<tr><td>Organism:</td><td>' + info.Organism + '</td><td>'
-    str += '<tr><td>Pathways:</td><td>' + info.Pathways + '</td><td>'
+    //str += '<tr><td>Organism:</td><td>' + info.Organism + '</td><td>'
+    str += '<tr><td>Pathways:</td><td>' + pathwayLinks + '</td><td>'
     str += '<tr><td>Diseases:</td><td>' + info.Diseases + '</td><td>'
     str += '<tr><td>Modules:</td><td>' + info.Modules + '</td><td>'
     str += '<tr><td>Drug target:</td><td>' + info.Drug_Target + '</td><td>'
@@ -297,6 +301,20 @@ function GenerateInfoPanel(info){
     str += '</table>';
     return str
 }
+
+function CreatePathwayLinks(ids) {
+    var baseURL = "http://"+window.location.hostname+":8000/demo/pathwaySelect="
+    links  = "" 
+    console.log(ids)
+    for (i in ids) {
+        id = ids[i];
+        console.log(ids[i]);
+        name = GetPathwayName(id)
+        console.log(name)
+        links += "<a href=\""+baseURL+id+"\" title=\""+id+"\">"+name+"</a></br>"
+    }
+    return links
+} 
 
 function GenerateParallelPanel() {
     var str = '<table class="table" style="word-wrap: break-word;table-layout:fixed">';
