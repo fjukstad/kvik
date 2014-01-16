@@ -43,6 +43,7 @@ func GetGene(id string) Gene {
     if err != nil{
         log.Panic("Cannot download from url:",err)
     }
+    
     /*
     body, err := ioutil.ReadAll(response.Body)
     if err != nil{
@@ -52,8 +53,6 @@ func GetGene(id string) Gene {
 
     gene := parseGeneResponse(response.Body) 
 
-    gene.Print()
-    
     return gene
 }
 
@@ -106,8 +105,8 @@ func (g Gene) Print() {
     fmt.Println("\tMotif:", g.Motif)
     fmt.Println("\tDBLinks:", g.DBLinks)
     fmt.Println("\tStructure:", g.Structure)
-    fmt.Println("\tAASEQ:", g.AASEQ)
-    fmt.Println("\tNTSEQ:", g.NTSEQ)
+    //fmt.Println("\tAASEQ:", g.AASEQ)
+    //fmt.Println("\tNTSEQ:", g.NTSEQ)
     fmt.Println("")
 }
 
@@ -162,14 +161,25 @@ func parseGeneResponse(response io.ReadCloser) Gene {
             tmp = append(tmp, b)
 
         case "DISEASE":
+            if(current == "PATHWAY"){
+                gene.Pathways = tmp
+            }
+            if(current == "MODULE"){
+                gene.Modules = tmp
+            }
             current = "DISEASE"
-            gene.Pathways = tmp
             tmp = make([]string, 0)
             a := strings.Join(line[5:], " ")
             tmp = append(tmp, a)
         case "MODULE":
+           if(current == "PATHWAY"){
+                gene.Pathways = tmp
+            }
+            if(current == "DISEASE"){
+                gene.Diseases = tmp
+            }
+
             current = "MODULE"
-            gene.Pathways = tmp
             tmp = make([]string, 0)
             a := strings.Join(line[6:], " ")
             tmp = append(tmp, a)
