@@ -20,7 +20,7 @@ type Gene struct {
     Pathways []string
     Modules []string 
     Diseases []string
-    Drug_Target string
+    Drug_Target [] string
     Classes []string
     Position string
     Motif string
@@ -161,6 +161,7 @@ func parseGeneResponse(response io.ReadCloser) Gene {
             tmp = append(tmp, b)
 
         case "DISEASE":
+
             if(current == "PATHWAY"){
                 gene.Pathways = tmp
             }
@@ -171,6 +172,7 @@ func parseGeneResponse(response io.ReadCloser) Gene {
             tmp = make([]string, 0)
             a := strings.Join(line[5:], " ")
             tmp = append(tmp, a)
+
         case "MODULE":
            if(current == "PATHWAY"){
                 gene.Pathways = tmp
@@ -185,11 +187,13 @@ func parseGeneResponse(response io.ReadCloser) Gene {
             tmp = append(tmp, a)
 
         case "DRUG_TARGET":
+            if(current == "DISEASE"){ 
+                gene.Diseases = tmp
+            } 
             current = "DRUG_TARGET"
-            gene.Pathways = tmp
             tmp = make([]string, 0)
             a := strings.Join(line[1:], " ")
-            gene.Drug_Target = a
+            tmp = append(tmp,a)
 
         case "CLASS":
             if(current == "PATHWAY"){
@@ -201,6 +205,9 @@ func parseGeneResponse(response io.ReadCloser) Gene {
             
             if(current == "MODULE"){
                 gene.Modules = tmp
+            }
+            if(current == "DRUG_TARGET"){
+                gene.Drug_Target = tmp
             }
 
 
@@ -261,9 +268,9 @@ func parseGeneResponse(response io.ReadCloser) Gene {
                 tmp = append(tmp, b)
             }
             if(current == "CLASS" ||
-                current == "DISEASE" ||
                 current == "MODULE" ||
                 current == "DRUG_TARGET"){
+
                 // Parsing, not very pretty...
                 a := strings.Join(line[0:], " ")
                 b := strings.Replace(a, "    ", "",-1)
@@ -283,6 +290,7 @@ func parseGeneResponse(response io.ReadCloser) Gene {
             }
         }
     }
+
     return gene
 }
 
