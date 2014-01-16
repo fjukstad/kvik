@@ -68,10 +68,20 @@ type NOWACService struct {
     pathwayGeneCount gorest.EndPoint    `method:"GET"
                                         path:"/info/gene/{Genes:string}/commonpathways"
                                         output:"string"`
+
+    pathwayIDToName gorest.EndPoint `method:"GET"   
+                                    path:"/info/pathway/{Id:string}/name"
+                                    output:"string"`
 }
 
 type PWMap struct {
     Map map[string] int
+}
+
+
+func (serv NOWACService) PathwayIDToName (Id string) string {
+    addAccessControlAllowOriginHeader(serv)             
+    return kegg.ReadablePathwayName(Id)   
 }
 
 // Returns a list of pathways and the frequency of given genes. I.e.
@@ -288,6 +298,9 @@ func (serv NOWACService) GetInfo(Items string, InfoType string) string {
         geneId := strings.Split(geneIdString, ":")[1]
 
         gene := kegg.GetGene(geneId)
+
+        //gene.Pathways = kegg.ReadablePathwayNames(gene.Pathways) 
+
         return kegg.GeneJSON(gene)
     }
     
