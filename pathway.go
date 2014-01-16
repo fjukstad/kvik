@@ -82,15 +82,16 @@ func ReadablePathwayNames(ids [] string) [] string {
     pathways := make([] string, len(ids)) 
 
     for i, id := range ids {
-        pw := GetPathway(id) 
-        pathways[i] = pw.Name
+        pathways[i] = ReadablePathwayName(id)
     }
 
     return pathways
 
-
 } 
 
+func ReadablePathwayName(id string) string {
+    return GetPathway(id).Name
+} 
 
 func getMap(url string) ([]byte) {
     response, err := gocache.Get(url)
