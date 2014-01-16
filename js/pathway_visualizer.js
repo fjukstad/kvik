@@ -241,7 +241,6 @@ $(loadCy = function(){
                     
                     json = JSON.parse(JSON.parse(message.graph)); 
                     var numAdded = 0; 
-                    console.log(json.nodes);
                     
                     for(var i in json.nodes){
                         var n = json.nodes[i]; 
@@ -278,15 +277,46 @@ function GenerateInfoPanel(info){
     pathwayLinks = CreatePathwayLinks(info.Pathways)
 
 
-    var str = '<table class="table" style="word-wrap: break-word;table-layout:fixed">';
-    str += '<thead><tr><th style="width: 20%"></th><th style="width: 80%"></th></tr></thead>'
+    var str = '<div class="panel-group" id="accordion">'
+        
+    str += '<div class="panel panel-default">';
+    str += '<div class="panel-heading">'
+    str += '<h4 class="panel-title">'
+    str += '<a data-toggle="collapse" data-parent="#accordion" href="#c1">'
+    str += 'Expression'
+    str += '</a> </div>'
+    str += '<div id="c1" class="panel-collapse collapse in">'
+    str += '<div class="panel-body">'
+    str += '<div class="visman"></div>'
+    str += '</div></div></div>'
+
+    str += '<div class="panel panel-default">';
+    str += '<div class="panel-heading">'
+    str += '<h4 class="panel-title">'
+    str += '<a data-toggle="collapse" data-parent="#accordion" href="#c2">'
+    str += 'Pathways'
+    str += '</a> </div>'
+    str += '<div id="c2" class="panel-collapse collapse in">'
+    str += '<div class="panel-body">'
+    str += pathwayLinks
+    str += '</div></div></div>'
+
+    str += '<div class="panel panel-default">';
+    str += '<div class="panel-heading">'
+    str += '<h4 class="panel-title">'
+    str += '<a data-toggle="collapse" data-parent="#accordion" href="#c3">'
+    str += 'More information'
+    str += '</a> </div>'
+    str += '<div id="c3" class="panel-collapse collapse">'
+    str += '<div class="panel-body">'
+
+    str += '<table class="table" style="word-wrap: break-word;table-layout:fixed">';
+    str += '<thead><tr><th style="width: 20%"></th><th style="width: 80%"></th>'
     str += '<tbody>'
-    str += '<tr><td>Expression:</td><td><div class="visman"></div></td></tr>';
     str += '<tr><td>Id:</td><td>hsa:' + info.Id + '</td><td>'
     str += '<tr><td>Definition:</td><td>' + info.Definition + '</td><td>'
     str += '<tr><td>Orthology:</td><td>' + info.Orthology + '</td><td>'
     //str += '<tr><td>Organism:</td><td>' + info.Organism + '</td><td>'
-    str += '<tr><td>Pathways:</td><td>' + pathwayLinks + '</td><td>'
     str += '<tr><td>Diseases:</td><td>' + info.Diseases + '</td><td>'
     str += '<tr><td>Modules:</td><td>' + info.Modules + '</td><td>'
     str += '<tr><td>Drug target:</td><td>' + info.Drug_Target + '</td><td>'
@@ -299,18 +329,21 @@ function GenerateInfoPanel(info){
     //str += '<tr><td>NTSeq:</td><td>' + info.NTSEQ.Sequence + '</td><td>'
     str += '</tbody>'
     str += '</table>';
-    return str
+    str += '</div></div></div>'
+
+    
+
+    str += '</div>'
+    
+       return str
 }
 
 function CreatePathwayLinks(ids) {
     var baseURL = "http://"+window.location.hostname+":8000/demo/pathwaySelect="
     links  = "" 
-    console.log(ids)
     for (i in ids) {
         id = ids[i];
-        console.log(ids[i]);
         name = GetPathwayName(id)
-        console.log(name)
         links += "<a href=\""+baseURL+id+"\" title=\""+id+"\">"+name+"</a></br>"
     }
     return links
