@@ -85,24 +85,6 @@ $(loadCy = function(){
             graph = new Graph(cy); 
                     
 
-            cy.on('mouseover', 'node', function(d){
-                // update visuals of nodes
-                if(prevSelection !== undefined){
-                    //prevSelection.cyTarget.css('background-color', 'steelblue');
-                    //prevSelection.cyTarget.css('text-opacity', '0.0');
-                }
-                //d.cyTarget.css('background-color', '#2CA25F');
-                //d.cyTarget.css('text-opacity', '0.5');
-                d.cyTarget.css({
-                    'height': 'data(graphics.height + 50)',
-                    'width': 'data(graphics.width + 50) ', 
-                })
-
-
-
-                prevSelection = d;
-            });
-
             cy.on('select', 'node', function(d){
 
                 // Determine selected node, can be gene/pathway/compound
@@ -164,45 +146,6 @@ $(loadCy = function(){
 
 
 
-            cy.on('select', 'node', function(d){
-                //d.cyTarget.css('background-color', '#FEC44F');
-
-                
-                if(d.type === 'select') { 
-                    /*
-                    console.log("highlighted nodes: ", cy.elements("node:selected"));
-
-                    // remove old info body
-                    document.getElementById('info-panel').innerHTML = '';
-        
-                    // Set up new info box
-                    var panelDiv = document.createElement('div');
-                    panelDiv.className = 'panel panel-default';
-        
-                    var panelHeadingDiv = document.createElement('div');
-                    panelHeadingDiv.id = 'info-panel-heading';
-                    panelHeadingDiv.className = 'panel-heading';
-                    var str = '<h5> Time series for selected genes </h5>'
-                    panelHeadingDiv.innerHTML = str
-
-                    var panelBodyDiv = document.createElement('div');
-                    panelBodyDiv.id = 'info-panel-body';
-                    panelBodyDiv.className = 'panel-body';
-                    panelBodyDiv.innerHTML = GenerateParallelPanel()
-
-
-                    panelDiv.appendChild(panelHeadingDiv);
-                    panelDiv.appendChild(panelBodyDiv);
-
-                    document.getElementById('info-panel').appendChild(panelDiv);
-
-                    $(GetParallelVis()).appendTo(".parallel"); 
-                    */
-                }
-
-                
-            });
-
             cy.on('unselect', 'node', function(d){
                // d.cyTarget.css('background-color', 'steelblue');
             });
@@ -213,23 +156,6 @@ $(loadCy = function(){
 
             cy.on('zoom', function(d){
                 var zoomLevel = cy.zoom();
-                /*
-                if(zoomLevel >= 1.5){
-                    cy.nodes().animate({
-                      css: { 'text-opacity': '0.5' } }
-                    , {
-                      duration: 0
-                    });
-                }
-                else {
-                    cy.nodes().animate({
-                      css: { 'text-opacity': '0.5' } }
-                    , {
-                      duration: 0
-                    });
-                }
-
-                */
                 });
 
 

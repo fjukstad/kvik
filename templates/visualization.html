@@ -18,6 +18,44 @@
     </small>
 </div>
 --->
+
+<div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-8">    
+    <!--
+      <div class="btn-group btn-group-xs">
+        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+          Scale
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a href="#">Absolute</a></li>
+          <li><a href="#">Logarithmic</a></li>
+        </ul>
+
+        </div>
+    -->
+        <script>
+            $(document).on("click", "#scalebtns", function(event){
+                console.log(event); 
+                console.log(event.toElement.control.id);
+            });
+        </script>
+
+
+        <div class="btn-group" data-toggle="buttons" id="scalebtns">
+          <label class="btn btn-primary active">
+            <input type="radio" name="options" id="log"> Logarithmic
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="options" id="abs"> Absolute
+          </label>
+
+        </div>
+
+</div>
+</div>
+
+
 <div class="row">
     <div class="col-xs-12 col-sm-6 col-md-8">
         <div id="container">
@@ -35,20 +73,6 @@
 </div>
 
 
-<div class="row">
-    <div class="col-xs-12 col-sm-6 col-md-8">    
-      <div class="btn-group btn-group-xs">
-        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-          Scale
-          <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-          <li><a href="#">Absolute</a></li>
-          <li><a href="#">Logarithmic</a></li>
-        </ul>
-        </div>
-    </div>
-</div>
     <script type="text/javascript" src="/js/info-man.js"></script>
     <script type="text/javascript" src="/js/vis-man.js"></script>
     <script type="text/javascript" src="/js/graph-interface.js"></script>

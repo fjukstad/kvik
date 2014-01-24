@@ -15,3 +15,12 @@
 #info-panel{
     word-wrap: break-word;
 }
+
+#scalebtns {
+    left: 4em;
+}
+
+.btn-default {
+    background-color: #FFFFFF;
+    color: #111111;
+}
