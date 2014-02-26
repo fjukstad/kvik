@@ -116,7 +116,7 @@ func (pathway *KeggPathway) Print() {
     log.Println("Relations:", pathway.Relations)
 }
 
-func newKeggPathway(keggId string) { 
+func NewKeggPathway(keggId string) *KeggPathway { 
 
     baseURL := "http://rest.kegg.jp/get/"+keggId
     url := baseURL + "/kgml"
