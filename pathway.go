@@ -116,6 +116,25 @@ func (pathway *KeggPathway) Print() {
     log.Println("Relations:", pathway.Relations)
 }
 
+func newKeggPathway(keggId string) { 
+
+    baseURL := "http://rest.kegg.jp/get/"+keggId
+    url := baseURL + "/kgml"
+    
+    // url := "http://localhost:8000/public/pathway.kgml"
+    pw := getMap(url)
+    
+    pathway := new(KeggPathway)
+    err := xml.Unmarshal(pw, pathway) 
+
+    if err != nil {
+        log.Panic("Could not unmarshal KGML ", err)
+    }
+
+    return pathway
+
+} 
+
 func createPathwayGraph(keggId string, inputGraph *gographer.Graph){
 
     baseURL := "http://rest.kegg.jp/get/"+keggId

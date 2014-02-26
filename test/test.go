@@ -2,6 +2,7 @@ package main
 
 import (
     "nowac/kegg"
+    "fmt"
 )
 
 func main(){
@@ -14,5 +15,8 @@ func main(){
     pathwayId := "hsa05200"
     pathway := kegg.GetPathway(pathwayId); 
     pathway.Print() 
+
+    keggPathway := kegg.newKeggPathway(pathwayId)
+    fmt.Println(keggPathway)   
 
 }
