@@ -14,6 +14,7 @@ import (
    // "github.com/fjukstad/gocache"    
     "encoding/json"
     "io/ioutil"
+    "bytes"
 ) 
 
 func main () {
@@ -56,6 +57,10 @@ type NOWACService struct {
     datastore gorest.EndPoint `method:"GET"
                                 path:"/datastore/{...:string}"
                                 output:"string"`
+
+    datastorePost gorest.EndPoint `method:"POST"
+                                    path:"/datastore/{...:string}"
+                                    postdata:"string"`
     
     pathways gorest.EndPoint    `method:"GET"
                                 path:"/info/gene/{Gene:string}/pathways"
@@ -72,6 +77,9 @@ type NOWACService struct {
     pathwayIDToName gorest.EndPoint `method:"GET"   
                                     path:"/info/pathway/{Id:string}/name"
                                     output:"string"`
+/*
+    geneColor gorest.EndPoint `method:"GET"
+                                path:"/in*/
 }
 
 type PWMap struct {
@@ -194,6 +202,29 @@ func (serv NOWACService) Datastore(args ...string) string {
     return string(response)
 }
 
+
+func (serv NOWACService) DatastorePost( PostData string, varArgs ...string) {
+    addAccessControlAllowOriginHeader(serv)         
+
+    requestURL := serv.Context.Request().URL.Path
+
+    // Where the datastore is running, this would be Stallo in later versions
+    datastoreBaseURL := "http://localhost:8888/"
+
+    URL := datastoreBaseURL + strings.Replace(requestURL, "/datastore/","",-1)
+    
+
+    postContent := bytes.NewBufferString(PostData) 
+
+    // Perform the actual http post to the datastore
+    // note that we set text as datatype. will fail miserably with anything else
+    _, err := http.Post(URL, "text", postContent) 
+    if err != nil { 
+        log.Print("Post to datastore failed. ", err)
+        serv.ResponseBuilder().SetResponseCode(500).Overide(true)
+    } 
+    
+} 
 
 
 
