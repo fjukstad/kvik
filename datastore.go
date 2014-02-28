@@ -7,6 +7,7 @@ import (
     "net/http"
     "nowac/kegg"
     "strings"
+    "math"
 /*
     "runtime/pprof"
     "os"
@@ -28,10 +29,105 @@ type RestService struct  {
                             path:"/gene/{Id:string}/avg"
                             output:"float64"`
 
+    setScale gorest.EndPoint `method:"POST"
+                             path:"/setscale/"
+                             postdata:"string"`
+                            
+
     // Dataset holding nowac data
-    Dataset Dataset
+    Dataset *Dataset
 
 }
+
+func (serv RestService) SetScale (PostData string) {
+    log.Print("setting scale to ", PostData)
+    
+    serv.Dataset.setScale(PostData) 
+
+    log.Println(serv.Dataset.Exprs.IdExpression["900229_1"][0]) 
+    log.Println(serv.Dataset.DiffExprs.IdExpression["900229_1"][0]) 
+    log.Println("dicks-------------------------------------------")
+
+    log.Print("done")
+} 
+
+func (dataset *Dataset) setScale(scale string) {
+    // changing scale to the same as before
+    if(dataset.Scale == scale){
+        return 
+    }
+    
+    log.Println("--------- old scale -------- ", dataset.Scale)
+    dataset.Scale = scale
+    log.Println("--------- new scale -------- ",  dataset.Scale)
+
+
+    // Dataset to store new values
+    TempExprs := new(Expression) 
+
+    // new expression maps. to store log or exp of old ones
+    idexprs := make(map[string][]float64, len(dataset.Exprs.IdExpression))
+    geneexprs := make(map[string][]float64, len(dataset.Exprs.GeneExpression))
+        
+
+    // Compute either log of exp of old value and store into new dataset
+    for id, exprs := range(dataset.Exprs.IdExpression){ 
+        if(scale == "log"){
+            idexprs[id] = log2(exprs)
+        } else if(scale == "abs"){
+            idexprs[id] = exp2(exprs)
+        }
+    }
+    for gene, exprs := range(dataset.Exprs.GeneExpression){
+        if(scale == "log"){
+            geneexprs[gene] = log2(exprs)
+        } else if(scale == "abs") {
+            geneexprs[gene] = exp2(exprs)
+        }
+    }
+
+    genes := dataset.Exprs.Genes
+
+    TempExprs.Genes = genes
+    TempExprs.IdExpression = idexprs
+    TempExprs.GeneExpression = geneexprs
+
+
+    dataset.DiffExprs = dataset.Exprs
+    dataset.Exprs = *TempExprs
+    
+    log.Println(dataset.Exprs.IdExpression["900229_1"][0]) 
+    log.Println(dataset.DiffExprs.IdExpression["900229_1"][0]) 
+    log.Println("dicks-------------------------------------------")
+
+
+
+} 
+
+// convert 
+func log2(input []float64) [] float64 {
+    new_vals := make([] float64, len(input)) 
+
+    for i, value := range(input){
+        v := math.Log2(value)
+        new_vals[i] = v
+    }
+
+    return new_vals
+} 
+
+func exp2(input []float64) []float64 {
+
+    new_vals := make([] float64, len(input)) 
+
+    for i, value := range(input){
+        v := math.Exp2(value)
+        new_vals[i] = v
+    }
+
+    return new_vals
+}
+
 
 // Get gene expression for given gene
 func (serv RestService) GeneExpression(Id string) []float64 {
@@ -91,7 +187,7 @@ func avg(nums [] float64) float64 {
 
 func main() {
     
-    var path = flag.String("path", "data" , "path where data files are stored")
+    var path = flag.String("path", "/Users/bjorn/stallo/data" , "path where data files are stored")
     var ip = flag.String("ip", "localhost", "ip to run on")
     var port = flag.String("port", ":8888" ,"port to run on")
 
@@ -105,7 +201,7 @@ func main() {
 
     log.Print("Starting datastore at ", *ip, *port)
     restService := new(RestService)
-    restService.Dataset = ds
+    restService.Dataset = &ds
 
     gorest.RegisterService(restService)
 

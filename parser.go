@@ -13,6 +13,9 @@ import (
 type Dataset struct {
     Bg Background
     Exprs Expression
+
+    Scale string
+    DiffExprs Expression
 }
 
 type Background struct {
@@ -50,8 +53,9 @@ func NewDataset( path string ) Dataset {
         log.Print(err) 
     }
     
-    ds := Dataset{bg, exprs}
-
+    diffexprs := Expression{}
+    // Init data set with background and expression data.  Set scale to absolute
+    ds := Dataset{bg, exprs, "abs", diffexprs}
 
     return ds
     
