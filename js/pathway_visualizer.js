@@ -323,3 +323,23 @@ addCSS("/css/pathway-visualizer.css");
 window.onerror = function(error) {
     alert(error);
 };
+
+function updateNodeColors() {
+
+    // Fetch new expression values and colors for every gene
+    var nodes = cy.nodes();
+    for (var n in nodes) {
+        if(n < nodes.length){
+            if(nodes[n].style().shape == "rectangle"){
+                var name = nodes[n].data().name.split(" ")[0];
+                var c = color(AvgDiff(name))
+                console.log(c)
+                nodes[n].css("background-color", c)
+            }
+        }
+    }
+}
+
+functionman = function() {
+    console.log("updating color");
+}

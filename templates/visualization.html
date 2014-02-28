@@ -36,17 +36,39 @@
     -->
         <script>
             $(document).on("click", "#scalebtns", function(event){
-                console.log(event); 
-                console.log(event.toElement.control.id);
+
+                scale = event.target.textContent;
+                var log = scale.match(/log/i);
+                var scale = ""                
+                if(log) { 
+                    scale = "log"
+                }
+                else { 
+                    scale = "abs"
+                } 
+
+                console.log("js setting scale to ", scale);
+                
+                var baseURL = "http://"
+                                +window.location.hostname
+                                +":8080/datastore/setscale";
+
+                    
+                $.post( baseURL, scale, function( data ) {
+                        console.log("response:", data);
+                        updateNodeColors();
+                });
+
+
             });
         </script>
 
 
         <div class="btn-group" data-toggle="buttons" id="scalebtns">
-          <label class="btn btn-primary active">
+          <label class="btn btn-primary">
             <input type="radio" name="options" id="log"> Logarithmic
           </label>
-          <label class="btn btn-primary">
+          <label class="btn btn-primary active">
             <input type="radio" name="options" id="abs"> Absolute
           </label>
 
