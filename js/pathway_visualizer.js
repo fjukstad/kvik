@@ -19,7 +19,6 @@ function getVisServerAddress() {
     var url = baseURL+visType+selectedPathways;
     var serverURL; 
 
-
     $.ajax({
         async: false,
         cache: false,
@@ -83,7 +82,6 @@ loadCy = function(){
             cy = this;
             console.log("ready");
             graph = new Graph(cy); 
-                    
 
             cy.on('select', 'node', function(d){
 
@@ -134,9 +132,6 @@ loadCy = function(){
                     console.log("The selected node was a compund!");
                 }
                     
-                
-                console.log("Neighbors: ", d.cyTarget.edges());
-
                 d.cyTarget.edges().css({
                     'line-color': 'red'
                 });
@@ -145,18 +140,20 @@ loadCy = function(){
             });
 
 
-
+            /*
             cy.on('unselect', 'node', function(d){
                // d.cyTarget.css('background-color', 'steelblue');
             });
 
             cy.on('mouseup', '', function(d) {
             });
+            */
     
-
+            /*
             cy.on('zoom', function(d){
                 var zoomLevel = cy.zoom();
                 });
+            */
 
 
             // Load data from JSON 
