@@ -183,8 +183,8 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph){
         "rectangle",
         sizeX/2,
         sizeY/2,
-        sizeX,
-        sizeY)
+        sizeY,
+        sizeX)
         
 
 
