@@ -91,18 +91,17 @@ type PWMap struct {
     Map map[string] int
 }
 
-// Returns the common genes shared between multiple pathways
+// Returns the number of common genes shared between multiple pathways
 func (serv NOWACService) CommonGenes(Pathways string) int { 
+    addAccessControlAllowOriginHeader(serv)             
 
     pathwayList := strings.Split(Pathways, " ")
-    log.Print(pathwayList)
     
     allGenes := make(map[string]int) 
 
     // Iterate over all genes from different pathways and set their count
     for _, p := range pathwayList { 
         pw := kegg.GetPathway(p) 
-        log.Println(pw.Genes)
         genes := pw.Genes
 
         for _, g := range genes { 
@@ -143,7 +142,6 @@ func (serv NOWACService) PathwayGeneCount (Genes string) string {
 
 	PathwayMap := make(map[string] int, 0)
 
-    log.Print(Genes)
     geneList := strings.Split(Genes, " ")
 
     // for every gene get its list of pathways
@@ -163,10 +161,8 @@ func (serv NOWACService) PathwayGeneCount (Genes string) string {
             }
         }
 
-        log.Println("gene", g)
     }
     
-    log.Println(PathwayMap)
 
     b, err := json.Marshal(PathwayMap)
     if err != nil {
@@ -437,7 +433,6 @@ func GetGeneExpression(id int) string {
         log.Panic("Could not read expression ", err) 
     } 
     
-    log.Print(string(exprs))
 
     
     return string(exprs)
