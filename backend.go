@@ -77,14 +77,58 @@ type NOWACService struct {
     pathwayIDToName gorest.EndPoint `method:"GET"   
                                     path:"/info/pathway/{Id:string}/name"
                                     output:"string"`
+
+    commonGenes gorest.EndPoint `method:"GET"
+                                path:"/info/pathway/{Pathways:string}/commongenes"
+                                output:"int"`
 /*
     geneColor gorest.EndPoint `method:"GET"
                                 path:"/in*/
 }
 
+
 type PWMap struct {
     Map map[string] int
 }
+
+// Returns the common genes shared between multiple pathways
+func (serv NOWACService) CommonGenes(Pathways string) int { 
+
+    pathwayList := strings.Split(Pathways, " ")
+    log.Print(pathwayList)
+    
+    allGenes := make(map[string]int) 
+
+    // Iterate over all genes from different pathways and set their count
+    for _, p := range pathwayList { 
+        pw := kegg.GetPathway(p) 
+        log.Println(pw.Genes)
+        genes := pw.Genes
+
+        for _, g := range genes { 
+
+            count := allGenes[g]
+            if count != 0 {
+                allGenes[g] = count + 1
+                
+            } else {
+                allGenes[g] = 1
+            }
+        }
+
+    } 
+
+    // From map of all genes get the ones with count larger than 1 
+    var commonGenes [] string
+    for k, v := range allGenes { 
+        if v > 1 {
+            commonGenes = append(commonGenes, k)
+        }
+    }
+
+    return len(commonGenes)
+
+} 
 
 
 func (serv NOWACService) PathwayIDToName (Id string) string {
