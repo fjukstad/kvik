@@ -287,10 +287,18 @@ function GenerateInfoPanel(info){
 function CreatePathwayLinks(ids) {
     var baseURL = "http://"+window.location.hostname+":8000/demo/pathwaySelect="
     links  = "" 
+
+    var currentLocation = window.location;
+    var path = currentLocation.pathname
+    var pathwayid = path.split("=")[1]
     for (i in ids) {
         id = ids[i];
-        name = GetPathwayName(id)
-        links += "<a href=\""+baseURL+id+"\" title=\""+id+"\">"+name+"</a></br>"
+        if (id != pathwayid) {
+            name = GetPathwayName(id)
+            pathwayIds = id+"+"+pathwayid
+            num = GetCommonGenes(pathwayIds)
+            links += "<a href=\""+baseURL+id+"\" title=\""+id+"\">"+name+" ("+num+")</a></br>"
+        }
     }
     return links
 } 

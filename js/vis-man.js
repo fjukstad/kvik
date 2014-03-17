@@ -94,3 +94,25 @@ function GetPathwayName(id) {
 }
 
 
+
+function GetCommonGenes(ids) {
+    var baseURL = "http://"+window.location.hostname+":8080/info/pathway/"
+        url =  baseURL+ids+"/commongenes"
+
+    var num
+    $.ajax({
+        async: false,
+        cache: true,
+        type: "GET",
+        url: url,
+        dataType: "text",
+        success: function(data) {
+             num = data;
+        }
+    });
+
+    console.log("Number of common genes: ", num)
+
+    return num;
+
+}
