@@ -297,7 +297,13 @@ function CreatePathwayLinks(ids) {
             name = GetPathwayName(id)
             pathwayIds = id+"+"+pathwayid
             num = GetCommonGenes(pathwayIds)
-            links += "<a href=\""+baseURL+id+"\" title=\""+id+"\">"+name+" ("+num+")</a></br>"
+            test = "<div style=\" float: right; display: inline-block; width:" 
+            test += num
+            test += "px; height: 10px; background-color: #a6bbc8\"></div>"
+
+            links += "<a href=\""+baseURL+id+"\" title=\""+id+"\">"+name+"</a>"
+            links += test + "</br>"
+            
         }
     }
     return links
