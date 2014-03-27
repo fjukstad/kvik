@@ -310,7 +310,7 @@ func GeneExpression(geneid string) string {
     
     // rest of the vis code
     vis := `
-        var w = 500;
+        var w = $("#c1").width();
         var h = 100;
 
         var x = d3.scale.linear()
@@ -337,9 +337,9 @@ func GeneExpression(geneid string) string {
             return color(d);
         })
         
-            .attr("width", 2)
+           .attr("width", w/data.length+"px")
            .attr("height", function(d) {
-            return x(d);
+                return x(d);
             });
 
             
