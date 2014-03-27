@@ -55,7 +55,7 @@ function AvgDiff(gene) {
     var avg
     $.ajax({
         async: false,
-        cache: true,
+        cache: false,
         type: "GET",
         url: url,
         dataType: "text",

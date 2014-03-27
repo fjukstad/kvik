@@ -64,10 +64,12 @@ loadCy = function(){
             })
             .selector(':selected')
             .css({
+                /*
                 'background-color': '#000',
                 'line-color': '#000',
                 'target-arrow-color': '#000',
                 'text-outline-color': '#000'
+                */
             })
             .selector('edge')
             .css({
