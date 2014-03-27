@@ -90,7 +90,11 @@ func ReadablePathwayNames(ids [] string) [] string {
 } 
 
 func ReadablePathwayName(id string) string {
-    return GetPathway(id).Name
+    // 
+    name := GetPathway(id).Name
+    shortName := strings.Trim(strings.SplitAfter(name, " - ")[0]," - ")
+
+    return shortName
 } 
 
 func getMap(url string) ([]byte) {
