@@ -122,14 +122,15 @@ function updateColor(scale) {
     if(scale == "log") { 
         console.log("log scale") 
         color = d3.scale.linear()
-            .domain([0, 1, 10])
-            .range(["white", "yellow", "purple"]);
+            .domain([-2,2])
+            .range(colorbrewer.RdYlBu[3]);
+
     } 
     else { 
         console.log("abs scale") 
         color = d3.scale.linear()
-            .domain([0, 1, 1500])
-            .range(["white", "yellow", "purple"]);
+            .domain([-400,0,400])
+            .range(colorbrewer.RdYlBu[3]);
     } 
 
 

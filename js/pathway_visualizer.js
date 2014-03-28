@@ -90,9 +90,12 @@ loadCy = function(){
                 // Determine selected node, can be gene/pathway/compound
                 node = d.cyTarget.data();
                 nodeType = node.name.split(":");
-
+                
+                Pace.restart()
+                
 
                 if(nodeType[0] === 'hsa'){
+                    
                     info = GetInfo(d.cyTarget.data());
                     
                     console.log("The selected node was a gene!");
@@ -236,6 +239,7 @@ function GenerateInfoPanel(info){
     str += '<div id="c1" class="panel-collapse collapse in">'
     str += '<div class="panel-body">'
     str += '<div class="visman"></div>'
+    //str += '<button id="sort" onclick="sortBars()">Sort</button>'
     str += '</div></div></div>'
 
     str += '<div class="panel panel-default">';
@@ -356,3 +360,16 @@ function updateNodeColors() {
 functionman = function() {
     console.log("updating color");
 }
+
+
+
+function savePathway()
+{
+    // get cytoscape instance
+    var cy = $('#cy').cytoscape('get')
+    // set image source
+    $('#image')[0].src = cy.png()
+
+} 
+
+

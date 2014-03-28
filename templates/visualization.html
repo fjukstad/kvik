@@ -18,7 +18,11 @@
     </small>
 </div>
 --->
-
+<!--
+<div id="image">
+    <button onclick="savePathway()">Save as Image</button>        
+</div>
+-->
 <div class="row">
     <div class="col-xs-12 col-sm-6 col-md-8">    
     <!--
@@ -36,7 +40,9 @@
     -->
         <script>
             $(document).on("click", "#scalebtns", function(event){
-
+            
+                Pace.restart()
+    
                 scale = event.target.textContent;
                 var log = scale.match(/log/i);
                 var scale = ""                
@@ -91,7 +97,7 @@
     </div>
     <div class="col-xs-4 col-sm-4 col-md-5">
         <div id="expression-view">
-            <div id="info-panel">
+           <div id="info-panel">
             </div>
         </div>
     </div>

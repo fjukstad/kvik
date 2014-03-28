@@ -38,3 +38,34 @@
     border-color:white;
 }
 */
+
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #a6bbc8;
+  shape-rendering: crispEdges;
+}
+
+
+.x.axis line {
+  stroke: #a6bbc8;
+}
+
+.y.axis line, .y.axis path {
+  fill: none;
+  stroke: #a6bbc8;
+}
+
+.y.axis tick { 
+    stroke: black;
+} 
+
+/*.tick {
+    display:none
+} */
+
