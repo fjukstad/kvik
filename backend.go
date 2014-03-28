@@ -310,39 +310,120 @@ func GeneExpression(geneid string) string {
     
     // rest of the vis code
     vis := `
-        var w = $("#c1").width();
-        var h = 100;
 
-        var x = d3.scale.linear()
-            .domain([0, d3.max(data)])
+
+    var margin = {top: 30, right: 10, bottom: 0, left: 10},
+        w = $("#c1").width() - margin.left - margin.right,
+        h = 170 - margin.top - margin.bottom;
+        var padding = 40
+
+        var y = d3.scale.linear()
+            .domain([-d3.max(data), d3.max(data)])
             .range([0, h]);
+        
+        var x = d3.scale.linear()
+            .domain([-d3.max(data), d3.max(data)])
+            .range([0,w]);
 
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .ticks(0)
+            .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .ticks(6) 
+            .tickFormat(function(d) { 
+                return d * -1;
+            })
+            .outerTickSize(0)
+            .orient("left"); 
+        
         var svg = d3.select(".chart")
                     .append("svg")
                     .attr("width", w)
-                    .attr("height", h);
-
+                    .attr("height", h)
+        
+       
         svg.selectAll("rect")
            .data(data)
            .enter()
            .append("rect")
             .attr("x", function(d, i) {
-                return i * 3;  //Bar width of 20 plus 1 for padding
+                console.log(d,i)
+                return padding*1.2 + i * 4;  //Bar width of 20 plus 1 for padding
             })
-
          .attr("y", function(d) {
-            return h - x(d);  //Height minus data value
+             if(d>0) {
+                 return h - y(d) 
+             }
+            return h/2;  //Height minus data value
         })
         .attr("fill", function(d){
             return color(d);
         })
         
-           .attr("width", w/data.length+"px")
-           .attr("height", function(d) {
-                return x(d);
-            });
+       .attr("width", 3+"px")
+       .attr("height", function(d) {
+            return Math.abs(y(d) - y(0));
+        })
+        
+        .append("svg:title")
+        .text(function(d) { 
+            return d; 
+        });
 
-            
+         svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate("+padding+","+h/2+")")
+            .call(xAxis);
+
+        
+        svg.append("g")
+            .attr("class", "y axis")
+            .attr("transform", "translate(" + padding + ",0)")
+            .call(yAxis);
+
+    var avg =  y(AvgDiff(info.Name))
+    svg.append("line")
+        .attr("x1", padding)
+        .attr("y1", avg)
+        .attr("x2", w)
+        .attr("y2", avg)
+        .style("stroke", "#fab");
+
+
+
+    var sortOrder = false;
+    var sortBars = function () {
+        sortOrder = !sortOrder;
+        
+        sortItems = function (a, b) {
+            console.log(a,b)
+            if (sortOrder) {
+                return a.value - b.value;
+            }
+            return b.value - a.value;
+        };
+
+        svg.selectAll("rect")
+            .sort(sortItems)
+            .transition()
+            .delay(function (d, i) {
+            return i ;
+        })
+            .duration(1000)
+            .attr("x", function (d, i) {
+                console.log(d,i,x(d))
+                return x(d)+4; 
+
+        });
+    } 
+    sortOrder=true
+
+    d3.select("#sort").on("click", sortBars);
+    
+                
 
         </script>
     `
