@@ -7,6 +7,7 @@ import (
     "io"
     "strconv"
     "path"
+    "strings" 
 
 )
 
@@ -35,8 +36,13 @@ type Info struct {
 type Expression struct {
     Genes []string
     IdExpression map[string] [] float64
-    GeneExpression map[string] [] float64
+    GeneExpression map[string] map[string]*CaseCtrl
 }
+
+type CaseCtrl struct { 
+    Case float64
+    Ctrl float64
+} 
 
 func NewDataset( path string ) Dataset {
 
@@ -64,8 +70,8 @@ func NewDataset( path string ) Dataset {
 func generateExpressionDataset(filename string) (Expression, error) { 
 
     var IdExpression map[string][]float64
-    var GeneExpression map[string][]float64
-
+    var GeneExpression map[string]map[string]*CaseCtrl
+     
     exprs := Expression{}
 
     exprsfile, err := os.Open(filename)
@@ -91,8 +97,11 @@ func generateExpressionDataset(filename string) (Expression, error) {
             
 
             // the lengths here are maybe a bit off?
-            IdExpression = make(map[string][]float64, len(record)-1)
-            GeneExpression = make(map[string][]float64, len(record)-1)
+            IdExpression = make(map[string] []float64, len(record)-1)
+            GeneExpression = make(map[string] map[string]*CaseCtrl, len(record)-1)
+            for i, _ := range(exprs.Genes) { 
+                GeneExpression[exprs.Genes[i]] = make(map[string] *CaseCtrl, len(record)) 
+            } 
             firstRow = false 
         } else { 
 
@@ -102,12 +111,29 @@ func generateExpressionDataset(filename string) (Expression, error) {
             // store an id to expression mapping. 
             IdExpression[id] = expression
             
+            // string contains _ means it is a ctrl
+            ctrl := strings.Contains(id, "_") 
+
             // Store the expression value for this specific gene and id
             // combination
             for i, _ := range(expression){
+                
                 gene := exprs.Genes[i]
-                GeneExpression[gene] = append(GeneExpression[gene],
-                expression[i])
+
+                // Store id on same nuber without trailing _1 _2 etc
+                commonId := strings.Split(id, "_")[0]
+
+                exprsvals := GeneExpression[gene][commonId]
+
+                if(exprsvals == nil) {
+                    GeneExpression[gene][commonId] = new(CaseCtrl)
+                } 
+
+                if(ctrl){ 
+                    GeneExpression[gene][commonId].Ctrl = expression[i]
+                } else { 
+                    GeneExpression[gene][commonId].Case = expression[i]
+                } 
             }
         }
     }

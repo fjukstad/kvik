@@ -46,12 +46,15 @@ func (serv RestService) SetScale (PostData string) {
 
     log.Println(serv.Dataset.Exprs.IdExpression["900229_1"][0]) 
     log.Println(serv.Dataset.DiffExprs.IdExpression["900229_1"][0]) 
-    log.Println("dicks-------------------------------------------")
 
     log.Print("done")
+
 } 
 
 func (dataset *Dataset) setScale(scale string) {
+    return 
+} 
+/*
     // changing scale to the same as before
     if(dataset.Scale == scale){
         return 
@@ -98,12 +101,10 @@ func (dataset *Dataset) setScale(scale string) {
     
     log.Println(dataset.Exprs.IdExpression["900229_1"][0]) 
     log.Println(dataset.DiffExprs.IdExpression["900229_1"][0]) 
-    log.Println("dicks-------------------------------------------")
-
-
 
 } 
 
+*/
 // convert 
 func log2(input []float64) [] float64 {
     new_vals := make([] float64, len(input)) 
@@ -134,42 +135,31 @@ func (serv RestService) GeneExpression(Id string) []float64 {
     log.Print("Returning gene expression for gene ", Id)
     id := strings.Trim(Id, "hsa:")
     gene := kegg.GetGene(id)
+
     log.Print("hsa:",id," ==> ", gene.Name)
+    
     name := strings.Split(gene.Name, ", ")[0]
     
-    exprs := serv.Dataset.Exprs.GeneExpression[name]
-    return exprs 
+    var ret []float64
+    // return difference between case & ctrl
+    for _, cc := range(serv.Dataset.Exprs.GeneExpression[name]) {
+        ret = append(ret, cc.Case - cc.Ctrl) 
+    } 
+
+    return ret
 }
 
 func (serv RestService) AvgDiff(Id string) float64 {
+    exprs := serv.GeneExpression(Id) 
 
-    //log.Print("Average difference in gene expression for gene ", Id[0] )
-
-
-    //log.Print("Expression: ", serv.Dataset.Exprs.IdExpression[Id[0]])
-    //log.Print(serv.Dataset.Exprs.Genes)
-
-    id := strings.Trim(Id, "hsa:")
-    gene := kegg.GetGene(id)
-
-    log.Print("hsa:",id," ==> ", gene.Name)
-    
-    name := strings.Split(gene.Name, ", ")[0]
-
-    log.Print(name) 
-
-    
-
-    exprs := serv.Dataset.Exprs.GeneExpression[name]
-        
     if(len(exprs) == 0){
-        log.Print("Expression values for gene ", name, " not found")
+        log.Print("Expression values for gene ", Id, " not found")
         return 0
     }
 
     avg := avg(exprs)
 
-    log.Print("Avg expression for gene ", name," = ",avg)
+    log.Println("Average difference for gene ", Id, " is ",avg)
     return avg
 }
 
@@ -207,6 +197,7 @@ func main() {
 
     http.Handle("/", gorest.Handle())
     http.ListenAndServe(*port, nil)
+
 
 
 
