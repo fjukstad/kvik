@@ -41,20 +41,14 @@ type RestService struct  {
 
 func (serv RestService) SetScale (PostData string) {
     log.Print("setting scale to ", PostData)
+
     
     serv.Dataset.setScale(PostData) 
 
-    log.Println(serv.Dataset.Exprs.IdExpression["900229_1"][0]) 
-    log.Println(serv.Dataset.DiffExprs.IdExpression["900229_1"][0]) 
-
-    log.Print("done")
-
+    log.Print("---------------------------------------------")
 } 
 
 func (dataset *Dataset) setScale(scale string) {
-    return 
-} 
-/*
     // changing scale to the same as before
     if(dataset.Scale == scale){
         return 
@@ -64,47 +58,23 @@ func (dataset *Dataset) setScale(scale string) {
     dataset.Scale = scale
     log.Println("--------- new scale -------- ",  dataset.Scale)
 
-
-    // Dataset to store new values
-    TempExprs := new(Expression) 
-
-    // new expression maps. to store log or exp of old ones
-    idexprs := make(map[string][]float64, len(dataset.Exprs.IdExpression))
-    geneexprs := make(map[string][]float64, len(dataset.Exprs.GeneExpression))
-        
-
-    // Compute either log of exp of old value and store into new dataset
-    for id, exprs := range(dataset.Exprs.IdExpression){ 
-        if(scale == "log"){
-            idexprs[id] = log2(exprs)
-        } else if(scale == "abs"){
-            idexprs[id] = exp2(exprs)
-        }
-    }
-    for gene, exprs := range(dataset.Exprs.GeneExpression){
-        if(scale == "log"){
-            geneexprs[gene] = log2(exprs)
-        } else if(scale == "abs") {
-            geneexprs[gene] = exp2(exprs)
-        }
-    }
-
-    genes := dataset.Exprs.Genes
-
-    TempExprs.Genes = genes
-    TempExprs.IdExpression = idexprs
-    TempExprs.GeneExpression = geneexprs
-
-
-    dataset.DiffExprs = dataset.Exprs
-    dataset.Exprs = *TempExprs
     
-    log.Println(dataset.Exprs.IdExpression["900229_1"][0]) 
-    log.Println(dataset.DiffExprs.IdExpression["900229_1"][0]) 
+    
+    var tmpIdExprs map[string][]float64
+    var tmpGeneExprs map[string]map[string]*CaseCtrl
+
+    tmpIdExprs = dataset.Exprs.IdExpression
+    tmpGeneExprs = dataset.Exprs.GeneExpression
+
+    dataset.Exprs.IdExpression = dataset.Exprs.DiffIdExpression
+    dataset.Exprs.GeneExpression = dataset.Exprs.DiffGeneExpression
+    
+
+    dataset.Exprs.DiffIdExpression = tmpIdExprs
+    dataset.Exprs.DiffGeneExpression = tmpGeneExprs
 
 } 
 
-*/
 // convert 
 func log2(input []float64) [] float64 {
     new_vals := make([] float64, len(input)) 

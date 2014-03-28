@@ -8,6 +8,7 @@ import (
     "strconv"
     "path"
     "strings" 
+    "math"
 
 )
 
@@ -35,8 +36,13 @@ type Info struct {
 
 type Expression struct {
     Genes []string
+    
     IdExpression map[string] [] float64
     GeneExpression map[string] map[string]*CaseCtrl
+
+    // for storing lob/abs. on init it holds log values
+    DiffIdExpression map[string] [] float64
+    DiffGeneExpression map[string] map[string]*CaseCtrl
 }
 
 type CaseCtrl struct { 
@@ -69,8 +75,12 @@ func NewDataset( path string ) Dataset {
 
 func generateExpressionDataset(filename string) (Expression, error) { 
 
-    var IdExpression map[string][]float64
+    
     var GeneExpression map[string]map[string]*CaseCtrl
+    var IdExpression map[string][]float64
+    
+    var DiffIdExpression map[string][]float64
+    var DiffGeneExpression map[string]map[string]*CaseCtrl
      
     exprs := Expression{}
 
@@ -99,9 +109,18 @@ func generateExpressionDataset(filename string) (Expression, error) {
             // the lengths here are maybe a bit off?
             IdExpression = make(map[string] []float64, len(record)-1)
             GeneExpression = make(map[string] map[string]*CaseCtrl, len(record)-1)
+            
+            // Storing log values
+            DiffIdExpression = make(map[string] []float64, len(record)-1)
+            DiffGeneExpression = make(map[string] map[string]*CaseCtrl, len(record)-1)
+            
+
             for i, _ := range(exprs.Genes) { 
                 GeneExpression[exprs.Genes[i]] = make(map[string] *CaseCtrl, len(record)) 
+                DiffGeneExpression[exprs.Genes[i]] = make(map[string] *CaseCtrl, len(record)) 
             } 
+
+
             firstRow = false 
         } else { 
 
@@ -127,12 +146,16 @@ func generateExpressionDataset(filename string) (Expression, error) {
 
                 if(exprsvals == nil) {
                     GeneExpression[gene][commonId] = new(CaseCtrl)
+                    DiffGeneExpression[gene][commonId] = new(CaseCtrl)
                 } 
 
                 if(ctrl){ 
                     GeneExpression[gene][commonId].Ctrl = expression[i]
+                    DiffGeneExpression[gene][commonId].Ctrl = math.Log2(expression[i])
+
                 } else { 
                     GeneExpression[gene][commonId].Case = expression[i]
+                    DiffGeneExpression[gene][commonId].Case = math.Log2(expression[i])
                 } 
             }
         }
@@ -140,6 +163,9 @@ func generateExpressionDataset(filename string) (Expression, error) {
 
     exprs.IdExpression = IdExpression
     exprs.GeneExpression = GeneExpression
+
+    exprs.DiffIdExpression = DiffIdExpression
+    exprs.DiffGeneExpression = DiffGeneExpression
 
     return exprs, nil
 }
