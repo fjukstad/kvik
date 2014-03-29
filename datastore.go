@@ -8,10 +8,8 @@ import (
     "nowac/kegg"
     "strings"
     "math"
-/*
     "runtime/pprof"
     "os"
-*/
 )
 
 type RestService struct  {
@@ -163,11 +161,17 @@ func main() {
     restService := new(RestService)
     restService.Dataset = &ds
 
+    f, err := os.Create("memprofile.prof")
+    if err != nil {
+        log.Fatal(err)
+    }
+    pprof.WriteHeapProfile(f)
+    f.Close()
+
     gorest.RegisterService(restService)
 
     http.Handle("/", gorest.Handle())
     http.ListenAndServe(*port, nil)
-
 
 
 
@@ -184,6 +188,5 @@ func main() {
     f.Close()
     return
 */
-
 }
 

@@ -116,8 +116,8 @@ func generateExpressionDataset(filename string) (Expression, error) {
             
 
             for i, _ := range(exprs.Genes) { 
-                GeneExpression[exprs.Genes[i]] = make(map[string] *CaseCtrl, len(record)) 
-                DiffGeneExpression[exprs.Genes[i]] = make(map[string] *CaseCtrl, len(record)) 
+                GeneExpression[exprs.Genes[i]] = make(map[string] *CaseCtrl) 
+                DiffGeneExpression[exprs.Genes[i]] = make(map[string] *CaseCtrl) 
             } 
 
 
