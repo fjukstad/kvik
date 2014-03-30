@@ -10,6 +10,8 @@ import (
     "math"
     "runtime/pprof"
     "os"
+    "github.com/fjukstad/rpcman" // rpc to the statistics man
+    
 )
 
 type RestService struct  {
@@ -35,6 +37,9 @@ type RestService struct  {
     // Dataset holding nowac data
     Dataset *Dataset
 
+    // RPC Server for performing statistics 
+    RPC rpcman.RPCMan
+    
 }
 
 func (serv RestService) SetScale (PostData string) {
@@ -105,6 +110,13 @@ func (serv RestService) GeneExpression(Id string) []float64 {
     gene := kegg.GetGene(id)
 
     log.Print("hsa:",id," ==> ", gene.Name)
+
+    if(gene.Name == "") { 
+        log.Println("Gene with id ",Id," not found in database")
+
+        // return slice with all zeros
+        return make([]float64, len(serv.Dataset.Exprs.Genes))
+    }
     
     name := strings.Split(gene.Name, ", ")[0]
     
@@ -125,7 +137,18 @@ func (serv RestService) AvgDiff(Id string) float64 {
         return 0
     }
 
-    avg := avg(exprs)
+    // avg := avg(exprs)
+    
+    ret, err := serv.RPC.Call("mean",exprs) 
+    if err != nil { 
+        log.Println("RPC FAILED", err) 
+    } 
+    avg, ok := ret.(float64) // Alt. non panicking version 
+    if !ok{ 
+        log.Println("conversion to float64 went bad: ",ret) 
+    } 
+
+
 
     log.Println("Average difference for gene ", Id, " is ",avg)
     return avg
@@ -160,6 +183,14 @@ func main() {
     log.Print("Starting datastore at ", *ip, *port)
     restService := new(RestService)
     restService.Dataset = &ds
+
+    // connect to statistics engine that will run statistics and that 
+    rpcaddr := "tcp://localhost:5555"
+    restService.RPC = rpcman.Init(rpcaddr)
+    restService.RPC.Connect() 
+
+
+
 
     f, err := os.Create("memprofile.prof")
     if err != nil {
