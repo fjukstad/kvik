@@ -29,6 +29,14 @@ type RestService struct  {
                             path:"/gene/{Id:string}/avg"
                             output:"float64"`
 
+    std gorest.EndPoint `method:"GET"
+                            path:"/gene/{Id:string}/stddev"
+                            output:"float64"`
+
+    variance gorest.EndPoint `method:"GET"
+                            path:"/gene/{Id:string}/vari"
+                            output:"float64"`
+
     setScale gorest.EndPoint `method:"POST"
                              path:"/setscale/"
                              postdata:"string"`
@@ -129,6 +137,58 @@ func (serv RestService) GeneExpression(Id string) []float64 {
     return ret
 }
 
+// Get standard deviation for expression values of a given gene
+func (serv RestService) Std(GeneId string) float64 { 
+    exprs := serv.GeneExpression(GeneId) 
+
+    if(len(exprs) == 0){
+        log.Print("Expression values for gene ", GeneId, " not found")
+        return 0
+    }
+    ret, err := serv.RPC.Call("std",exprs) 
+    if err != nil { 
+        log.Println("RPC FAILED", err) 
+        return 0
+    } 
+
+    std, ok := ret.(float64) 
+    if !ok{ 
+        log.Println("conversion to float64 went bad: ",ret) 
+        return 0
+    } 
+
+    log.Println("Standard deviation for expression of gene ", GeneId, " is ",std)
+    return std
+
+
+} 
+
+// Get variation for expression values of a given gene
+func (serv RestService) Variance(GeneId string) float64{ 
+    exprs := serv.GeneExpression(GeneId) 
+
+    if(len(exprs) == 0){
+        log.Print("Expression values for gene ", GeneId, " not found")
+        return 0
+    }
+
+    ret, err := serv.RPC.Call("var",exprs) 
+    if err != nil { 
+        log.Println("RPC FAILED", err) 
+        return 0
+    } 
+
+    variance, ok := ret.(float64) 
+    if !ok{ 
+        log.Println("conversion to float64 went bad: ",ret) 
+        return 0
+    } 
+
+    log.Println("Variance for expression of gene ", GeneId, " is ",variance)
+    return variance
+
+} 
+
 func (serv RestService) AvgDiff(Id string) float64 {
     exprs := serv.GeneExpression(Id) 
 
@@ -143,11 +203,10 @@ func (serv RestService) AvgDiff(Id string) float64 {
     if err != nil { 
         log.Println("RPC FAILED", err) 
     } 
-    avg, ok := ret.(float64) // Alt. non panicking version 
+    avg, ok := ret.(float64) 
     if !ok{ 
         log.Println("conversion to float64 went bad: ",ret) 
     } 
-
 
 
     log.Println("Average difference for gene ", Id, " is ",avg)
