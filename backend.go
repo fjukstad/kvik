@@ -350,7 +350,7 @@ func GeneExpression(geneid string) string {
            .enter()
            .append("rect")
             .attr("x", function(d, i) {
-                console.log(d,i)
+                //console.log(d,i)
                 return padding*1.2 + i * 4;  //Bar width of 20 plus 1 for padding
             })
          .attr("y", function(d) {
@@ -384,22 +384,51 @@ func GeneExpression(geneid string) string {
             .attr("transform", "translate(" + padding + ",0)")
             .call(yAxis);
 
-    var avg =  y(AvgDiff(info.Name))
+    var avg =  parseFloat(AvgDiff(info.Id))
     svg.append("line")
         .attr("x1", padding)
-        .attr("y1", avg)
+        .attr("y1", h - y(avg))
         .attr("x2", w)
-        .attr("y2", avg)
+        .attr("y2", h - y(avg))
         .style("stroke", "#fab");
 
+    var std =  parseFloat(Std(info.Id))
 
+    var stdup = avg + std
+    var stddown = avg - std
+
+    console.log(stdup,stddown)
+
+    svg.append("line")
+        .attr("x1", padding)
+        .attr("y1", h - y(stdup))
+        .attr("x2", w)
+        .attr("y2", h - y(stdup))
+        .style("stroke-dasharray", ("3, 3"))
+        .style("stroke", "a6bbc8");
+
+    svg.append("line")
+        .attr("x1", padding)
+        .attr("y1", h - y(stddown))
+        .attr("x2", w)
+        .attr("y2", h - y(stddown))
+        .style("stroke-dasharray", ("3, 3"))
+        .style("stroke", "a6bbc8");
+
+
+    ypos = function(y) {
+        if(y > 0){
+            return h - y
+        }
+        return y
+    } 
 
     var sortOrder = false;
     var sortBars = function () {
         sortOrder = !sortOrder;
         
         sortItems = function (a, b) {
-            console.log(a,b)
+            //console.log(a,b)
             if (sortOrder) {
                 return a.value - b.value;
             }
@@ -414,12 +443,11 @@ func GeneExpression(geneid string) string {
         })
             .duration(1000)
             .attr("x", function (d, i) {
-                console.log(d,i,x(d))
+                //console.log(d,i,x(d))
                 return x(d)+4; 
 
         });
     } 
-    sortOrder=true
 
     d3.select("#sort").on("click", sortBars);
     
