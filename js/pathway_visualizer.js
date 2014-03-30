@@ -228,6 +228,11 @@ function GenerateInfoPanel(info){
     pathwayLinks = CreatePathwayLinks(info.Pathways)
 
 
+    var std = Std(info.Id)
+    var variance = Var(info.Id)
+    var mean = AvgDiff(info.Id)
+
+
     var str = '<div class="panel-group" id="accordion">'
         
     str += '<div class="panel panel-default">';
@@ -240,7 +245,9 @@ function GenerateInfoPanel(info){
     str += '<div class="panel-body">'
     str += '<div class="visman"></div>'
     //str += '<button id="sort" onclick="sortBars()">Sort</button>'
+    str += '<small>Mean: '+mean+'</br>Standard deviation: '+std+'</br>Variance:'+variance+ '</small>'
     str += '</div></div></div>'
+
 
     str += '<div class="panel panel-default">';
     str += '<div class="panel-heading">'
@@ -349,8 +356,13 @@ function updateNodeColors() {
         if(n < nodes.length){
             if(nodes[n].style().shape == "rectangle"){
                 var name = nodes[n].data().name.split(" ")[0];
-                var c = color(AvgDiff(name))
-                console.log(c)
+                avg = AvgDiff(name)
+                if(avg === "0") { 
+                   var c = "#ffffff"
+                } else { 
+                    var c = color(avg)
+                }  
+                //console.log(c)
                 nodes[n].css("background-color", c)
             }
         }

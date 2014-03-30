@@ -44,14 +44,21 @@ function Graph(cy){
             console.log(gene, ids, ids[0])
             // If more than gene is present in the node. Fetch all of them
             // and do some clever stuff 
+            /*
             if (ids.length > 0) {
                 n.graphics.bgcolor = color(AvgDiff(ids[0]))
             }
             else {
-
                 n.graphics.bgcolor = color(AvgDiff(ids[0]))
-
             }
+            */
+
+            avg = AvgDiff(ids[0]) 
+            if(avg === "0") {
+                n.graphics.bgcolor = "#ffffff"
+            } else  {
+                n.graphics.bgcolor = color(avg) 
+            } 
         }
 
 

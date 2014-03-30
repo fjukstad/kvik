@@ -64,11 +64,63 @@ function AvgDiff(gene) {
         }
     });
 
-    console.log("got avg diff: ", avg)
+    console.log(gene,"got avg diff: ", avg)
 
     return avg;
 
 }
+
+
+
+// Fetches std from datastore
+function Std(gene) {
+    
+    var baseURL = "http://"+window.location.hostname+":8080/datastore/gene/";
+    url = baseURL + gene + "/stddev"
+
+    var res
+    $.ajax({
+        async: false,
+        cache: false,
+        type: "GET",
+        url: url,
+        dataType: "text",
+        success: function(data) {
+            res = data;
+        }
+    });
+
+    console.log(gene,"got std:", res)
+
+    return res;
+
+}
+
+
+// Fetches std from datastore
+function Var(gene) {
+    
+    var baseURL = "http://"+window.location.hostname+":8080/datastore/gene/";
+    url = baseURL + gene + "/vari"
+
+    var res
+    $.ajax({
+        async: false,
+        cache: false,
+        type: "GET",
+        url: url,
+        dataType: "text",
+        success: function(data) {
+            res = data;
+        }
+    });
+
+    console.log(gene,"got variance:", res)
+
+    return res;
+
+}
+
 
 
 function GetPathwayName(id) {
@@ -87,7 +139,7 @@ function GetPathwayName(id) {
         }
     });
 
-    console.log("name: ", name)
+    //console.log("name: ", name)
 
     return name;
 
@@ -111,7 +163,7 @@ function GetCommonGenes(ids) {
         }
     });
 
-    console.log("Number of common genes: ", num)
+    //console.log("Number of common genes: ", num)
 
     return num;
 
