@@ -2,7 +2,8 @@ import numpy as np
 import json
 import ast
 import zmq
-
+import time
+import datetime
 
 
 class RPC():
@@ -49,7 +50,9 @@ if __name__ == "__main__":
         #  Wait for next request from client
         message = socket.recv()
 
-        print "Incoming request"
+        time = datetime.datetime.now().strftime("%H:%M:%S.%f")
+
+        # print time, "Incoming request"
 
         req = ast.literal_eval(message)
 
@@ -66,6 +69,8 @@ if __name__ == "__main__":
         #  Send reply back to client
         socket.send(resp)
 
-        print "Completed RPC call"
+        time = datetime.datetime.now().strftime("%H:%M:%S.%f")
+
+        print time, "Completed RPC call"
 
 
