@@ -13,8 +13,10 @@ import (
     "github.com/fjukstad/rpcman" // rpc to the statistics man
     "strconv" 
     "encoding/json" 
+    "io/ioutil"
     
 )
+
 
 type RestService struct  {
 
@@ -46,9 +48,6 @@ type RestService struct  {
     bg gorest.EndPoint `method:"GET"
                         path:"/gene/{GeneId:string}/{Exprs:string}/bg"
                         output:"string"`
-
-
-                            
 
     // Dataset holding nowac data
     Dataset *Dataset
@@ -130,8 +129,11 @@ func (serv RestService) GeneExpression(Id string) []float64 {
         log.Println("Gene with id ",Id," not found in database")
 
         // return slice with all zeros
-        return make([]float64, len(serv.Dataset.Exprs.Genes))
+        emptySlice := make([]float64, len(serv.Dataset.Exprs.Genes))
+        return emptySlice
     }
+
+    log.Println("hepp")
     
     name := strings.Split(gene.Name, ", ")[0]
     
@@ -283,22 +285,13 @@ func (serv RestService) Bg(GeneId, Exprs string) string {
     return string(b)
 } 
 
+func Init(path string) *RestService { 
+    ds := NewDataset(path) //Dataset{} // := NewDataset(*path)
 
-func main() {
-    
-    var path = flag.String("path", "/Users/bjorn/stallo/data" , "path where data files are stored")
-    var ip = flag.String("ip", "localhost", "ip to run on")
-    var port = flag.String("port", ":8888" ,"port to run on")
-
-    flag.Parse()
-    
-    ds := NewDataset(*path) //Dataset{} // := NewDataset(*path)
-
-    log.Print("dataset found at ", *path)
+    log.Print("dataset found at ", path)
     
     ds.PrintDebugInfo()
 
-    log.Print("Starting datastore at ", *ip, *port)
     restService := new(RestService)
     restService.Dataset = &ds
 
@@ -306,13 +299,30 @@ func main() {
     rpcaddr := "tcp://localhost:5555" // "ipc:///tmp/datastore/0" //"tcp://localhost:5555"
     restService.RPC = rpcman.Init(rpcaddr)
     restService.RPC.Connect() 
+    
+    return restService
+} 
 
+func main() {
 
+    // enable debugging
+    
+        log.SetOutput(ioutil.Discard) 
+    //defer log.SetOutput(os.Stdout) 
+    
+    var path = flag.String("path", "/Users/bjorn/stallo/data" , "path where data files are stored")
+    var ip = flag.String("ip", "localhost", "ip to run on")
+    var port = flag.String("port", ":8888" ,"port to run on")
 
-
+    flag.Parse()
+    
+    restService := Init(*path)
+    log.Print("Starting datastore at ", *ip, *port)
+    
     f, err := os.Create("memprofile.prof")
     if err != nil {
-        log.Fatal(err)
+        log.Print(err)
+        return
     }
     pprof.WriteHeapProfile(f)
     f.Close()
