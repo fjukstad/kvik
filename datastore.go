@@ -11,6 +11,8 @@ import (
     "runtime/pprof"
     "os"
     "github.com/fjukstad/rpcman" // rpc to the statistics man
+    "strconv" 
+    "encoding/json" 
     
 )
 
@@ -40,6 +42,12 @@ type RestService struct  {
     setScale gorest.EndPoint `method:"POST"
                              path:"/setscale/"
                              postdata:"string"`
+    
+    bg gorest.EndPoint `method:"GET"
+                        path:"/gene/{GeneId:string}/{Exprs:string}/bg"
+                        output:"string"`
+
+
                             
 
     // Dataset holding nowac data
@@ -80,7 +88,6 @@ func (dataset *Dataset) setScale(scale string) {
     dataset.Exprs.IdExpression = dataset.Exprs.DiffIdExpression
     dataset.Exprs.GeneExpression = dataset.Exprs.DiffGeneExpression
     
-
     dataset.Exprs.DiffIdExpression = tmpIdExprs
     dataset.Exprs.DiffGeneExpression = tmpGeneExprs
 
@@ -225,6 +232,58 @@ func avg(nums [] float64) float64 {
 
 } 
 
+
+// Find dataset id that has the given expression value
+func expressionToId(dataset *Dataset, GeneId, Exprs string) string { 
+    
+    id := strings.Trim(GeneId, "hsa:")
+    gene := kegg.GetGene(id)
+
+    if(gene.Name == "") { 
+        log.Println("Gene with id ",GeneId," not found in database")
+        return "" 
+    }
+    
+    name := strings.Split(gene.Name, ", ")[0]
+    
+    dsId := ""
+
+    exprsVal, err := strconv.ParseFloat(Exprs,64) 
+    if err != nil { 
+        log.Println("could not convert ",Exprs,"to float")
+        return ""
+    } 
+
+    // return difference between case & ctrl
+    for i, cc := range(dataset.Exprs.GeneExpression[name]) {
+        ex := cc.Case - cc.Ctrl
+        if(ex == exprsVal) { 
+            dsId = i 
+            break
+        } 
+
+    } 
+
+    return dsId
+
+} 
+
+func (serv RestService) Bg(GeneId, Exprs string) string { 
+    dsId := expressionToId(serv.Dataset, GeneId, Exprs) 
+
+    bg := serv.Dataset.Bg.IdInfo[dsId]
+
+
+    b, err := json.Marshal(bg)
+    if err != nil {
+        log.Print("marshaling went bad: ",err)
+        return ""
+    }
+
+    return string(b)
+} 
+
+
 func main() {
     
     var path = flag.String("path", "/Users/bjorn/stallo/data" , "path where data files are stored")
@@ -244,7 +303,7 @@ func main() {
     restService.Dataset = &ds
 
     // connect to statistics engine that will run statistics and that 
-    rpcaddr := "tcp://localhost:5555"
+    rpcaddr := "tcp://localhost:5555" // "ipc:///tmp/datastore/0" //"tcp://localhost:5555"
     restService.RPC = rpcman.Init(rpcaddr)
     restService.RPC.Connect() 
 
@@ -279,4 +338,5 @@ func main() {
     return
 */
 }
+
 
