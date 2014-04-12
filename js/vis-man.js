@@ -147,6 +147,28 @@ function GetPathwayName(id) {
 
 
 
+function GetBg(geneId,exprs) {
+    var baseURL = "http://"+window.location.hostname+":8080/datastore/gene/"
+        url = baseURL + geneId+"/"+exprs+"/bg"
+
+    var info
+    $.ajax({
+        async: false,
+        cache: true,
+        type: "GET",
+        url: url,
+        dataType: "text",
+        success: function(data) {
+             info = data;
+        }
+    });
+
+    //console.log("Number of common genes: ", num)
+
+    return info;
+
+}
+
 function GetCommonGenes(ids) {
     var baseURL = "http://"+window.location.hostname+":8080/info/pathway/"
         url =  baseURL+ids+"/commongenes"
