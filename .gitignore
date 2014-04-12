@@ -1,2 +1,5 @@
 src/pgk/
 src/bin/
+cache/
+offline_me/
+misc/
