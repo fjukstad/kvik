@@ -81,17 +81,7 @@ type NOWACService struct {
     commonGenes gorest.EndPoint `method:"GET"
                                 path:"/info/pathway/{Pathways:string}/commongenes"
                                 output:"int"`
-/*
-    geneColor gorest.EndPoint `method:"GET"
-                                func BenchmarkGetGeneVis(b *testing.B) { 
-    res = rs.GetGeneVis("2776")
-    b.ResetTimer()
 
-    for n := 0; n < b.N; n++ {
-        res = rs.GetGeneVis("2776")
-    } 
-} 
-path:"/in*/
 }
 
 
