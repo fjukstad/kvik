@@ -110,7 +110,7 @@ loadCy = function(){
                     var panelHeadingDiv = document.createElement('div');
                     panelHeadingDiv.id = 'info-panel-heading';
                     panelHeadingDiv.className = 'panel-heading';
-                    var str = '<h5>'+info.Name+'</h5>'
+                    var str = '<h5>'+info.Definition+'</h5>'
                     panelHeadingDiv.innerHTML = str
 
                     var panelBodyDiv = document.createElement('div');
@@ -228,9 +228,9 @@ function GenerateInfoPanel(info){
     pathwayLinks = CreatePathwayLinks(info.Pathways)
 
 
-    var std = Std(info.Id)
-    var variance = Var(info.Id)
-    var mean = AvgDiff(info.Id)
+    var std = parseFloat(Std(info.Id)).toFixed(3) 
+    var variance = parseFloat(Var(info.Id)).toFixed(3)
+    var mean = parseFloat(AvgDiff(info.Id)).toFixed(3)
 
 
     var str = '<div class="panel-group" id="accordion">'
@@ -246,6 +246,7 @@ function GenerateInfoPanel(info){
     str += '<div class="visman"></div>'
     //str += '<button id="sort" onclick="sortBars()">Sort</button>'
     str += '<small>Mean: '+mean+'</br>Standard deviation: '+std+'</br>Variance:'+variance+ '</small>'
+    str += '<div id="dsidinfo"></div>'
     str += '</div></div></div>'
 
 
@@ -273,7 +274,7 @@ function GenerateInfoPanel(info){
     str += '<thead><tr><th style="width: 20%"></th><th style="width: 80%"></th>'
     str += '<tbody>'
     str += '<tr><td>Id:</td><td>hsa:' + info.Id + '</td><td>'
-    str += '<tr><td>Definition:</td><td>' + info.Definition + '</td><td>'
+    str += '<tr><td>Definition:</td><td>' + info.Name + '</td><td>'
     str += '<tr><td>Orthology:</td><td>' + info.Orthology + '</td><td>'
     //str += '<tr><td>Organism:</td><td>' + info.Organism + '</td><td>'
     str += '<tr><td>Diseases:</td><td>' + info.Diseases + '</td><td>'
@@ -384,4 +385,11 @@ function savePathway()
 
 } 
 
+function ShowBgInfo(id,exprs) {
 
+    var bg = GetBg(id,exprs);
+    //bg = JSON.parse(GetBg(id,exprs));
+
+    document.getElementById('dsidinfo').innerHTML =  bg
+
+} 
