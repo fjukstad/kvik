@@ -367,11 +367,17 @@ func GeneExpression(geneid string) string {
        .attr("height", function(d) {
             return Math.abs(y(d) - y(0));
         })
-        
+        .on("click", function(d) {
+            console.log("clicked")
+            ShowBgInfo(info.Id,d)
+        })
+
         .append("svg:title")
         .text(function(d) { 
-            return d; 
+            console.log("hepp");
+            return GetBg(info.Id, d); 
         });
+        
 
          svg.append("g")
             .attr("class", "x axis")
