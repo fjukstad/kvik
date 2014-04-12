@@ -83,7 +83,15 @@ type NOWACService struct {
                                 output:"int"`
 /*
     geneColor gorest.EndPoint `method:"GET"
-                                path:"/in*/
+                                func BenchmarkGetGeneVis(b *testing.B) { 
+    res = rs.GetGeneVis("2776")
+    b.ResetTimer()
+
+    for n := 0; n < b.N; n++ {
+        res = rs.GetGeneVis("2776")
+    } 
+} 
+path:"/in*/
 }
 
 
@@ -186,6 +194,7 @@ func (serv NOWACService) Pathways (Gene string) string {
     
     geneIdString := strings.Split(Gene, " ")[0]
     geneId := strings.Split(geneIdString, ":")[1]
+    log.Println(geneId)
     gene := kegg.GetGene(geneId)
     pws := kegg.Pathways(gene)
     return kegg.PathwaysJSON(pws)
@@ -500,6 +509,7 @@ func (serv NOWACService) NewPathwayGraph(Pathways string) string {
     addAccessControlAllowOriginHeader(serv)     
     
     pws := parsePathwayInput(Pathways); 
+    log.Print(Pathways)
     handlerAddress := kegg.PathwayGraphFrom(pws[0]) 
 
     return handlerAddress+"/"+pws[0]
@@ -509,7 +519,9 @@ func (serv NOWACService) NewPathwayGraph(Pathways string) string {
 func addAccessControlAllowOriginHeader (serv NOWACService) {
     // Allowing access control stuff
     rb := serv.ResponseBuilder()
-    rb.AddHeader("Access-Control-Allow-Origin","*")
+    if serv.Context != nil {
+        rb.AddHeader("Access-Control-Allow-Origin","*")
+    }
 }
 
 func parsePathwayInput(input string) ([] string) {
