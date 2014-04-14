@@ -387,13 +387,13 @@ func GeneExpression(geneid string) string {
             return Math.abs(y(d) - y(0));
         })
         .on("click", function(d) {
-            console.log("clicked")
+            //console.log("clicked")
             ShowBgInfo(info.Id,d)
         })
 
         .append("svg:title")
         .text(function(d) { 
-            console.log("hepp");
+            //console.log("hepp");
             return GetBg(info.Id, d); 
         });
         
@@ -422,7 +422,7 @@ func GeneExpression(geneid string) string {
     var stdup = avg + std
     var stddown = avg - std
 
-    console.log(stdup,stddown)
+    //console.log(stdup,stddown)
 
     svg.append("line")
         .attr("x1", padding)
