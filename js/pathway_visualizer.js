@@ -9,7 +9,8 @@ window.onload = function() {
 
 var prevSelection;
 
-
+var benchmarked = false
+var drawnPathway = false
 
 function getVisServerAddress() {
     var baseURL = "http://"+window.location.hostname+":8080"
@@ -39,6 +40,9 @@ loadCy = function(){
         layout: {
             name: 'preset', 
             fit: true,
+            stop: function(){
+                console.log("layout done");
+            }
         },
         
         showOverlay: false,
@@ -79,11 +83,20 @@ loadCy = function(){
             nodes: [],
             edges : []
         },
+
+        done: function(){ 
+            console.log("done!");
+        },    
+                
             
         ready: function(){
             cy = this;
-            //console.log("ready");
+            console.log("ready");
             graph = new Graph(cy); 
+
+            drawnPathway = false
+
+            
 
             cy.on('select', 'node', function(d){
 
@@ -184,6 +197,16 @@ loadCy = function(){
                                                 //graph.push(ed); 
                     }
                     cy.layout();
+                    console.log("Pathway map loaded.", nodes.length, "nodes");
+                    drawnPathway = true   
+
+                    if(!benchmarked){ 
+                        StartBenchmarks()
+                        benchmarked = true
+                    } 
+
+                    deferAway() 
+
                 }
 
                 if(message.command == "\"AddNode\""){
@@ -196,8 +219,60 @@ loadCy = function(){
         }
     }; 
 
-
     $('#cy').cytoscape(options); 
+
+
+
+    /*
+    function wait() {
+        var d = jQuery.Deferred();
+        var checkDraw = function(){
+            if(!drawnPathway){
+                setTimeout(checkDraw, 100);
+            }
+            else {
+                d.resolve();
+            }
+        }; 
+        checkDraw();
+        return d.promise();
+    }
+
+    wait().done(function(){
+        console.log("finished drawing")
+        return
+    })
+
+    */
+    /*
+    $.when(wait()).always(function(){
+        console.log("finished drawing")
+        return
+    }); 
+    */
+
+
+    /*
+
+    var wait = function () {
+      // Do stuff
+        if(!drawnPathway){
+           setTimeout(wait, 10);
+            return true
+        }
+        else { 
+            console.log("Pathway is drawn!")
+            if(!benchmarked){ 
+                setTimeout(StartBenchmarks(),30)
+            } 
+            return false
+        }
+    };
+*/
+
+    console.log("RETURNING")
+
+
 /*
     $('#cy').cytoscapePanzoom({
         zoomFactor: 0.05, // zoom factor per zoom tick

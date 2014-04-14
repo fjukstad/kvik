@@ -78,6 +78,7 @@ function Graph(cy){
 
         nodes.push(no);
         cy.add(no); 
+        
     };
 
     this.addEdge = function(e){
