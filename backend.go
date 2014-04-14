@@ -15,6 +15,7 @@ import (
     "encoding/json"
     "io/ioutil"
     "bytes"
+    "os/exec"     
 ) 
 
 func main () {
@@ -82,12 +83,31 @@ type NOWACService struct {
                                 path:"/info/pathway/{Pathways:string}/commongenes"
                                 output:"int"`
 
+    resetCache gorest.EndPoint `method:"GET"
+                                path:"/resetcache/"
+                                output:"string"` 
+
 }
 
 
 type PWMap struct {
     Map map[string] int
 }
+
+func (serv NOWACService)  ResetCache() string {
+    addAccessControlAllowOriginHeader(serv)             
+    
+    log.Println("!!!! CLEARING CACHE !!!!!")
+
+    cmd := exec.Command("rm", "-rf", "cache") 
+    err := cmd.Run() 
+    if err != nil { 
+        log.Println(err) 
+    } 
+
+    return "ok"
+} 
+
 
 // Returns the number of common genes shared between multiple pathways
 func (serv NOWACService) CommonGenes(Pathways string) int { 
