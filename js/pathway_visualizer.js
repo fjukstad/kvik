@@ -2,8 +2,8 @@ var wsURL
 window.onload = function() {
     serverAddr = getVisServerAddress();
     wsURL = "ws://"+serverAddr; 
-    console.log("visualization server is at:", wsURL); 
-    console.log("Starting visualization..."); 
+    //console.log("visualization server is at:", wsURL); 
+    //console.log("Starting visualization..."); 
     loadCy(); 
 };
 
@@ -82,7 +82,7 @@ loadCy = function(){
             
         ready: function(){
             cy = this;
-            console.log("ready");
+            //console.log("ready");
             graph = new Graph(cy); 
 
             cy.on('select', 'node', function(d){
@@ -98,7 +98,7 @@ loadCy = function(){
                     
                     info = GetInfo(d.cyTarget.data());
                     
-                    console.log("The selected node was a gene!");
+                    //console.log("The selected node was a gene!");
 
                     // remove old info body
                     document.getElementById('info-panel').innerHTML = '';
@@ -129,13 +129,14 @@ loadCy = function(){
 
                 
                 }
-
+                /*
                 if(nodeType[0] === 'path'){
-                    console.log("The selected node was a pathway!");
+                    continue
                 }
                 if(nodeType[0] === 'cpd'){
-                    console.log("The selected node was a compund!");
+                    continue
                 }
+                */
                     
                 d.cyTarget.edges().css({
                     'line-color': 'red'
@@ -162,7 +163,7 @@ loadCy = function(){
 
 
             // Load data from JSON 
-            console.log(wsURL)
+            //console.log(wsURL)
             var socket = new WebSocket(wsURL); 
             socket.onmessage = function(m){
                 var message = JSON.parse(m.data); 
@@ -368,10 +369,6 @@ function updateNodeColors() {
             }
         }
     }
-}
-
-functionman = function() {
-    console.log("updating color");
 }
 
 

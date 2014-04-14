@@ -15,15 +15,14 @@ function Graph(cy){
     this.addNode = function(n){
         
         if(typeof findNode(n.id) != 'undefined') {
-            console.log("attempted to add node (",n.id,") which exists.."); 
+            //console.log("attempted to add node (",n.id,") which exists.."); 
             return
         }
         
 
-        console.log("Adding node:",n); 
+        //console.log("Adding node:",n); 
         n.graphics.name = n.graphics.name.split(" ")
         if(n.name === "\"bg\"") {
-            console.log("MY LORD!!!!!!!!!!", n.name)
             n.graphics.bgimage = n.graphics.name[0];
             n.graphics.bgcolor = "#fff"
             n.graphics.name = ""
@@ -41,7 +40,7 @@ function Graph(cy){
             id = JSON.parse(n.name)
             ids = JSON.parse(n.name).split(" ")
             
-            console.log(gene, ids, ids[0])
+            //console.log(gene, ids, ids[0])
             // If more than gene is present in the node. Fetch all of them
             // and do some clever stuff 
             /*
@@ -86,7 +85,7 @@ function Graph(cy){
         var t = findNode(e.target); 
         
         if(typeof s == 'undefined' || typeof t == 'undefined'){
-            console.log("Attempted to add a faulty edge"); 
+            //console.log("Attempted to add a faulty edge"); 
             return
         }
 

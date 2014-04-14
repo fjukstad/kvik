@@ -64,7 +64,7 @@ function AvgDiff(gene) {
         }
     });
 
-    console.log(gene,"got avg diff: ", avg)
+    //console.log(gene,"got avg diff: ", avg)
 
     return avg;
 
@@ -90,7 +90,7 @@ function Std(gene) {
         }
     });
 
-    console.log(gene,"got std:", res)
+    //console.log(gene,"got std:", res)
 
     return res;
 
@@ -115,7 +115,7 @@ function Var(gene) {
         }
     });
 
-    console.log(gene,"got variance:", res)
+    //console.log(gene,"got variance:", res)
 
     return res;
 
@@ -194,14 +194,14 @@ function GetCommonGenes(ids) {
 function updateColor(scale) { 
     
     if(scale == "log") { 
-        console.log("log scale") 
+        //console.log("log scale") 
         color = d3.scale.linear()
             .domain([-2,2])
             .range(colorbrewer.RdYlBu[3]);
 
     } 
     else { 
-        console.log("abs scale") 
+        //console.log("abs scale") 
         color = d3.scale.linear()
             .domain([-400,0,400])
             .range(colorbrewer.RdYlBu[3]);

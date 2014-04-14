@@ -2,7 +2,7 @@
 
 function GetInfo(data) {
 
-    console.log("fetching information about:", data.name);
+    //console.log("fetching information about:", data.name);
 
     var a = data.name;
     var b = a.replace(/ /g, '+').toLowerCase();
@@ -25,8 +25,8 @@ function GetInfo(data) {
         }
     });
 
-    console.log("Request URL:", url);
-    console.log("Reply:", info);
+    //console.log("Request URL:", url);
+    //console.log("Reply:", info);
 
     return jQuery.parseJSON(info);
 
