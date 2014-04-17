@@ -96,9 +96,6 @@ func writeToCache(url string, body []byte, resp *http.Response){
         }
     }
 
-    log.Println(filename)
-
-
     // If the file hasn't got an extension, set it to .json
     name := strings.Split(filename,"/")
     fn := name[len(name)-1]
