@@ -26,7 +26,11 @@ func main () {
     flag.Parse()
     address := *ip+*port
 
-    gorest.RegisterService(new(NOWACService)) 
+    serv := new(NOWACService)
+
+    serv.GraphServers = make(map[string]string,0)
+
+    gorest.RegisterService(serv) 
     http.Handle("/", gorest.Handle()) 
 
     log.Println("Starting server on", address)
@@ -86,6 +90,9 @@ type NOWACService struct {
     resetCache gorest.EndPoint `method:"GET"
                                 path:"/resetcache/"
                                 output:"string"` 
+
+
+    GraphServers map[string]string
 
 }
 
@@ -519,8 +526,24 @@ func (serv NOWACService) NewPathwayGraph(Pathways string) string {
     addAccessControlAllowOriginHeader(serv)     
     
     pws := parsePathwayInput(Pathways); 
+
+    log.Println("mans", pws[0])
     log.Print(Pathways)
-    handlerAddress := kegg.PathwayGraphFrom(pws[0]) 
+
+    pathwayId := pws[0]
+    var handlerAddress string
+
+    log.Println(serv.GraphServers[pathwayId])
+
+    if serv.GraphServers[pathwayId] == "" {
+        log.Println("first time for ", pathwayId);
+        handlerAddress = kegg.PathwayGraphFrom(pws[0]) 
+        serv.GraphServers[pathwayId] = handlerAddress
+    } else {
+        handlerAddress = serv.GraphServers[pathwayId]
+        log.Println("second time for ", handlerAddress)
+    }
+
 
     return handlerAddress+"/"+pws[0]
     
