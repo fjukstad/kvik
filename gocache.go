@@ -101,7 +101,6 @@ func writeToCache(url string, body []byte, resp *http.Response){
     fn := name[len(name)-1]
 
     if len(strings.Split(fn, ".")) < 2{
-        log.Println("No extension", filename)
         filename = filename + ".json"
     }
 
