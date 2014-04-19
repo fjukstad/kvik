@@ -249,3 +249,41 @@ function updateColor(scale) {
             .range(colorbrewer.RdYlBu[3]);
     } 
 } 
+
+
+
+
+function visGenePanel(name){
+    info = GetInfo(name);
+    
+    
+    //console.log("The selected node was a gene!");
+
+    // remove old info body
+    document.getElementById('info-panel').innerHTML = '';
+
+    // Set up new info box
+    var panelDiv = document.createElement('div');
+    panelDiv.className = 'panel panel-default';
+
+    var panelHeadingDiv = document.createElement('div');
+    panelHeadingDiv.id = 'info-panel-heading';
+    panelHeadingDiv.className = 'panel-heading';
+    var str = '<h5>'+info.Definition+'</h5>'
+    panelHeadingDiv.innerHTML = str
+
+    var panelBodyDiv = document.createElement('div');
+    panelBodyDiv.id = 'info-panel-body';
+    panelBodyDiv.className = 'panel-body';
+    panelBodyDiv.innerHTML = GenerateInfoPanel(info)
+
+
+    panelDiv.appendChild(panelHeadingDiv);
+    panelDiv.appendChild(panelBodyDiv);
+
+    document.getElementById('info-panel').appendChild(panelDiv);
+
+    $(GetVis(info.Id)).appendTo(".visman"); 
+
+
+} 

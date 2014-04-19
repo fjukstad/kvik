@@ -1,10 +1,10 @@
 // js for retrieving info about specific pathway/gene/compund etc.
 
-function GetInfo(data) {
+function GetInfo(name) {
 
     //console.log("fetching information about:", data.name);
 
-    var a = data.name;
+    var a = name;
     var b = a.replace(/ /g, '+').toLowerCase();
 
     var baseURL = "http://"+window.location.hostname+":8080/info";

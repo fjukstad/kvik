@@ -44,6 +44,12 @@ var pwid = "hsa04630"
 var pwid2 = "hsa04915"
 var pwid3 = "hsa05200"
 
+
+var hsa4313 = "hsa:4313"
+var hsa3303 = "hsa:3303"
+var hsa6654 = "hsa:6654"
+var hsa5604 = "hsa:5604"
+
 // current pathway
 var logpwid = window.location.pathname.split("=")[1]; 
 
@@ -134,6 +140,7 @@ function StartBenchmarks(){
 
     */ 
 
+    /*
     suite.add("set scale "+logpwid, function(deferred){
             setScale("log");       
             defff = deferred
@@ -147,6 +154,38 @@ function StartBenchmarks(){
     
 
         })
+    
+    */
+
+    suite.add("get info"+hsa4313, function(){
+        visGenePanel(hsa4313);
+        console.log("done!")
+    }, {
+        'minSamples': minSamples
+    });
+    
+    suite.add("get info"+hsa3303, function(){
+        visGenePanel(hsa3303);
+        console.log("done!")
+    }, {
+        'minSamples': minSamples
+    });
+
+    suite.add("get info"+hsa6654, function(){
+        visGenePanel(hsa6654);
+        console.log("done!")
+    }, {
+        'minSamples': minSamples
+    });
+
+    suite.add("get info"+hsa5604, function(){
+        visGenePanel(hsa5604);
+        console.log("done!")
+    }, {
+        'minSamples': minSamples
+    });
+
+
 
     suite.run({'async':true});
     benchmarked = true
