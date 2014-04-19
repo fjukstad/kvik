@@ -15,7 +15,8 @@ import (
     "encoding/json"
     "io/ioutil"
     "bytes"
-    "os/exec"     
+    "os/exec"  
+    "io"
 ) 
 
 func main () {
@@ -223,11 +224,14 @@ func (serv NOWACService) Pathways (Gene string) string {
 func (serv NOWACService) Datastore(args ...string) string {
     
     addAccessControlAllowOriginHeader(serv)         
+    serv.RB().ConnectionClose()
+
+
 
     requestURL := serv.Context.Request().URL.Path
 
     // Where the datastore is running, this would be Stallo in later versions
-    datastoreBaseURL := "http://localhost:8888/"
+    datastoreBaseURL := "http://127.0.0.1:8888/"
 
     URL := datastoreBaseURL + strings.Trim(requestURL, "/datastore")
 
@@ -250,11 +254,19 @@ func (serv NOWACService) Datastore(args ...string) string {
     // shorter than this, so its not an issue. 
     respLength := int(resp.ContentLength) 
 
+    if respLength < 0 { 
+        respLength = 1024 * 10000
+    } 
+
 
     // Read the response from the body and return it as a string. 
-    response := make([]byte, respLength)
-    _, err = resp.Body.Read(response)
+    //response := make([]byte, respLength)
+
+    response, err := ioutil.ReadAll(resp.Body)
     if err != nil {
+        if err == io.EOF {
+            log.Println("IT WAS END OF FILE NOTHING TO WORRY ABOUT")
+        }
         log.Print("reading response from datastore failed. ", err)
         serv.ResponseBuilder().SetResponseCode(404).Overide(true)
         return ":("
@@ -265,6 +277,7 @@ func (serv NOWACService) Datastore(args ...string) string {
     // along
     serv.ResponseBuilder().SetResponseCode(resp.StatusCode).Overide(false)
     
+
     return string(response)
 }
 
