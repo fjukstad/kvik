@@ -70,6 +70,26 @@ function AvgDiff(gene) {
 
 }
 
+function AvgDiffs(genes) { 
+    var baseURL = "http://"+window.location.hostname+":8080/datastore/genes/";
+    url = baseURL + genes + "/avg"
+
+    var avg
+    $.ajax({
+        async: false,
+        cache: false,
+        type: "GET",
+        url: url,
+        dataType: "text",
+        success: function(data) {
+            avg = JSON.parse(data);
+        }
+    });
+
+    return avg
+
+}
+
 
 
 // Fetches std from datastore
@@ -191,6 +211,28 @@ function GetCommonGenes(ids) {
 
 }
 
+function setScale(scale) { 
+    console.log("js setting scale to ", scale);
+    
+    var baseURL = "http://"
+                    +window.location.hostname
+                    +":8080/datastore/setscale";
+    
+    updateColor(scale); 
+        
+    $.post( baseURL, scale, function( data ) {
+            updateNodeColors();
+            scaleDefer();
+            
+    });
+    
+    // erase content of infopanel
+    document.getElementById('info-panel').innerHTML = '';
+
+
+
+} 
+
 function updateColor(scale) { 
     
     if(scale == "log") { 
@@ -206,7 +248,4 @@ function updateColor(scale) {
             .domain([-400,0,400])
             .range(colorbrewer.RdYlBu[3]);
     } 
-
-
-
 } 

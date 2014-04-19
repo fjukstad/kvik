@@ -14,8 +14,10 @@ var color = d3.scale.linear()
 function Graph(cy){
     this.addNode = function(n){
         
+
+        //console.log("adding node")
         if(typeof findNode(n.id) != 'undefined') {
-            //console.log("attempted to add node (",n.id,") which exists.."); 
+            //console.log("returning undefined") 
             return
         }
         
@@ -32,7 +34,7 @@ function Graph(cy){
         }
 
 //        n.background-image = "http://www.genome.jp/kegg/pathway/hsa/hsa04915.png"
-        
+        /*
         // Fetch coloring if node is a gene
         if(n.graphics.shape == "rectangle"){
             // gene name but strip away any colon
@@ -40,25 +42,20 @@ function Graph(cy){
             id = JSON.parse(n.name)
             ids = JSON.parse(n.name).split(" ")
             
-            //console.log(gene, ids, ids[0])
             // If more than gene is present in the node. Fetch all of them
             // and do some clever stuff 
-            /*
-            if (ids.length > 0) {
-                n.graphics.bgcolor = color(AvgDiff(ids[0]))
-            }
-            else {
-                n.graphics.bgcolor = color(AvgDiff(ids[0]))
-            }
-            */
+
 
             avg = AvgDiff(ids[0]) 
+
             if(avg === "0") {
                 n.graphics.bgcolor = "#ffffff"
             } else  {
                 n.graphics.bgcolor = color(avg) 
             } 
         }
+
+        */
 
 
         var no = {

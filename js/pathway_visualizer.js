@@ -40,9 +40,6 @@ loadCy = function(){
         layout: {
             name: 'preset', 
             fit: true,
-            stop: function(){
-                console.log("layout done");
-            }
         },
         
         showOverlay: false,
@@ -84,14 +81,8 @@ loadCy = function(){
             edges : []
         },
 
-        done: function(){ 
-            console.log("done!");
-        },    
-                
-            
         ready: function(){
             cy = this;
-            console.log("ready");
             graph = new Graph(cy); 
 
             drawnPathway = false
@@ -182,6 +173,7 @@ loadCy = function(){
                 var message = JSON.parse(m.data); 
                 if(message.command == "\"InitGraph\""){
                     
+                    //console.log("INIT ME")
                     json = JSON.parse(JSON.parse(message.graph)); 
                     var numAdded = 0; 
                     
@@ -197,13 +189,21 @@ loadCy = function(){
                                                 //graph.push(ed); 
                     }
                     cy.layout();
-                    console.log("Pathway map loaded.", nodes.length, "nodes");
+                    //console.log("Pathway map loaded.", nodes.length, "nodes");
+                    
+                    //console.log(json)
+
                     drawnPathway = true   
 
                     if(!benchmarked){ 
                         StartBenchmarks()
                         benchmarked = true
                     } 
+
+                    updateNodeColors()
+
+                    // WARNING: CLOSING SOCKET AFTER INIT
+                    socket.close()
 
                     deferAway() 
 
@@ -270,7 +270,7 @@ loadCy = function(){
     };
 */
 
-    console.log("RETURNING")
+    ////console.log("RETURNING")
 
 
 /*
@@ -300,6 +300,8 @@ loadCy = function(){
 
 
 function GenerateInfoPanel(info){
+
+    //console.log("Gene is found in ", info.Pathways.length, "pathways") 
 
     pathwayLinks = CreatePathwayLinks(info.Pathways)
 
@@ -427,20 +429,36 @@ window.onerror = function(error) {
 
 function updateNodeColors() {
 
-    // Fetch new expression values and colors for every gene
-    var nodes = cy.nodes();
-    for (var n in nodes) {
-        if(n < nodes.length){
-            if(nodes[n].style().shape == "rectangle"){
-                var name = nodes[n].data().name.split(" ")[0];
-                avg = AvgDiff(name)
+
+    // get list of genes in pathwaymap
+    var hsas = [];
+        
+    for(i=0;i<nodes.length;i++){
+        var n = nodes[i]; 
+        name=n.data.name;
+        if(!name.indexOf("hsa")){
+            hsas.push(name.split(" "))[0];
+        }
+    }
+    
+    // convert list to string
+    var hsastring = hsas.toString().replace(/,/g,"+")
+
+    var ex = AvgDiffs(hsastring)
+
+    var graphNodes = cy.nodes();
+
+    for (var n in graphNodes) {
+        if(n < graphNodes.length){
+            if(graphNodes[n].style().shape == "rectangle"){
+                var name = graphNodes[n].data().name.split(" ")[0];
+                    avg = ex.Expression[name]
                 if(avg === "0") { 
                    var c = "#ffffff"
                 } else { 
                     var c = color(avg)
                 }  
-                //console.log(c)
-                nodes[n].css("background-color", c)
+                graphNodes[n].css("background-color", c)
             }
         }
     }
