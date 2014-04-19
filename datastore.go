@@ -13,7 +13,7 @@ import (
     "github.com/fjukstad/rpcman" // rpc to the statistics man
     "strconv" 
     "encoding/json" 
-    "io/ioutil"
+//    "io/ioutil"
     
 )
 
@@ -32,6 +32,10 @@ type RestService struct  {
     avgDiff gorest.EndPoint `method:"GET"
                             path:"/gene/{Id:string}/avg"
                             output:"float64"`
+    
+    avgDiffs gorest.EndPoint `method:"GET"
+                            path:"/genes/{...:string}/avg"
+                            output:"string"`
 
     std gorest.EndPoint `method:"GET"
                             path:"/gene/{Id:string}/stddev"
@@ -56,6 +60,38 @@ type RestService struct  {
     RPC rpcman.RPCMan
     
 }
+
+type Ex struct {
+    Expression map[string] float64
+}
+
+func (serv RestService) AvgDiffs(args ...string) string { 
+    
+    if len(args) < 2 { 
+        return ""
+    } 
+
+    // Last item in args is avg
+    genes := args[0:len(args)-1]
+    genes = strings.Split(genes[0], " ")
+    resp := make(map[string]float64,0)
+
+    for _, gene  := range(genes) { 
+        resp[gene] = serv.AvgDiff(gene)
+    }
+
+    exp := Ex{resp}
+
+    b, err := json.Marshal(exp)
+    if err != nil {
+        log.Println("Could not marshal reply in avgdiffs",err)
+        return ""
+    }
+
+    
+    return string(b)
+
+} 
 
 func (serv RestService) SetScale (PostData string) {
     log.Print("setting scale to ", PostData)
@@ -143,6 +179,12 @@ func (serv RestService) GeneExpression(Id string) []float64 {
         ret = append(ret, cc.Case - cc.Ctrl) 
     } 
 
+    /*
+    if(serv.Context != nil){
+        serv.RB().ConnectionClose()
+    }
+    */
+
     return ret
 }
 
@@ -219,6 +261,15 @@ func (serv RestService) AvgDiff(Id string) float64 {
 
 
     log.Println("Average difference for gene ", Id, " is ",avg)
+
+    /*
+    if(serv.Context != nil){
+        serv.RB().ConnectionClose()
+    }
+    */
+
+
+    
     return avg
 }
 
@@ -298,7 +349,13 @@ func Init(path string) *RestService {
     // connect to statistics engine that will run statistics and that 
     rpcaddr := "tcp://localhost:5555" // "ipc:///tmp/datastore/0" //"tcp://localhost:5555"
     restService.RPC = rpcman.Init(rpcaddr)
-    restService.RPC.Connect() 
+    //err := restService.RPC.Connect() 
+
+    //log.Println("connecting to statsman")
+
+    //if err != nil{
+    //    log.Panic("Connection statistics engine failed.",err)
+    //} 
     
     return restService
 } 
@@ -307,7 +364,7 @@ func main() {
 
     // enable debugging
     
-        log.SetOutput(ioutil.Discard) 
+    //log.SetOutput(ioutil.Discard) 
     //defer log.SetOutput(os.Stdout) 
     
     var path = flag.String("path", "/Users/bjorn/stallo/data" , "path where data files are stored")
