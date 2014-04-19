@@ -332,6 +332,9 @@ func toFloats(input []string) []float64{
     var err error
 
     for i, _ := range(input){
+    
+        //WARNING: CONVERTING TO FLOAT WITH A BITSIZE OF 32 BELOW... 
+
         output[i], err = strconv.ParseFloat(input[i], 32)
         if err != nil {
             log.Panic("Parsing of float went bad: ", err)
