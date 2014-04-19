@@ -42,7 +42,7 @@
             $(document).on("click", "#scalebtns", function(event){
             
                 Pace.restart()
-    
+
                 scale = event.target.textContent;
                 var log = scale.match(/log/i);
                 var scale = ""                
@@ -53,21 +53,7 @@
                     scale = "abs"
                 } 
 
-                console.log("js setting scale to ", scale);
-                
-                var baseURL = "http://"
-                                +window.location.hostname
-                                +":8080/datastore/setscale";
-                
-                updateColor(scale); 
-                    
-                $.post( baseURL, scale, function( data ) {
-                        console.log("response:", data);
-                        updateNodeColors();
-                });
-                
-                // erase content of info panel
-                document.getElementById('info-panel').innerHTML = '';
+                setScale(scale)                     
                 
 
             });
