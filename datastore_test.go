@@ -82,10 +82,6 @@ var genes = [...]string{"hsa:1630", "hsa:836", "hsa:842", "hsa:836", "hsa:999", 
 var reply string
 
 func BenchmarkManyGenes(b *testing.B){
-
-
-
-
     disableLogging() 
     path := "/Users/bjorn/stallo/src/src/nowac/datastore/data"
     // Set up rest service to be used later. reset timer afterwards
@@ -142,4 +138,42 @@ func get(URL string) string {
 
     return string(body)
     
+} 
+
+
+func BenchmarkDatasetSize1x(b *testing.B) { 
+    path := "/Users/bjorn/stallo/src/src/nowac/datastore/data"
+
+    for n := 0; n < b.N; n++ {
+        ds = NewDataset(path) 
+    } 
+} 
+
+
+func BenchmarkDatasetSize2x(b *testing.B) { 
+    size := "2x"
+    path := "/Users/bjorn/stallo/src/src/nowac/datastore/data-"+size
+
+    for n := 0; n < b.N; n++ {
+        ds = NewDataset(path) 
+    } 
+} 
+
+
+func BenchmarkDatasetSize5x(b *testing.B) { 
+    size := "5x"
+    path := "/Users/bjorn/stallo/src/src/nowac/datastore/data-"+size
+
+    for n := 0; n < b.N; n++ {
+        ds = NewDataset(path) 
+    } 
+} 
+
+func BenchmarkDatasetSize10x(b *testing.B) { 
+    size := "10x"
+    path := "/Users/bjorn/stallo/src/src/nowac/datastore/data-"+size
+
+    for n := 0; n < b.N; n++ {
+        ds = NewDataset(path) 
+    } 
 } 

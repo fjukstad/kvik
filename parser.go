@@ -118,14 +118,14 @@ func generateExpressionDataset(filename string) (Expression, error) {
                 GeneExpression[exprs.Genes[i]] = make(map[string] *CaseCtrl) 
                 DiffGeneExpression[exprs.Genes[i]] = make(map[string] *CaseCtrl) 
             } 
-
+    
 
             firstRow = false 
         } else { 
 
             id := record[0]
             expression := toFloats(record[1:])
-            
+
             // store an id to expression mapping. 
             IdExpression[id] = expression
             
@@ -240,7 +240,7 @@ func getProbeToGeneMapping(filename string) (map[string] string, error) {
 func (ds Dataset) PrintDebugInfo() {
     exprs := ds.Exprs
 
-    log.Print("Generated dataset with ", len(exprs.IdExpression["900229_1"]),
+    log.Print("Generated dataset with ", len(exprs.Genes),
                 " genes and ",len(exprs.GeneExpression[exprs.Genes[0]]),
                 " case/ctrl pairs")
 
