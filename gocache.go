@@ -146,12 +146,23 @@ func generateCacheEntry(resp *http.Response, body []byte ) Entry {
 func getFromCache(url string) (resp *http.Response, err error) {
     
     filename := getFilePath(url)
+
+
+    // If the file hasn't got an extension, set it to .json
+    name := strings.Split(filename,"/")
+    fn := name[len(name)-1]
+
+    if len(strings.Split(fn, ".")) < 2{
+        filename = filename + ".json"
+    }
     
     file, err := os.Open(filename) 
     if err != nil{
         err = errors.New("File '"+filename+"' not Found") 
         return 
     }
+
+    defer file.Close() 
 
     entry, err := readFromFile(file)
     
