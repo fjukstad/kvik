@@ -177,3 +177,22 @@ func BenchmarkDatasetSize10x(b *testing.B) {
         ds = NewDataset(path) 
     } 
 } 
+
+func BenchmarkDatasetSize20x(b *testing.B) { 
+    size := "20x"
+    path := "/Users/bjorn/stallo/src/src/nowac/datastore/data-"+size
+
+    for n := 0; n < b.N; n++ {
+        ds = NewDataset(path) 
+    } 
+} 
+
+func BenchmarkDatasetSize40x(b *testing.B) { 
+    size := "40x"
+    path := "/Users/bjorn/stallo/src/src/nowac/datastore/data-"+size
+
+    for n := 0; n < b.N; n++ {
+        ds = NewDataset(path) 
+    } 
+} 
+*/
