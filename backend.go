@@ -1,333 +1,312 @@
 package main
 
-
 import (
-    "log" 
-    "flag" 
-    "net/http"
-    "strings"
-    "code.google.com/p/gorest" 
-    "nowac/kegg"
-//    "time"
-//    "math/rand"
-    "strconv"
-   // "github.com/fjukstad/gocache"    
-    "encoding/json"
-    "io/ioutil"
-    "bytes"
-    "os/exec"  
-    "io"
-) 
+	"code.google.com/p/gorest"
+	"flag"
+	"log"
+	"net/http"
+	"nowac/kegg"
+	"strings"
+	//    "time"
+	//    "math/rand"
+	"strconv"
+	// "github.com/fjukstad/gocache"
+	"bytes"
+	"encoding/json"
+	"io"
+	"io/ioutil"
+	"os/exec"
+)
 
-func main () {
+func main() {
 
-    var ip = flag.String("ip", "localhost", "ip to run on")
-    var port = flag.String("port", ":8080" ,"port to run on")
+	var ip = flag.String("ip", "localhost", "ip to run on")
+	var port = flag.String("port", ":8080", "port to run on")
 
-    flag.Parse()
-    address := *ip+*port
+	flag.Parse()
+	address := *ip + *port
 
-    serv := new(NOWACService)
+	serv := new(NOWACService)
 
-    serv.GraphServers = make(map[string]string,0)
+	serv.GraphServers = make(map[string]string, 0)
 
-    gorest.RegisterService(serv) 
-    http.Handle("/", gorest.Handle()) 
+	gorest.RegisterService(serv)
+	http.Handle("/", gorest.Handle())
 
-    log.Println("Starting server on", address)
-    err := http.ListenAndServe(address, nil) 
-    if err != nil{
-        log.Panic("Could not start rest-service:", err)
-    }
+	log.Println("Starting server on", address)
+	err := http.ListenAndServe(address, nil)
+	if err != nil {
+		log.Panic("Could not start rest-service:", err)
+	}
 
 }
 
 type NOWACService struct {
-    gorest.RestService `root:"/"
+	gorest.RestService `root:"/"
                         consumes:"application/json"
                         produces:"application/json"`
 
-    newPathwayGraph gorest.EndPoint `method:"GET" 
+	newPathwayGraph gorest.EndPoint `method:"GET" 
                                     path:"/new/graph/pathway/{Pathways:string}"
                                     output:"string"`
 
-    getInfo gorest.EndPoint `method:"GET"
+	getInfo gorest.EndPoint `method:"GET"
                             path:"/info/{Items:string}/{InfoType:string}"
                             output:"string"`
 
-    getGeneVis gorest.EndPoint `method:"GET"
+	getGeneVis gorest.EndPoint `method:"GET"
                             path:"/vis/{Gene:string}"
                             output:"string"`
 
-
-    datastore gorest.EndPoint `method:"GET"
+	datastore gorest.EndPoint `method:"GET"
                                 path:"/datastore/{...:string}"
                                 output:"string"`
 
-    datastorePost gorest.EndPoint `method:"POST"
+	datastorePost gorest.EndPoint `method:"POST"
                                     path:"/datastore/{...:string}"
                                     postdata:"string"`
-    
-    pathways gorest.EndPoint    `method:"GET"
+
+	pathways gorest.EndPoint `method:"GET"
                                 path:"/info/gene/{Gene:string}/pathways"
                                 output:"string"`
 
-    commonPathways gorest.EndPoint  `method:"GET"
+	commonPathways gorest.EndPoint `method:"GET"
                                     path:"/info/pathway/{Pathways:string}"
                                     output:"string"`
 
-    pathwayGeneCount gorest.EndPoint    `method:"GET"
+	pathwayGeneCount gorest.EndPoint `method:"GET"
                                         path:"/info/gene/{Genes:string}/commonpathways"
                                         output:"string"`
 
-    pathwayIDToName gorest.EndPoint `method:"GET"   
+	pathwayIDToName gorest.EndPoint `method:"GET"   
                                     path:"/info/pathway/{Id:string}/name"
                                     output:"string"`
 
-    commonGenes gorest.EndPoint `method:"GET"
+	commonGenes gorest.EndPoint `method:"GET"
                                 path:"/info/pathway/{Pathways:string}/commongenes"
                                 output:"int"`
 
-    resetCache gorest.EndPoint `method:"GET"
+	resetCache gorest.EndPoint `method:"GET"
                                 path:"/resetcache/"
-                                output:"string"` 
+                                output:"string"`
 
-
-    GraphServers map[string]string
-
+	GraphServers map[string]string
 }
-
 
 type PWMap struct {
-    Map map[string] int
+	Map map[string]int
 }
 
-func (serv NOWACService)  ResetCache() string {
-    addAccessControlAllowOriginHeader(serv)             
-    
-    log.Println("!!!! CLEARING CACHE !!!!!")
+func (serv NOWACService) ResetCache() string {
+	addAccessControlAllowOriginHeader(serv)
 
-    cmd := exec.Command("rm", "-rf", "cache") 
-    err := cmd.Run() 
-    if err != nil { 
-        log.Println(err) 
-    } 
+	log.Println("!!!! CLEARING CACHE !!!!!")
 
-    return "ok"
-} 
+	cmd := exec.Command("rm", "-rf", "cache")
+	err := cmd.Run()
+	if err != nil {
+		log.Println(err)
+	}
 
+	return "ok"
+}
 
 // Returns the number of common genes shared between multiple pathways
-func (serv NOWACService) CommonGenes(Pathways string) int { 
-    addAccessControlAllowOriginHeader(serv)             
+func (serv NOWACService) CommonGenes(Pathways string) int {
+	addAccessControlAllowOriginHeader(serv)
 
-    pathwayList := strings.Split(Pathways, " ")
-    
-    allGenes := make(map[string]int) 
+	pathwayList := strings.Split(Pathways, " ")
 
-    // Iterate over all genes from different pathways and set their count
-    for _, p := range pathwayList { 
-        pw := kegg.GetPathway(p) 
-        genes := pw.Genes
+	allGenes := make(map[string]int)
 
-        for _, g := range genes { 
+	// Iterate over all genes from different pathways and set their count
+	for _, p := range pathwayList {
+		pw := kegg.GetPathway(p)
+		genes := pw.Genes
 
-            count := allGenes[g]
-            if count != 0 {
-                allGenes[g] = count + 1
-                
-            } else {
-                allGenes[g] = 1
-            }
-        }
+		for _, g := range genes {
 
-    } 
+			count := allGenes[g]
+			if count != 0 {
+				allGenes[g] = count + 1
 
-    // From map of all genes get the ones with count larger than 1 
-    var commonGenes [] string
-    for k, v := range allGenes { 
-        if v > 1 {
-            commonGenes = append(commonGenes, k)
-        }
-    }
+			} else {
+				allGenes[g] = 1
+			}
+		}
 
-    return len(commonGenes)
+	}
 
-} 
+	// From map of all genes get the ones with count larger than 1
+	var commonGenes []string
+	for k, v := range allGenes {
+		if v > 1 {
+			commonGenes = append(commonGenes, k)
+		}
+	}
 
+	return len(commonGenes)
 
-func (serv NOWACService) PathwayIDToName (Id string) string {
-    addAccessControlAllowOriginHeader(serv)             
-    return kegg.ReadablePathwayName(Id)   
+}
+
+func (serv NOWACService) PathwayIDToName(Id string) string {
+	addAccessControlAllowOriginHeader(serv)
+	return kegg.ReadablePathwayName(Id)
 }
 
 // Returns a list of pathways and the frequency of given genes. I.e.
 // how many of the given genes are represented in different pathways
 // Genes is a string that looks like "hsa:123+hsa:321+..."
-func (serv NOWACService) PathwayGeneCount (Genes string) string {
+func (serv NOWACService) PathwayGeneCount(Genes string) string {
 
-	PathwayMap := make(map[string] int, 0)
+	PathwayMap := make(map[string]int, 0)
 
-    geneList := strings.Split(Genes, " ")
+	geneList := strings.Split(Genes, " ")
 
-    // for every gene get its list of pathways
-    for _, g := range geneList {    
-        
-        geneId := strings.Split(g, ":")[1]
-        gene := kegg.GetGene(geneId)
-        pws := kegg.Pathways(gene)
-    
-        // for each of its pathways, increment the counter for number
-        // of genes represented in this pathway. 
-        for _, p := range pws.Pathways {
-            if PathwayMap[p] != 0 {
-                PathwayMap[p]++
-            } else {
-                PathwayMap[p] = 1
-            }
-        }
+	// for every gene get its list of pathways
+	for _, g := range geneList {
 
-    }
-    
+		geneId := strings.Split(g, ":")[1]
+		gene := kegg.GetGene(geneId)
+		pws := kegg.Pathways(gene)
 
-    b, err := json.Marshal(PathwayMap)
-    if err != nil {
-        log.Panic("marshaling went bad: ",err)
-    }
+		// for each of its pathways, increment the counter for number
+		// of genes represented in this pathway.
+		for _, p := range pws.Pathways {
+			if PathwayMap[p] != 0 {
+				PathwayMap[p]++
+			} else {
+				PathwayMap[p] = 1
+			}
+		}
 
+	}
 
-    return string(b)
+	b, err := json.Marshal(PathwayMap)
+	if err != nil {
+		log.Panic("marshaling went bad: ", err)
+	}
+
+	return string(b)
 }
 
 func (serv NOWACService) CommonPathways(Pathways string) string {
-    
-    return "Not implemented yet"
+
+	return "Not implemented yet"
 
 }
 
+// Will return a list of pathways for a given gene
+func (serv NOWACService) Pathways(Gene string) string {
 
-
-// Will return a list of pathways for a given gene 
-func (serv NOWACService) Pathways (Gene string) string {
-    
-    geneIdString := strings.Split(Gene, " ")[0]
-    geneId := strings.Split(geneIdString, ":")[1]
-    log.Println(geneId)
-    gene := kegg.GetGene(geneId)
-    pws := kegg.Pathways(gene)
-    return kegg.PathwaysJSON(pws)
+	geneIdString := strings.Split(Gene, " ")[0]
+	geneId := strings.Split(geneIdString, ":")[1]
+	log.Println(geneId)
+	gene := kegg.GetGene(geneId)
+	pws := kegg.Pathways(gene)
+	return kegg.PathwaysJSON(pws)
 
 }
 
 // Handles any requests to the Datastore. Will simply make the request to the
 // datastore and return the result
 func (serv NOWACService) Datastore(args ...string) string {
-    
-    addAccessControlAllowOriginHeader(serv)         
-    serv.RB().ConnectionClose()
 
+	addAccessControlAllowOriginHeader(serv)
+	serv.RB().ConnectionClose()
 
+	requestURL := serv.Context.Request().URL.Path
 
-    requestURL := serv.Context.Request().URL.Path
+	// Where the datastore is running, this would be Stallo in later versions
+	datastoreBaseURL := "http://127.0.0.1:8888/"
 
-    // Where the datastore is running, this would be Stallo in later versions
-    datastoreBaseURL := "http://127.0.0.1:8888/"
+	URL := datastoreBaseURL + strings.Trim(requestURL, "/datastore")
 
-    URL := datastoreBaseURL + strings.Trim(requestURL, "/datastore")
+	// NOTE: We are not caching results here, this could have been done, but
+	// since we're doing work with a test dataset caching is not done.
 
-    // NOTE: We are not caching results here, this could have been done, but
-    // since we're doing work with a test dataset caching is not done.
+	//NOTE: http.GET(URL) failed when the number of these calls were really
+	//frequent. now trying gocache.
+	resp, err := http.Get(URL)
+	if err != nil {
+		log.Print("request to datastore failed. ", err)
+		serv.ResponseBuilder().SetResponseCode(404).Overide(true)
+		return ":("
+	}
 
-    //NOTE: http.GET(URL) failed when the number of these calls were really
-    //frequent. now trying gocache. 
-    resp, err := http.Get(URL)
-    if err != nil {
-        log.Print("request to datastore failed. ",err)
-        serv.ResponseBuilder().SetResponseCode(404).Overide(true)
-        return ":("
-    }
+	defer resp.Body.Close()
 
-    defer resp.Body.Close()
-    
-    // WARNING: int64 -> int conversion. may crash and burn if more than 2^32
-    // - 1 bytes were read. Response from Datastore will typically be much
-    // shorter than this, so its not an issue. 
-    respLength := int(resp.ContentLength) 
+	// WARNING: int64 -> int conversion. may crash and burn if more than 2^32
+	// - 1 bytes were read. Response from Datastore will typically be much
+	// shorter than this, so its not an issue.
+	respLength := int(resp.ContentLength)
 
-    if respLength < 0 { 
-        respLength = 1024 * 10000
-    } 
+	if respLength < 0 {
+		respLength = 1024 * 10000
+	}
 
+	// Read the response from the body and return it as a string.
+	//response := make([]byte, respLength)
 
-    // Read the response from the body and return it as a string. 
-    //response := make([]byte, respLength)
+	response, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		if err == io.EOF {
+			log.Println("IT WAS END OF FILE NOTHING TO WORRY ABOUT")
+		}
+		log.Print("reading response from datastore failed. ", err)
+		serv.ResponseBuilder().SetResponseCode(404).Overide(true)
+		return ":("
+	}
 
-    response, err := ioutil.ReadAll(resp.Body)
-    if err != nil {
-        if err == io.EOF {
-            log.Println("IT WAS END OF FILE NOTHING TO WORRY ABOUT")
-        }
-        log.Print("reading response from datastore failed. ", err)
-        serv.ResponseBuilder().SetResponseCode(404).Overide(true)
-        return ":("
-    }
+	// Set response code to what was returned from Datastore.
+	// Will ensure that if a 404 is returned by datastore this is also passed
+	// along
+	serv.ResponseBuilder().SetResponseCode(resp.StatusCode).Overide(false)
 
-    // Set response code to what was returned from Datastore. 
-    // Will ensure that if a 404 is returned by datastore this is also passed
-    // along
-    serv.ResponseBuilder().SetResponseCode(resp.StatusCode).Overide(false)
-    
-
-    return string(response)
+	return string(response)
 }
 
+func (serv NOWACService) DatastorePost(PostData string, varArgs ...string) {
+	addAccessControlAllowOriginHeader(serv)
 
-func (serv NOWACService) DatastorePost( PostData string, varArgs ...string) {
-    addAccessControlAllowOriginHeader(serv)         
+	requestURL := serv.Context.Request().URL.Path
 
-    requestURL := serv.Context.Request().URL.Path
+	// Where the datastore is running, this would be Stallo in later versions
+	datastoreBaseURL := "http://localhost:8888/"
 
-    // Where the datastore is running, this would be Stallo in later versions
-    datastoreBaseURL := "http://localhost:8888/"
+	URL := datastoreBaseURL + strings.Replace(requestURL, "/datastore/", "", -1)
 
-    URL := datastoreBaseURL + strings.Replace(requestURL, "/datastore/","",-1)
-    
+	postContent := bytes.NewBufferString(PostData)
 
-    postContent := bytes.NewBufferString(PostData) 
+	// Perform the actual http post to the datastore
+	// note that we set text as datatype. will fail miserably with anything else
+	_, err := http.Post(URL, "text", postContent)
+	if err != nil {
+		log.Print("Post to datastore failed. ", err)
+		serv.ResponseBuilder().SetResponseCode(500).Overide(true)
+	}
 
-    // Perform the actual http post to the datastore
-    // note that we set text as datatype. will fail miserably with anything else
-    _, err := http.Post(URL, "text", postContent) 
-    if err != nil { 
-        log.Print("Post to datastore failed. ", err)
-        serv.ResponseBuilder().SetResponseCode(500).Overide(true)
-    } 
-    
-} 
-
-
-
+}
 
 func (serv NOWACService) GetGeneVis(Gene string) string {
-    addAccessControlAllowOriginHeader(serv)     
-    
-    log.Print("Returning the VIS code for gene: ", Gene)
+	addAccessControlAllowOriginHeader(serv)
 
-    code := GeneExpression(Gene) // Barchar() // ParallelCoordinates(len(Gene))//GeneVisCode(Gene)
-    return code
+	log.Print("Returning the VIS code for gene: ", Gene)
+
+	code := GeneExpression(Gene) // Barchar() // ParallelCoordinates(len(Gene))//GeneVisCode(Gene)
+	return code
 }
 
-
 func GeneExpression(geneid string) string {
-    
-    id, err := strconv.Atoi(geneid)
-    if err != nil {
-        log.Panic("that was not a gene id: ", geneid, " ", err)
-    }
-    ds := GetGeneExpression(id) 
-    
-    // Header, containing all other js 
-    header := `
+
+	id, err := strconv.Atoi(geneid)
+	if err != nil {
+		log.Panic("that was not a gene id: ", geneid, " ", err)
+	}
+	ds := GetGeneExpression(id)
+
+	// Header, containing all other js
+	header := `
         <style>
 
         .chart div {
@@ -343,12 +322,12 @@ func GeneExpression(geneid string) string {
         <div class="chart"></div>
         <script src="http://d3js.org/d3.v3.min.js"></script>
         <script>`
-            
-    // dataset to be used, just random numbers now
-    dataset := `var data = `+ds
-    
-    // rest of the vis code
-    vis := `
+
+	// dataset to be used, just random numbers now
+	dataset := `var data = ` + ds
+
+	// rest of the vis code
+	vis := `
 
 
     var margin = {top: 30, right: 10, bottom: 0, left: 10},
@@ -501,116 +480,105 @@ func GeneExpression(geneid string) string {
         </script>
     `
 
-    return header+dataset+vis
+	return header + dataset + vis
 
-
-} 
-
+}
 
 // Returns all information possible for a gene. This includes stuff
-// like id,name,definition etc etc. 
+// like id,name,definition etc etc.
 func (serv NOWACService) GetInfo(Items string, InfoType string) string {
 
-    //TODO: implement different info types such as name/sequence/ etc
-    
-    addAccessControlAllowOriginHeader(serv)     
+	//TODO: implement different info types such as name/sequence/ etc
 
-    if(strings.Contains(Items, "hsa")){
-        // will get the first gene in the list Items. Could be more than one
-        // but for starters we'll do with just one. 
-        
-        geneIdString := strings.Split(Items, " ")[0]
-        geneId := strings.Split(geneIdString, ":")[1]
+	addAccessControlAllowOriginHeader(serv)
 
-        gene := kegg.GetGene(geneId)
+	if strings.Contains(Items, "hsa") {
+		// will get the first gene in the list Items. Could be more than one
+		// but for starters we'll do with just one.
 
-        //gene.Pathways = kegg.ReadablePathwayNames(gene.Pathways) 
+		geneIdString := strings.Split(Items, " ")[0]
+		geneId := strings.Split(geneIdString, ":")[1]
 
-        return kegg.GeneJSON(gene)
-    }
-    
+		gene := kegg.GetGene(geneId)
 
-    return Items;
+		//gene.Pathways = kegg.ReadablePathwayNames(gene.Pathways)
 
+		return kegg.GeneJSON(gene)
+	}
+
+	return Items
 
 }
 
 func (serv NOWACService) NewPathwayGraph(Pathways string) string {
-    addAccessControlAllowOriginHeader(serv)     
-    
-    pws := parsePathwayInput(Pathways); 
+	addAccessControlAllowOriginHeader(serv)
 
-    log.Println("mans", pws[0])
-    log.Print(Pathways)
+	pws := parsePathwayInput(Pathways)
 
-    pathwayId := pws[0]
-    var handlerAddress string
+	log.Println("mans", pws[0])
+	log.Print(Pathways)
 
-    log.Println(serv.GraphServers[pathwayId])
+	pathwayId := pws[0]
+	var handlerAddress string
 
-    if serv.GraphServers[pathwayId] == "" {
-        log.Println("first time for ", pathwayId);
-        handlerAddress = kegg.PathwayGraphFrom(pws[0]) 
-        serv.GraphServers[pathwayId] = handlerAddress
-    } else {
-        handlerAddress = serv.GraphServers[pathwayId]
-        log.Println("second time for ", handlerAddress)
-    }
+	log.Println(serv.GraphServers[pathwayId])
 
+	if serv.GraphServers[pathwayId] == "" {
+		log.Println("first time for ", pathwayId)
+		handlerAddress = kegg.PathwayGraphFrom(pws[0])
+		serv.GraphServers[pathwayId] = handlerAddress
+	} else {
+		handlerAddress = serv.GraphServers[pathwayId]
+		log.Println("second time for ", handlerAddress)
+	}
 
-    return handlerAddress+"/"+pws[0]
-    
+	return handlerAddress + "/" + pws[0]
+
 }
 
-func addAccessControlAllowOriginHeader (serv NOWACService) {
-    // Allowing access control stuff
-    rb := serv.ResponseBuilder()
-    if serv.Context != nil {
-        rb.AddHeader("Access-Control-Allow-Origin","*")
-    }
+func addAccessControlAllowOriginHeader(serv NOWACService) {
+	// Allowing access control stuff
+	rb := serv.ResponseBuilder()
+	if serv.Context != nil {
+		rb.AddHeader("Access-Control-Allow-Origin", "*")
+	}
 }
 
-func parsePathwayInput(input string) ([] string) {
-        // Remove any unwanted characters 
+func parsePathwayInput(input string) []string {
+	// Remove any unwanted characters
 	a := strings.Replace(input, "%3A", ":", -1)
 	a = strings.Replace(a, "&", "", -1)
 	a = strings.Replace(a, "=", "", -1)
-	
+
 	// Split into separate hsa:... strings
 	b := strings.Split(a, "pathwaySelect")
-		
-	// Clear out first empty item 
+
+	// Clear out first empty item
 	b = b[1:len(b)]
-    
-    return b
+
+	return b
 
 }
-
 
 func GetGeneExpression(id int) string {
 
-    datastore := "http://localhost:8888"
-    
-    query := "/gene/"+strconv.Itoa(id)
-    url := datastore+query
-    response, err := http.Get(url)
-    
-    if err != nil {
-        log.Panic("could not download expression ", err)
-    }
+	datastore := "http://localhost:8888"
 
-    defer response.Body.Close()
+	query := "/gene/" + strconv.Itoa(id)
+	url := datastore + query
+	response, err := http.Get(url)
+
+	if err != nil {
+		log.Panic("could not download expression ", err)
+	}
+
+	defer response.Body.Close()
 
 	exprs, err := ioutil.ReadAll(response.Body)
-    if err != nil {
-        log.Panic("Could not read expression ", err) 
-    } 
-    
+	if err != nil {
+		log.Panic("Could not read expression ", err)
+	}
 
-    
-    return string(exprs)
+	return string(exprs)
 
 }
-
-
-
