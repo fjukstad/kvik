@@ -49,7 +49,6 @@ type NOWACService struct {
 	newPathwayGraph gorest.EndPoint `method:"GET" 
                                     path:"/new/graph/pathway/{Pathways:string}"
                                     output:"string"`
-
 	getInfo gorest.EndPoint `method:"GET"
                             path:"/info/{Items:string}/{InfoType:string}"
                             output:"string"`
@@ -69,10 +68,6 @@ type NOWACService struct {
 	pathways gorest.EndPoint `method:"GET"
                                 path:"/info/gene/{Gene:string}/pathways"
                                 output:"string"`
-
-	commonPathways gorest.EndPoint `method:"GET"
-                                    path:"/info/pathway/{Pathways:string}"
-                                    output:"string"`
 
 	pathwayGeneCount gorest.EndPoint `method:"GET"
                                         path:"/info/gene/{Genes:string}/commonpathways"
@@ -188,12 +183,6 @@ func (serv NOWACService) PathwayGeneCount(Genes string) string {
 	}
 
 	return string(b)
-}
-
-func (serv NOWACService) CommonPathways(Pathways string) string {
-
-	return "Not implemented yet"
-
 }
 
 // Will return a list of pathways for a given gene
