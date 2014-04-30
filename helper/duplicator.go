@@ -77,13 +77,21 @@ func main(){
         record = append(record, randomFloats(numGenes)...)
         
         writer.Write(record) 
+        if err := writer.Error(); err != nil { 
+            log.Println(err) 
+        }
+
 
         p = p+"_1"
         record = make([]string,0)
         record = append(record,p)
         record = append(record, randomFloats(numGenes)...)
         writer.Write(record) 
-        
+
+        if err := writer.Error(); err != nil { 
+            log.Println(err) 
+        }
+
         fmt.Print(i," of ",np," iterations done \r")
     }
     fmt.Print("\n")

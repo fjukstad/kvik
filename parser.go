@@ -122,7 +122,7 @@ func generateExpressionDataset(filename string) (Expression, error) {
 
             firstRow = false 
         } else { 
-
+            
             id := record[0]
             expression := toFloats(record[1:])
 
