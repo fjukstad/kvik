@@ -42,7 +42,8 @@ function LoadPathway(pathwayId) {
 
 var pwid = "hsa04630"
 var pwid2 = "hsa04915"
-var pwid3 = "hsa05200"
+var pwid3 = "hsa04151"
+var pwid4 = "hsa05200"
 
 
 var hsa4313 = "hsa:4313"
@@ -56,7 +57,7 @@ var logpwid = window.location.pathname.split("=")[1];
 var numRuns = 0
 function StartBenchmarks(){ 
 
-    minSamples = 150
+    minSamples = 300
 
     var suite = new Benchmark.Suite('test', { 
         'onComplete': function(){
@@ -79,7 +80,6 @@ function StartBenchmarks(){
     
 
         
-    /*
     suite.add("loadPathway "+pwid, function(deferred){
             name = "pathwaySelect="+pwid
             LoadPathway(name)
@@ -130,7 +130,7 @@ function StartBenchmarks(){
         },
         { 
             'defer': true,
-            'minSamples': 80,
+            'minSamples': minSamples,
             'onComplete': function(e){
                 console.log(e.currentTarget.name," is done running")
             }
@@ -138,7 +138,26 @@ function StartBenchmarks(){
         } 
     );
 
-    */ 
+        suite.add("loadPathway "+pwid4, function(deferred){
+            name = "pathwaySelect="+pwid4
+            LoadPathway(name)
+            defff = deferred
+            numRuns = numRuns + 1 
+            console.log(numRuns)
+        
+        },
+        { 
+            'defer': true,
+            'minSamples': minSamples,
+            'onComplete': function(e){
+                console.log(e.currentTarget.name," is done running")
+            }
+
+        } 
+    );
+
+
+
 
     /*
     suite.add("set scale "+logpwid, function(deferred){
@@ -157,37 +176,35 @@ function StartBenchmarks(){
     
     */
 
+
     suite.add("get info"+hsa4313, function(){
         visGenePanel(hsa4313);
-        console.log("done!")
     }, {
         'minSamples': minSamples
     });
     
     suite.add("get info"+hsa3303, function(){
         visGenePanel(hsa3303);
-        console.log("done!")
     }, {
         'minSamples': minSamples
     });
 
     suite.add("get info"+hsa6654, function(){
         visGenePanel(hsa6654);
-        console.log("done!")
     }, {
         'minSamples': minSamples
     });
 
     suite.add("get info"+hsa5604, function(){
         visGenePanel(hsa5604);
-        console.log("done!")
     }, {
         'minSamples': minSamples
     });
 
 
 
-    suite.run({'async':true});
+
+    //suite.run({'async':true});
     benchmarked = true
 
 } 
