@@ -1,10 +1,8 @@
 package main
 
 import (
-	"code.google.com/p/gorest"
 	"encoding/json"
 	"flag"
-	"github.com/fjukstad/rpcman" // rpc to the statistics man
 	"log"
 	"math"
 	"net/http"
@@ -13,7 +11,9 @@ import (
 	"runtime/pprof"
 	"strconv"
 	"strings"
-	//    "io/ioutil"
+
+	"code.google.com/p/gorest"
+	"github.com/fjukstad/rpcman"
 )
 
 type RestService struct {
@@ -55,7 +55,7 @@ type RestService struct {
 	Dataset *Dataset
 
 	// RPC Server for performing statistics
-	RPC rpcman.RPCMan
+	RPC *rpcman.RPCMan
 }
 
 type Ex struct {
@@ -188,7 +188,8 @@ func (serv RestService) Std(GeneId string) float64 {
 		log.Print("Expression values for gene ", GeneId, " not found")
 		return 0
 	}
-	ret, err := serv.RPC.Call("std", exprs)
+	//ret, err := serv.RPC.Call("std", exprs)
+	ret, err := serv.RPC.Call("add", 2, 5)
 	if err != nil {
 		log.Println("RPC FAILED", err)
 		return 0
@@ -333,8 +334,9 @@ func Init(path string) *RestService {
 	restService.Dataset = &ds
 
 	// connect to statistics engine that will run statistics and that
-	rpcaddr := "tcp://localhost:5555" // "ipc:///tmp/datastore/0" //"tcp://localhost:5555"
-	restService.RPC = rpcman.Init(rpcaddr)
+	rpcaddr := "tcp://localhost:5555" // "ipc:///tmp/datastore/0"
+	//"tcp://localhost:5555"
+	restService.RPC, _ = rpcman.Init(rpcaddr)
 	//err := restService.RPC.Connect()
 
 	//log.Println("connecting to statsman")

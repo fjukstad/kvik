@@ -43,7 +43,7 @@ if __name__ == "__main__":
     context = zmq.Context()
     socket = context.socket(zmq.REP)
     socket.bind("tcp://*:5555")
-    #socket.bind("ipc:///tmp/datastore/0")
+    #rc = socket.bind("ipc:///tmp/datastore/0")
 
     rpc = RPC()
 
@@ -51,9 +51,9 @@ if __name__ == "__main__":
         #  Wait for next request from client
         message = socket.recv()
 
-        time = datetime.datetime.now().strftime("%H:%M:%S.%f")
 
-        # print time, "Incoming request"
+        time = datetime.datetime.now().strftime("%H:%M:%S.%f")
+        print time, "incoming rpc", message
 
         req = ast.literal_eval(message)
 
