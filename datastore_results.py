@@ -35,77 +35,80 @@ def plot(d,i,name="figure", color=gre):
 
 
 
+if __name__ == "__main__":
+    sizes = ["-1x","-2x","-5x", "-10x", "-20x"]
+
+    results = {}
+    for s in sizes:
+        filename = "result"+s+".csv"
+        print "-----------"+s+"------------"
+        with open(filename) as file:
+            for line in csv.reader(file, delimiter=","):
+                method = line[0]
+                count = int(line[1].lstrip(" "))
+                a = line[2].lstrip(" ")
+                a = a.split(" ")[0]
+                runtime = float(a)
 
 
-results = {}
+                a = line[3].lstrip(" ")
+                a = a.split(" ")[0]
+                mem = int(a)
 
-with open("24-04-results/result-1x.csv") as file:
-    for line in csv.reader(file, delimiter=","):
-        method = line[0]
-        count = int(line[1].lstrip(" "))
-        a = line[2].lstrip(" ")
-        a = a.split(" ")[0]
-        runtime = float(a)
+                a = line[4].lstrip(" ")
+                alloc = int(a.split(" ")[0])
 
+                res = [{"count":count, "runtime":runtime,"memory":mem,"alloc":alloc}]
+                try:
+                    a = results[method]
+                    results[method] = res+a
+                except KeyError:
+                    results[method] = res
 
-        a = line[3].lstrip(" ")
-        a = a.split(" ")[0]
-        mem = int(a)
+        ns = 1000000000
+        mb = 1048576
 
-        a = line[4].lstrip(" ")
-        alloc = int(a.split(" ")[0])
+        d1 = []
+        d2 = []
 
-        res = [{"count":count, "runtime":runtime,"memory":mem,"alloc":alloc}]
-        try:
-            a = results[method]
-            results[method] = res+a
-        except KeyError:
-            results[method] = res
+        for i, method in  enumerate(results):
+            res = results[method]
 
-ns = 1000000000
-mb = 1048576
+            runtimes = []
+            mems = []
+            count = 0
 
-d1 = []
-d2 = []
+            for j in range(len(res)):
+                r = res[j]
+                runtimes.append(r["runtime"])
+                mems.append(r["memory"])
+                count = count + r["count"]
 
-for i, method in  enumerate(results):
-    res = results[method]
+            mean = np.mean(runtimes)/ns #seconds
+            std = np.std(runtimes)
+            var = np.var(runtimes)
+            sem = stats.sem(runtimes)/ns #seconds
+            gmean = stats.gmean(runtimes)
+            print method, "Runtime (mean,std):", mean, std/ns
+            #plot(runtimes,i,method)
+            d1.append(mean)
 
-    runtimes = []
-    mems = []
-    count = 0
+            mean = np.mean(mems)
+            std = np.std(mems)
+            var = np.var(mems)
+            sem = stats.sem(mems)
+            print method,"Memory usage (mean, std):", mean/mb, std/mb
 
-    for j in range(len(res)):
-        r = res[j]
-        runtimes.append(r["runtime"])
-        mems.append(r["memory"])
-        count = count + r["count"]
+            d2.append(mean)
 
-    mean = np.mean(runtimes)/ns #seconds
-    std = np.std(runtimes)
-    var = np.var(runtimes)
-    sem = stats.sem(runtimes)/ns #seconds
-    gmean = stats.gmean(runtimes)
-    print method, "Runtime (mean,std):", mean, std/ns
-    #plot(runtimes,i,method)
-    d1.append(mean)
-
-    mean = np.mean(mems)
-    std = np.std(mems)
-    var = np.var(mems)
-    sem = stats.sem(mems)
-    print method,"Memory usage (mean, std):", mean/mb, std/mb
-
-    d2.append(mean)
-
-#plt.subplots_adjust(hspace=.5,wspace=.75)
-#plt.show()
+    #plt.subplots_adjust(hspace=.5,wspace=.75)
+    #plt.show()
 
 
-d1.sort()
-d2.sort()
-print d1
-print d2
+    #d1.sort()
+    #d2.sort()
+    #print d1
+    #print d2
 
 
 
