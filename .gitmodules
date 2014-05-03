@@ -41,3 +41,6 @@
 [submodule "src/src/nowac/datastore"]
 	path = src/src/nowac/datastore
 	url = git@ice-git.cs.uit.no:fjukstad/nowac-datastore.git
+[submodule "src/src/nowac/js-stats"]
+	path = src/src/nowac/js-stats
+	url = git@ice-git.cs.uit.no:fjukstad/js-stats.git
