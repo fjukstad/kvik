@@ -168,6 +168,7 @@ function GetPathwayName(id) {
 
 
 function GetBg(geneId,exprs) {
+    /*
     var baseURL = "http://"+window.location.hostname+":8080/datastore/gene/"
         url = baseURL + geneId+"/"+exprs+"/bg"
 
@@ -182,9 +183,8 @@ function GetBg(geneId,exprs) {
              info = data;
         }
     });
-
-    //console.log("Number of common genes: ", num)
-
+	*/
+var info = "hepp"
     return info;
 
 }
