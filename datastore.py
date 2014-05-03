@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
 
         time = datetime.datetime.now().strftime("%H:%M:%S.%f")
-        print time, "incoming rpc", message
+        print time, "Incoming RPC"
 
         req = ast.literal_eval(message)
 
