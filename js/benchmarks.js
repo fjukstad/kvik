@@ -57,7 +57,7 @@ var logpwid = window.location.pathname.split("=")[1];
 var numRuns = 0
 function StartBenchmarks(){ 
 
-    minSamples = 300
+    minSamples = 200
 
     var suite = new Benchmark.Suite('test', { 
         'onComplete': function(){
@@ -202,9 +202,7 @@ function StartBenchmarks(){
     });
 
 
-
-
-    //suite.run({'async':true});
+    suite.run({'async':true});
     benchmarked = true
 
 } 
