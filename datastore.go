@@ -188,8 +188,8 @@ func (serv RestService) Std(GeneId string) float64 {
 		log.Print("Expression values for gene ", GeneId, " not found")
 		return 0
 	}
-	//ret, err := serv.RPC.Call("std", exprs)
-	ret, err := serv.RPC.Call("add", 2, 5)
+	ret, err := serv.RPC.Call("std", exprs)
+	//ret, err := serv.RPC.Call("add", 2, 5)
 	if err != nil {
 		log.Println("RPC FAILED", err)
 		return 0
