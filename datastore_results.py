@@ -38,8 +38,9 @@ def plot(d,i,name="figure", color=gre):
 if __name__ == "__main__":
     sizes = ["-1x","-2x","-5x", "-10x", "-20x"]
 
-    results = {}
     for s in sizes:
+        results = {}
+
         filename = "result"+s+".csv"
         print "-----------"+s+"------------"
         with open(filename) as file:
