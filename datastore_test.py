@@ -17,7 +17,7 @@ def storeResults(tmp,filename):
 
 if __name__=="__main__":
     numIter = 200
-    sizes = ["","-2x","-5x","-10x"]
+    sizes = ["","-2x","-5x","-10x","-20x"]
     for i in range(0,numIter):
         for size in sizes:
             tmp = "tmp"+size+".tmp"
