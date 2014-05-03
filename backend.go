@@ -376,13 +376,13 @@ func GeneExpression(geneid string) string {
         })
         .on("click", function(d) {
             //console.log("clicked")
-            ShowBgInfo(info.Id,d)
+            //ShowBgInfo(info.Id,d)
         })
 
         .append("svg:title")
         .text(function(d) { 
             //console.log("hepp");
-            return GetBg(info.Id, d); 
+            //return GetBg(info.Id, d); 
         });
         
 
