@@ -21,7 +21,7 @@ func BenchmarkInit(b *testing.B) {
 
 	size := flag.Lookup("test.cpuprofile").Value.String()
 
-	//disableLogging()
+	disableLogging()
 	path := "/Users/bjorn/stallo/src/src/nowac/datastore/data" + size
 	// Set up rest service to be used later. reset timer afterwards
 	restService = Init(path)
