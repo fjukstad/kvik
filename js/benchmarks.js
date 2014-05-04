@@ -44,6 +44,7 @@ var pwid = "hsa04630"
 var pwid2 = "hsa04915"
 var pwid3 = "hsa04151"
 var pwid4 = "hsa05200"
+var insulin = "hsa04910"
 
 
 var hsa4313 = "hsa:4313"
@@ -57,7 +58,7 @@ var logpwid = window.location.pathname.split("=")[1];
 var numRuns = 0
 function StartBenchmarks(){ 
 
-    minSamples = 200
+    minSamples = 10
 
     var suite = new Benchmark.Suite('test', { 
         'onComplete': function(){
@@ -78,7 +79,7 @@ function StartBenchmarks(){
     });
 
     
-
+    /*
         
     suite.add("loadPathway "+pwid, function(deferred){
             name = "pathwaySelect="+pwid
@@ -157,7 +158,7 @@ function StartBenchmarks(){
     );
 
 
-
+    */
 
     /*
     suite.add("set scale "+logpwid, function(deferred){
@@ -175,7 +176,8 @@ function StartBenchmarks(){
         })
     
     */
-
+    
+    /*
 
     suite.add("get info"+hsa4313, function(){
         visGenePanel(hsa4313);
@@ -200,6 +202,25 @@ function StartBenchmarks(){
     }, {
         'minSamples': minSamples
     });
+    
+    */
+    suite.add("kvikview ", function(deferred){
+            name = "pathwaySelect="+insulin
+            LoadPathway(name)
+            defff = deferred
+            numRuns = numRuns + 1 
+            console.log(numRuns)
+        
+        },
+        { 
+            'defer': true,
+            'minSamples': minSamples,
+            'onComplete': function(e){
+                console.log(e.currentTarget.name," is done running")
+            }
+
+        } 
+    );
 
 
     suite.run({'async':true});
