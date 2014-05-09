@@ -422,7 +422,8 @@ function updateNodeColors() {
             if(graphNodes[n].style().shape == "rectangle"){
                 var name = graphNodes[n].data().name.split(" ")[0];
                     avg = ex.Expression[name]
-                if(avg === "0") { 
+                console.log("average is", avg)
+                if(avg === 0) { 
                    var c = "#ffffff"
                 } else { 
                     var c = color(avg)
