@@ -25,6 +25,7 @@ function GetInfo(name) {
         }
     });
 
+    console.log(jQuery.parseJSON(info))
     //console.log("Request URL:", url);
     //console.log("Reply:", info);
 
