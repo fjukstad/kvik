@@ -44,3 +44,9 @@
 [submodule "src/src/nowac/js-stats"]
 	path = src/src/nowac/js-stats
 	url = git@ice-git.cs.uit.no:fjukstad/js-stats.git
+[submodule "src/src/github.com/fjukstad/rpcman"]
+	path = src/src/github.com/fjukstad/rpcman
+	url = http://github.com/fjukstad/rpcman
+[submodule "src/src/github.com/alecthomas/gozmq"]
+	path = src/src/github.com/alecthomas/gozmq
+	url = http://github.com/alecthomas/gozmq
