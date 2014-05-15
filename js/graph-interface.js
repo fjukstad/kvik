@@ -24,6 +24,7 @@ function Graph(cy){
 
         //console.log("Adding node:",n); 
         n.graphics.name = n.graphics.name.split(" ")
+        console.log(n.graphics.name)
         if(n.name === "\"bg\"") {
             n.graphics.bgimage = n.graphics.name[0];
             n.graphics.bgcolor = "#fff"
@@ -32,6 +33,7 @@ function Graph(cy){
         else{
             n.graphics.bgimage = "";
         }
+
 
 //        n.background-image = "http://www.genome.jp/kegg/pathway/hsa/hsa04915.png"
         /*
@@ -56,6 +58,15 @@ function Graph(cy){
         }
 
         */
+    
+        console.log(n.graphics.name.toString())
+
+        n.graphics.name = n.graphics.name.toString().replace(/,/g, " ")
+        
+        n.graphics.valign = "center"
+        if(n.graphics.name.substr(0,2) == "C0"){
+            n.graphics.valign = "bottom"
+        } 
 
 
         var no = {
@@ -72,7 +83,6 @@ function Graph(cy){
             },
             grabbable:false,
         };
-
         nodes.push(no);
         cy.add(no); 
         

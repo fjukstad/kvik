@@ -49,7 +49,7 @@ loadCy = function(){
             .selector('node')
             .css({
                 'content': 'data(graphics.name)',
-                'text-valign': 'center',
+                'text-valign': 'data(graphics.valign)',
                 'background-color': 'data(graphics.bgcolor)',
                 'background-image': 'data(graphics.bgimage)',
                 'border-color': 'data(graphics.fgcolor)',
@@ -62,6 +62,8 @@ loadCy = function(){
                 'shape': 'data(graphics.shape)',
                 'height': 'data(graphics.height)',
                 'width': 'data(graphics.width)', 
+                'font-family': 'helvetica',
+                'font-size': 10,
             })
             .selector(':selected')
             .css({
@@ -422,7 +424,8 @@ function updateNodeColors() {
             if(graphNodes[n].style().shape == "rectangle"){
                 var name = graphNodes[n].data().name.split(" ")[0];
                     avg = ex.Expression[name]
-                if(avg === "0") { 
+                console.log("average is", avg)
+                if(avg === 0) { 
                    var c = "#ffffff"
                 } else { 
                     var c = color(avg)
