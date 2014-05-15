@@ -4,8 +4,6 @@ import (
 	"encoding/csv"
 	"encoding/xml"
 	"fmt"
-	"github.com/fjukstad/gocache"
-	"github.com/fjukstad/gographer"
 	"image/png"
 	"io"
 	"io/ioutil"
@@ -15,6 +13,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/fjukstad/gocache"
+	"github.com/fjukstad/gographer"
 )
 
 type Pathway struct {
@@ -195,7 +196,9 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph) {
 		size := 1
 		graphics := ent.Graphics
 
-		description := strings.Split(graphics.Name, ", ")[0]
+		// Trimming away :title for the node containing the pathway name
+		description := strings.TrimPrefix(strings.Split(graphics.Name, ",")[0], "TITLE:")
+		log.Println("description", description)
 		fgcolor := graphics.Fgcolor
 		bgcolor := graphics.Bgcolor
 		shape := graphics.Type
