@@ -493,7 +493,7 @@ Biojs.KEGGViewer = Biojs.extend(
             },
             done:function(){
                 console.log("jeejjeje")
-                    deferAway()
+                sleep(30,deferAway);
             },
         });
     }

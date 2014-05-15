@@ -20,6 +20,18 @@ function LoadPathway(pathwayId) {
     
 
 } 
+
+function foobar_cont(){
+    console.log("finished.");
+};
+
+function sleep(millis, callback) {
+    setTimeout(function()
+            { callback(); }
+    , millis);
+}
+
+
 function keggview() {
     var instance = new Biojs.KEGGViewer({
          target: 'YourOwnDivId',
@@ -55,7 +67,7 @@ var logpwid = window.location.pathname.split("=")[1];
 var numRuns = 0
 function StartBenchmarks(){ 
 
-    minSamples = 10
+    minSamples = 200
 
     var suite = new Benchmark.Suite('test', { 
         'onComplete': function(){
@@ -93,9 +105,6 @@ function StartBenchmarks(){
             }
         } 
     );
-
-
-
 
     suite.run({'async':true});
     benchmarked = true

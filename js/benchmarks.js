@@ -58,7 +58,7 @@ var logpwid = window.location.pathname.split("=")[1];
 var numRuns = 0
 function StartBenchmarks(){ 
 
-    minSamples = 10
+    minSamples = 200
 
     var suite = new Benchmark.Suite('test', { 
         'onComplete': function(){
@@ -177,7 +177,6 @@ function StartBenchmarks(){
     
     */
     
-    /*
 
     suite.add("get info"+hsa4313, function(){
         visGenePanel(hsa4313);
@@ -203,7 +202,7 @@ function StartBenchmarks(){
         'minSamples': minSamples
     });
     
-    */
+	/*
     suite.add("kvikview ", function(deferred){
             name = "pathwaySelect="+insulin
             LoadPathway(name)
@@ -221,9 +220,10 @@ function StartBenchmarks(){
 
         } 
     );
+*/
 
 
-    suite.run({'async':true});
+    //suite.run({'async':true});
     benchmarked = true
 
 } 
