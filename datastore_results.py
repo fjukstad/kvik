@@ -41,7 +41,7 @@ if __name__ == "__main__":
     for s in sizes:
         results = {}
 
-        filename = "result"+s+".csv"
+        filename = "results/result"+s+".csv"
         print "-----------"+s+"------------"
         with open(filename) as file:
             for line in csv.reader(file, delimiter=","):
