@@ -1,2 +1,11 @@
-kvik
-====
+# Kvik
+An interactive system for exploring the dynamics of carcinogenesis through integrated studies of biological pathways and genomic data. It provides researchers with a lightweight web application for navigating through biological pathways from the [KEGG](http://kegg.jp) database integrated with genomic data from the [NOWAC](http://site.uit.no/nowac) postgenome biobank.
+
+## About
+My master's thesis project at the [BDPS](http://bdps.cs.uit.no) group at [UiT](http://uit.no). You can find the thesis [here](thesis.pdf)
+
+## Source Code
+The source code is found in the [src](src/src/github/fjukstad) directory. It consists of four individual components all written in Go. The Data Engine expects data from the NOWAC biobank and will not run without it. 
+
+## Contact
+Feel free to contact me at bjorn.fjukstad@uit.no! 
