@@ -1,0 +1,71 @@
+#cy {
+    height: 700px;
+    width: 850px;
+    position: absolute;
+    left: 4em;
+    top: 1em;
+    border:1px solid #AAAAAA;
+}
+
+#jumbotron{
+    height: 100%;
+    width: 100%;
+}
+
+#info-panel{
+    word-wrap: break-word;
+}
+
+#scalebtns {
+    /*left: 4em;*/
+}
+
+.btn-default {
+    background-color: #FFFFFF;
+    /*color: #111111;*/
+}
+
+/*
+.btn-primary {
+    color: black;
+    background-color: white;
+    border-color: white;
+} 
+
+.btn.active { 
+    color:black;
+    background-color:white;
+    border-color:white;
+}
+*/
+
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #a6bbc8;
+  shape-rendering: crispEdges;
+}
+
+
+.x.axis line {
+  stroke: #a6bbc8;
+}
+
+.y.axis line, .y.axis path {
+  fill: none;
+  stroke: #a6bbc8;
+}
+
+.y.axis tick { 
+    stroke: black;
+} 
+
+/*.tick {
+    display:none
+} */
+
