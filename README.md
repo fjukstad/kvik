@@ -1,2 +1,2 @@
 # Kvik Browser
-This is the source code for the Kvik Browser
+This is the source code for the Kvik Browser and Webserver
