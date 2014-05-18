@@ -1,0 +1,9 @@
+PASS
+BenchmarkInit	       1	2778025874 ns/op	370761088 B/op	 4687089 allocs/op
+BenchmarkGeneExpression	     500	   4648428 ns/op	  309321 B/op	    1681 allocs/op
+BenchmarkAverageDiff	       1	1003529559 ns/op	  303304 B/op	    1722 allocs/op
+BenchmarkStd	       1	1004222412 ns/op	  300088 B/op	    1682 allocs/op
+BenchmarkVariance	       1	1004229465 ns/op	  300224 B/op	    1686 allocs/op
+BenchmarkSetScale	   50000	     76945 ns/op	    7949 B/op	      87 allocs/op
+BenchmarkBackground	    2000	   1141564 ns/op	  284743 B/op	    1560 allocs/op
+ok  	nowac/datastore	20.512s

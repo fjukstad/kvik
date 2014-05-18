@@ -1,0 +1,8 @@
+# silly dbs
+*.db
+
+# data files, stored on stallo.
+data/
+
+# cache
+cache/

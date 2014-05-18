@@ -1,0 +1,805 @@
+BenchmarkInit,       1,5280323740 ns/op,737450120 B/op, 9000844 allocs/op
+BenchmarkGeneExpression,     500,   4889613 ns/op,  317897 B/op,    1685 allocs/op
+BenchmarkAverageDiff,       1,1003743501 ns/op,  310248 B/op,    1738 allocs/op
+BenchmarkStd,    1000,   1674134 ns/op,  301440 B/op,    1711 allocs/op
+BenchmarkVariance,    1000,   2281950 ns/op,  314192 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     89125 ns/op,    7928 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1106639 ns/op,  284968 B/op,    1562 allocs/op
+BenchmarkInit,       1,5628793780 ns/op,737762136 B/op, 9002517 allocs/op
+BenchmarkGeneExpression,     500,   4956401 ns/op,  318073 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003618311 ns/op,  312408 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2381747 ns/op,  314007 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2303062 ns/op,  313951 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     80475 ns/op,    7928 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1155045 ns/op,  285113 B/op,    1562 allocs/op
+BenchmarkInit,       1,5334891184 ns/op,737811848 B/op, 9002510 allocs/op
+BenchmarkGeneExpression,     500,   4905004 ns/op,  317815 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004117945 ns/op,  308792 B/op,    1733 allocs/op
+BenchmarkStd,    1000,   2402634 ns/op,  313937 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2316963 ns/op,  313026 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81552 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1154087 ns/op,  285055 B/op,    1562 allocs/op
+BenchmarkInit,       1,5422936183 ns/op,737630152 B/op, 9001739 allocs/op
+BenchmarkGeneExpression,     500,   4885404 ns/op,  317851 B/op,    1685 allocs/op
+BenchmarkAverageDiff,       1,1004341737 ns/op,  310680 B/op,    1734 allocs/op
+BenchmarkStd,    1000,   2357662 ns/op,  314085 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2301055 ns/op,  313181 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     80466 ns/op,    7926 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1142594 ns/op,  285052 B/op,    1562 allocs/op
+BenchmarkInit,       1,5184846246 ns/op,737751864 B/op, 9002322 allocs/op
+BenchmarkGeneExpression,     500,   4944285 ns/op,  317878 B/op,    1685 allocs/op
+BenchmarkAverageDiff,       1,1004440639 ns/op,  310648 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2370843 ns/op,  313977 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2284871 ns/op,  313842 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     80742 ns/op,    7926 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1142291 ns/op,  285045 B/op,    1562 allocs/op
+BenchmarkInit,       1,5496646966 ns/op,737772072 B/op, 9002432 allocs/op
+BenchmarkGeneExpression,     500,   4931460 ns/op,  317919 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004615337 ns/op,  310616 B/op,    1734 allocs/op
+BenchmarkStd,    1000,   2368384 ns/op,  314069 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2294549 ns/op,  314039 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     81056 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1135975 ns/op,  285098 B/op,    1562 allocs/op
+BenchmarkInit,       1,5551127624 ns/op,737869944 B/op, 9002920 allocs/op
+BenchmarkGeneExpression,     500,   4992399 ns/op,  317946 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004598981 ns/op,  312376 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2376124 ns/op,  314174 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2294992 ns/op,  313259 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     80063 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1147225 ns/op,  285074 B/op,    1562 allocs/op
+BenchmarkInit,       1,5196780330 ns/op,737753112 B/op, 9002386 allocs/op
+BenchmarkGeneExpression,     500,   4940052 ns/op,  317979 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004668944 ns/op,  313496 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2360217 ns/op,  313998 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2292069 ns/op,  314163 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     81206 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1174321 ns/op,  285058 B/op,    1562 allocs/op
+BenchmarkInit,       1,5166788261 ns/op,737690280 B/op, 9002000 allocs/op
+BenchmarkGeneExpression,     500,   4961597 ns/op,  317826 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1005120959 ns/op,  312520 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2384824 ns/op,  314036 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2292247 ns/op,  313738 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     79606 ns/op,    7934 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1143612 ns/op,  285017 B/op,    1562 allocs/op
+BenchmarkInit,       1,5148705502 ns/op,737683176 B/op, 9002134 allocs/op
+BenchmarkGeneExpression,     500,   5005457 ns/op,  317842 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1002643529 ns/op,  312344 B/op,    1734 allocs/op
+BenchmarkStd,    1000,   2366222 ns/op,  314052 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2273320 ns/op,  313615 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     81449 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1134116 ns/op,  285049 B/op,    1562 allocs/op
+BenchmarkInit,       1,5537010030 ns/op,737756088 B/op, 9002425 allocs/op
+BenchmarkGeneExpression,     500,   4955965 ns/op,  317925 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1002699240 ns/op,  312168 B/op,    1733 allocs/op
+BenchmarkStd,    1000,   2380477 ns/op,  314052 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2305229 ns/op,  314226 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     80345 ns/op,    7933 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1136210 ns/op,  285087 B/op,    1562 allocs/op
+BenchmarkInit,       1,5567856225 ns/op,737669736 B/op, 9001970 allocs/op
+BenchmarkGeneExpression,     500,   4925701 ns/op,  317929 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003442539 ns/op,  355896 B/op,    1738 allocs/op
+BenchmarkStd,    1000,   2365726 ns/op,  314045 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2289091 ns/op,  313094 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81556 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1140354 ns/op,  285099 B/op,    1562 allocs/op
+BenchmarkInit,       1,5510086783 ns/op,737633032 B/op, 9001823 allocs/op
+BenchmarkGeneExpression,     500,   5041772 ns/op,  317986 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004359720 ns/op,  312664 B/op,    1738 allocs/op
+BenchmarkStd,    1000,   2375943 ns/op,  314107 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2301238 ns/op,  313191 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     79799 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1140253 ns/op,  285063 B/op,    1562 allocs/op
+BenchmarkInit,       1,5540106275 ns/op,737812360 B/op, 9002677 allocs/op
+BenchmarkGeneExpression,     500,   4945329 ns/op,  317995 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004665532 ns/op,  313736 B/op,    1738 allocs/op
+BenchmarkStd,    1000,   2365264 ns/op,  314021 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2286335 ns/op,  313963 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     80344 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1136667 ns/op,  285070 B/op,    1562 allocs/op
+BenchmarkInit,       1,5167956613 ns/op,737776904 B/op, 9002437 allocs/op
+BenchmarkGeneExpression,     500,   4926449 ns/op,  317828 B/op,    1685 allocs/op
+BenchmarkAverageDiff,       1,1004285564 ns/op,  312536 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2370954 ns/op,  314189 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2291902 ns/op,  313615 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     83891 ns/op,    7926 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1141194 ns/op,  285105 B/op,    1562 allocs/op
+BenchmarkInit,       1,5163819161 ns/op,737701240 B/op, 9002095 allocs/op
+BenchmarkGeneExpression,     500,   4938499 ns/op,  318146 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003922048 ns/op,  310696 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2374380 ns/op,  314131 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2286683 ns/op,  313214 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     83242 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1139630 ns/op,  285061 B/op,    1562 allocs/op
+BenchmarkInit,       1,5176291397 ns/op,737744984 B/op, 9002351 allocs/op
+BenchmarkGeneExpression,     500,   4914090 ns/op,  317700 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003554155 ns/op,  355816 B/op,    1739 allocs/op
+BenchmarkStd,    1000,   2353122 ns/op,  314034 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2304926 ns/op,  314017 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     82023 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1142940 ns/op,  285122 B/op,    1562 allocs/op
+BenchmarkInit,       1,5518057816 ns/op,737640472 B/op, 9001880 allocs/op
+BenchmarkGeneExpression,     500,   4946611 ns/op,  317979 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003422586 ns/op,  356008 B/op,    1741 allocs/op
+BenchmarkStd,    1000,   2357895 ns/op,  313992 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2303197 ns/op,  313586 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     80976 ns/op,    7935 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1141311 ns/op,  285098 B/op,    1562 allocs/op
+BenchmarkInit,       1,5145376972 ns/op,737751368 B/op, 9002380 allocs/op
+BenchmarkGeneExpression,     500,   4905028 ns/op,  318038 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004724792 ns/op,  353496 B/op,    1741 allocs/op
+BenchmarkStd,    1000,   2345307 ns/op,  313931 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2295716 ns/op,  313440 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81696 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1138370 ns/op,  285092 B/op,    1562 allocs/op
+BenchmarkInit,       1,5166414313 ns/op,737701592 B/op, 9002075 allocs/op
+BenchmarkGeneExpression,     500,   4990473 ns/op,  317910 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003960755 ns/op,  354280 B/op,    1739 allocs/op
+BenchmarkStd,    1000,   2355688 ns/op,  313996 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2290595 ns/op,  313092 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     83182 ns/op,    7926 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1141995 ns/op,  285104 B/op,    1562 allocs/op
+BenchmarkInit,       1,5543316621 ns/op,737660520 B/op, 9001921 allocs/op
+BenchmarkGeneExpression,     500,   4922891 ns/op,  317896 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003953106 ns/op,  355944 B/op,    1739 allocs/op
+BenchmarkStd,    1000,   2367843 ns/op,  313949 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2297085 ns/op,  313955 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     83861 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1134892 ns/op,  285115 B/op,    1562 allocs/op
+BenchmarkInit,       1,5499166985 ns/op,737836968 B/op, 9002619 allocs/op
+BenchmarkGeneExpression,     500,   4942564 ns/op,  317966 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003886511 ns/op,  312456 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2364678 ns/op,  313943 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2280775 ns/op,  313619 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     83457 ns/op,    7934 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1144807 ns/op,  285053 B/op,    1562 allocs/op
+BenchmarkInit,       1,5509132071 ns/op,737842264 B/op, 9002666 allocs/op
+BenchmarkGeneExpression,     500,   4950314 ns/op,  317770 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004578860 ns/op,  312296 B/op,    1734 allocs/op
+BenchmarkStd,    1000,   2365571 ns/op,  313912 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2285413 ns/op,  313947 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     81350 ns/op,    7928 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1136897 ns/op,  285067 B/op,    1562 allocs/op
+BenchmarkInit,       1,5139104743 ns/op,737681512 B/op, 9001962 allocs/op
+BenchmarkGeneExpression,     500,   4938797 ns/op,  317946 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1005914421 ns/op,  356088 B/op,    1742 allocs/op
+BenchmarkStd,    1000,   2370491 ns/op,  313979 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2276613 ns/op,  313722 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81300 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1135383 ns/op,  285055 B/op,    1562 allocs/op
+BenchmarkInit,       1,5135116638 ns/op,737737576 B/op, 9002350 allocs/op
+BenchmarkGeneExpression,     500,   5055749 ns/op,  317876 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004693587 ns/op,  355752 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2353243 ns/op,  314078 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2285411 ns/op,  313770 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     82442 ns/op,    7929 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1135126 ns/op,  285041 B/op,    1562 allocs/op
+BenchmarkInit,       1,5512215871 ns/op,737740440 B/op, 9002314 allocs/op
+BenchmarkGeneExpression,     500,   5016265 ns/op,  317970 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004775780 ns/op,  356232 B/op,    1742 allocs/op
+BenchmarkStd,    1000,   2344265 ns/op,  313986 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2288090 ns/op,  313986 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     81500 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1140397 ns/op,  285082 B/op,    1562 allocs/op
+BenchmarkInit,       1,5168004227 ns/op,737622056 B/op, 9001664 allocs/op
+BenchmarkGeneExpression,     500,   4936453 ns/op,  317812 B/op,    1685 allocs/op
+BenchmarkAverageDiff,       1,1005095291 ns/op,  312952 B/op,    1741 allocs/op
+BenchmarkStd,    1000,   2365011 ns/op,  314092 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2314089 ns/op,  313150 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81702 ns/op,    7926 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1135374 ns/op,  285027 B/op,    1562 allocs/op
+BenchmarkInit,       1,5176505384 ns/op,737682056 B/op, 9002020 allocs/op
+BenchmarkGeneExpression,     500,   4979600 ns/op,  318092 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1002659809 ns/op,  312472 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2371478 ns/op,  313888 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2291961 ns/op,  312960 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     80064 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1137624 ns/op,  285029 B/op,    1562 allocs/op
+BenchmarkInit,       1,5170110652 ns/op,737749720 B/op, 9002408 allocs/op
+BenchmarkGeneExpression,     500,   5091575 ns/op,  318173 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003854936 ns/op,  354280 B/op,    1739 allocs/op
+BenchmarkStd,    1000,   2343971 ns/op,  314015 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2274760 ns/op,  314100 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     81145 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1137634 ns/op,  285061 B/op,    1562 allocs/op
+BenchmarkInit,       1,5195691186 ns/op,737718120 B/op, 9002143 allocs/op
+BenchmarkGeneExpression,     500,   5044097 ns/op,  317889 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004464426 ns/op,  354360 B/op,    1740 allocs/op
+BenchmarkStd,    1000,   2359088 ns/op,  314002 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2285550 ns/op,  313718 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81808 ns/op,    7932 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1138583 ns/op,  285088 B/op,    1562 allocs/op
+BenchmarkInit,       1,5178388040 ns/op,737761624 B/op, 9002220 allocs/op
+BenchmarkGeneExpression,     500,   4920866 ns/op,  317866 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003746355 ns/op,  312632 B/op,    1738 allocs/op
+BenchmarkStd,    1000,   2365771 ns/op,  313712 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2289995 ns/op,  313428 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     82985 ns/op,    7926 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1137844 ns/op,  285049 B/op,    1562 allocs/op
+BenchmarkInit,       1,5133660195 ns/op,737684248 B/op, 9002007 allocs/op
+BenchmarkGeneExpression,     500,   5037194 ns/op,  317763 B/op,    1685 allocs/op
+BenchmarkAverageDiff,       1,1003187203 ns/op,  312376 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2355696 ns/op,  313951 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2311803 ns/op,  313393 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     82094 ns/op,    7926 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1136745 ns/op,  285063 B/op,    1562 allocs/op
+BenchmarkInit,       1,5537731749 ns/op,737690920 B/op, 9002159 allocs/op
+BenchmarkGeneExpression,     500,   5016345 ns/op,  317998 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004601045 ns/op,  312360 B/op,    1734 allocs/op
+BenchmarkStd,    1000,   2377382 ns/op,  313939 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2289630 ns/op,  313972 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     82552 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1137674 ns/op,  285090 B/op,    1562 allocs/op
+BenchmarkInit,       1,5511080331 ns/op,737766472 B/op, 9002451 allocs/op
+BenchmarkGeneExpression,     500,   4930517 ns/op,  317913 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004694356 ns/op,  312296 B/op,    1734 allocs/op
+BenchmarkStd,    1000,   2358460 ns/op,  314032 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2304802 ns/op,  313961 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     81367 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1134076 ns/op,  285064 B/op,    1562 allocs/op
+BenchmarkInit,       1,5547127624 ns/op,737668520 B/op, 9002010 allocs/op
+BenchmarkGeneExpression,     500,   4917966 ns/op,  318109 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004293414 ns/op,  312584 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2367558 ns/op,  313910 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2282236 ns/op,  313409 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     80708 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1138098 ns/op,  285069 B/op,    1562 allocs/op
+BenchmarkInit,       1,5472921581 ns/op,737692808 B/op, 9002038 allocs/op
+BenchmarkGeneExpression,     500,   5004685 ns/op,  317927 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003900852 ns/op,  310680 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2359285 ns/op,  314096 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2289154 ns/op,  313113 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     80628 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1138079 ns/op,  285114 B/op,    1562 allocs/op
+BenchmarkInit,       1,5501647745 ns/op,737691672 B/op, 9002127 allocs/op
+BenchmarkGeneExpression,     500,   5064136 ns/op,  317815 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004790083 ns/op,  312456 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2369466 ns/op,  313950 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2283023 ns/op,  313064 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81186 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1141136 ns/op,  285037 B/op,    1562 allocs/op
+BenchmarkInit,       1,5203294679 ns/op,737674520 B/op, 9002020 allocs/op
+BenchmarkGeneExpression,     500,   4985752 ns/op,  317882 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004502220 ns/op,  312632 B/op,    1738 allocs/op
+BenchmarkStd,    1000,   2359043 ns/op,  313928 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2279529 ns/op,  313103 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     80346 ns/op,    7926 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1136857 ns/op,  285045 B/op,    1562 allocs/op
+BenchmarkInit,       1,5504217235 ns/op,737681144 B/op, 9002048 allocs/op
+BenchmarkGeneExpression,     500,   5031145 ns/op,  317996 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003293434 ns/op,  312376 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2369686 ns/op,  313804 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2284783 ns/op,  312876 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     76551 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1138243 ns/op,  285081 B/op,    1562 allocs/op
+BenchmarkInit,       1,5488203184 ns/op,737742776 B/op, 9002374 allocs/op
+BenchmarkGeneExpression,     500,   4941995 ns/op,  317979 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004702610 ns/op,  312472 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2366278 ns/op,  314021 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2282173 ns/op,  314233 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     82660 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1136036 ns/op,  285058 B/op,    1562 allocs/op
+BenchmarkInit,       1,5482460767 ns/op,737672712 B/op, 9001974 allocs/op
+BenchmarkGeneExpression,     500,   5042879 ns/op,  317945 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004564321 ns/op,  354584 B/op,    1742 allocs/op
+BenchmarkStd,    1000,   2367752 ns/op,  314187 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2302970 ns/op,  314213 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     81658 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1134276 ns/op,  285086 B/op,    1562 allocs/op
+BenchmarkInit,       1,5141720083 ns/op,737653832 B/op, 9001892 allocs/op
+BenchmarkGeneExpression,     500,   4960015 ns/op,  317943 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1005420233 ns/op,  312552 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2362248 ns/op,  313840 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2280197 ns/op,  314026 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     80771 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1140249 ns/op,  285047 B/op,    1562 allocs/op
+BenchmarkInit,       1,5500262345 ns/op,737711768 B/op, 9002192 allocs/op
+BenchmarkGeneExpression,     500,   5094072 ns/op,  317954 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1002874095 ns/op,  312552 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2373923 ns/op,  313991 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2308308 ns/op,  313101 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81455 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1144173 ns/op,  285049 B/op,    1562 allocs/op
+BenchmarkInit,       1,5524504831 ns/op,737740152 B/op, 9002333 allocs/op
+BenchmarkGeneExpression,     500,   5006798 ns/op,  317923 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003795379 ns/op,  312328 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2375575 ns/op,  314020 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2287081 ns/op,  313602 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     80611 ns/op,    7928 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1149669 ns/op,  285048 B/op,    1562 allocs/op
+BenchmarkInit,       1,5173608018 ns/op,737717640 B/op, 9002162 allocs/op
+BenchmarkGeneExpression,     500,   5003796 ns/op,  317817 B/op,    1685 allocs/op
+BenchmarkAverageDiff,       1,1004672671 ns/op,  312552 B/op,    1738 allocs/op
+BenchmarkStd,    1000,   2381836 ns/op,  314140 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2294476 ns/op,  313907 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     79340 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1139379 ns/op,  285088 B/op,    1562 allocs/op
+BenchmarkInit,       1,5179863597 ns/op,737683256 B/op, 9001994 allocs/op
+BenchmarkGeneExpression,     500,   4931439 ns/op,  317947 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004080530 ns/op,  312568 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2347249 ns/op,  314124 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2290192 ns/op,  313235 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81450 ns/op,    7926 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1140452 ns/op,  285070 B/op,    1562 allocs/op
+BenchmarkInit,       1,5494606417 ns/op,737627080 B/op, 9001845 allocs/op
+BenchmarkGeneExpression,     500,   5002371 ns/op,  318038 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004343725 ns/op,  312536 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2353602 ns/op,  313916 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2298496 ns/op,  312972 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     82012 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1141767 ns/op,  285067 B/op,    1562 allocs/op
+BenchmarkInit,       1,5523790350 ns/op,737738776 B/op, 9002326 allocs/op
+BenchmarkGeneExpression,     500,   5034311 ns/op,  318095 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004740416 ns/op,  312856 B/op,    1739 allocs/op
+BenchmarkStd,    1000,   2357350 ns/op,  314103 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2297677 ns/op,  314155 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     81192 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1145672 ns/op,  285113 B/op,    1562 allocs/op
+BenchmarkInit,       1,5511347386 ns/op,737816984 B/op, 9002697 allocs/op
+BenchmarkGeneExpression,     500,   4990937 ns/op,  317890 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004694529 ns/op,  312168 B/op,    1733 allocs/op
+BenchmarkStd,    1000,   2350720 ns/op,  314248 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2286901 ns/op,  314297 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     82110 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1138800 ns/op,  285098 B/op,    1562 allocs/op
+BenchmarkInit,       1,5500060813 ns/op,737698488 B/op, 9002124 allocs/op
+BenchmarkGeneExpression,     500,   5071349 ns/op,  317726 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003900260 ns/op,  311160 B/op,    1739 allocs/op
+BenchmarkStd,    1000,   2378315 ns/op,  313965 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2298406 ns/op,  314003 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     80695 ns/op,    7928 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1137782 ns/op,  285120 B/op,    1562 allocs/op
+BenchmarkInit,       1,5504225409 ns/op,737793304 B/op, 9002625 allocs/op
+BenchmarkGeneExpression,     500,   4890357 ns/op,  317891 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004693600 ns/op,  312664 B/op,    1738 allocs/op
+BenchmarkStd,    1000,   2367685 ns/op,  313952 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2278338 ns/op,  313068 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     80903 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1142532 ns/op,  285061 B/op,    1562 allocs/op
+BenchmarkInit,       1,5503668995 ns/op,737756776 B/op, 9002412 allocs/op
+BenchmarkGeneExpression,     500,   4981690 ns/op,  318051 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003885744 ns/op,  357304 B/op,    1742 allocs/op
+BenchmarkStd,    1000,   2367400 ns/op,  313867 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2292254 ns/op,  313046 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81473 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1133033 ns/op,  285052 B/op,    1562 allocs/op
+BenchmarkInit,       1,5158532114 ns/op,737694936 B/op, 9002169 allocs/op
+BenchmarkGeneExpression,     500,   5009425 ns/op,  317925 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004701112 ns/op,  312568 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2359680 ns/op,  314015 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2294151 ns/op,  313715 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     80219 ns/op,    7933 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1140085 ns/op,  285037 B/op,    1562 allocs/op
+BenchmarkInit,       1,5509583548 ns/op,737639848 B/op, 9001835 allocs/op
+BenchmarkGeneExpression,     500,   4842148 ns/op,  318013 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004779675 ns/op,  312568 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2389002 ns/op,  313715 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2296558 ns/op,  313377 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81653 ns/op,    7928 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1139038 ns/op,  285058 B/op,    1562 allocs/op
+BenchmarkInit,       1,5177031722 ns/op,737699704 B/op, 9002146 allocs/op
+BenchmarkGeneExpression,     500,   5055848 ns/op,  318049 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004721830 ns/op,  310520 B/op,    1738 allocs/op
+BenchmarkStd,    1000,   2361599 ns/op,  314062 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2291267 ns/op,  313754 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     83393 ns/op,    7926 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1134073 ns/op,  285060 B/op,    1562 allocs/op
+BenchmarkInit,       1,5139225077 ns/op,737549400 B/op, 9001268 allocs/op
+BenchmarkGeneExpression,     500,   4925259 ns/op,  317975 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1005216534 ns/op,  312408 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2361473 ns/op,  314050 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2284750 ns/op,  313168 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     80887 ns/op,    7926 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1143727 ns/op,  285067 B/op,    1562 allocs/op
+BenchmarkInit,       1,5140087245 ns/op,737578376 B/op, 9001456 allocs/op
+BenchmarkGeneExpression,     500,   5056333 ns/op,  317884 B/op,    1685 allocs/op
+BenchmarkAverageDiff,       1,1006053482 ns/op,  312456 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2357332 ns/op,  313872 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2281498 ns/op,  313782 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     78224 ns/op,    7929 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1142284 ns/op,  285088 B/op,    1562 allocs/op
+BenchmarkInit,       1,5496863671 ns/op,737710696 B/op, 9001958 allocs/op
+BenchmarkGeneExpression,     500,   4885327 ns/op,  318013 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1005685278 ns/op,  312376 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2343475 ns/op,  314145 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2301560 ns/op,  314059 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     81067 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1136562 ns/op,  285047 B/op,    1562 allocs/op
+BenchmarkInit,       1,5512929836 ns/op,737808552 B/op, 9002647 allocs/op
+BenchmarkGeneExpression,     500,   4969276 ns/op,  317957 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004725771 ns/op,  312296 B/op,    1734 allocs/op
+BenchmarkStd,    1000,   2352954 ns/op,  314005 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2296889 ns/op,  313004 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81818 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1143773 ns/op,  285072 B/op,    1562 allocs/op
+BenchmarkInit,       1,5175411250 ns/op,737670024 B/op, 9002010 allocs/op
+BenchmarkGeneExpression,     500,   5021980 ns/op,  317827 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1005072624 ns/op,  310520 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2363225 ns/op,  314042 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2295729 ns/op,  313897 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     79794 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1138777 ns/op,  285066 B/op,    1562 allocs/op
+BenchmarkInit,       1,5484056405 ns/op,737712952 B/op, 9002183 allocs/op
+BenchmarkGeneExpression,     500,   5013770 ns/op,  317781 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004831047 ns/op,  310920 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2363939 ns/op,  314176 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2292397 ns/op,  313918 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     80800 ns/op,    7929 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1138714 ns/op,  285078 B/op,    1562 allocs/op
+BenchmarkInit,       1,5570715808 ns/op,737809016 B/op, 9002668 allocs/op
+BenchmarkGeneExpression,     500,   4838436 ns/op,  317912 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004630453 ns/op,  312376 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2361695 ns/op,  313976 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2295649 ns/op,  314167 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     81551 ns/op,    7928 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1141745 ns/op,  285124 B/op,    1562 allocs/op
+BenchmarkInit,       1,5155714343 ns/op,737569992 B/op, 9001427 allocs/op
+BenchmarkGeneExpression,     500,   4995516 ns/op,  318010 B/op,    1685 allocs/op
+BenchmarkAverageDiff,       1,1004319061 ns/op,  312376 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2361096 ns/op,  313882 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2312940 ns/op,  314123 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     80159 ns/op,    7926 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1137867 ns/op,  285084 B/op,    1562 allocs/op
+BenchmarkInit,       1,5555850149 ns/op,737840088 B/op, 9002814 allocs/op
+BenchmarkGeneExpression,     500,   5035278 ns/op,  318065 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004693201 ns/op,  356120 B/op,    1740 allocs/op
+BenchmarkStd,    1000,   2349621 ns/op,  314209 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2291884 ns/op,  313232 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     79744 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1142998 ns/op,  285055 B/op,    1562 allocs/op
+BenchmarkInit,       1,5507730900 ns/op,737720344 B/op, 9002319 allocs/op
+BenchmarkGeneExpression,     500,   4972546 ns/op,  318113 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003358084 ns/op,  312456 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2376380 ns/op,  313911 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2297654 ns/op,  313387 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     80807 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1149657 ns/op,  285074 B/op,    1562 allocs/op
+BenchmarkInit,       1,5182097866 ns/op,737677736 B/op, 9001954 allocs/op
+BenchmarkGeneExpression,     500,   4900867 ns/op,  317976 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1002830932 ns/op,  312504 B/op,    1738 allocs/op
+BenchmarkStd,    1000,   2369430 ns/op,  314056 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2294311 ns/op,  313831 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81628 ns/op,    7931 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1140965 ns/op,  285065 B/op,    1562 allocs/op
+BenchmarkInit,       1,5489920503 ns/op,737731336 B/op, 9002341 allocs/op
+BenchmarkGeneExpression,     500,   5014914 ns/op,  318101 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003455885 ns/op,  310648 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2461161 ns/op,  313955 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2295535 ns/op,  313920 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     82082 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1144452 ns/op,  285097 B/op,    1562 allocs/op
+BenchmarkInit,       1,5558599859 ns/op,737820216 B/op, 9002739 allocs/op
+BenchmarkGeneExpression,     500,   4887430 ns/op,  318016 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004649176 ns/op,  313608 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2351656 ns/op,  314065 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2302824 ns/op,  313155 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     82589 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1136170 ns/op,  285057 B/op,    1562 allocs/op
+BenchmarkInit,       1,5526987089 ns/op,737690328 B/op, 9002068 allocs/op
+BenchmarkGeneExpression,     500,   5016510 ns/op,  317915 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003049080 ns/op,  355864 B/op,    1738 allocs/op
+BenchmarkStd,    1000,   2366376 ns/op,  314002 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2284775 ns/op,  312993 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     83648 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1143143 ns/op,  285079 B/op,    1562 allocs/op
+BenchmarkInit,       1,5520952307 ns/op,737654840 B/op, 9001937 allocs/op
+BenchmarkGeneExpression,     500,   4952080 ns/op,  318074 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003599007 ns/op,  356024 B/op,    1741 allocs/op
+BenchmarkStd,    1000,   2364891 ns/op,  313919 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2295182 ns/op,  313640 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     77225 ns/op,    7931 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1137407 ns/op,  285091 B/op,    1562 allocs/op
+BenchmarkInit,       1,5179636278 ns/op,737658344 B/op, 9001881 allocs/op
+BenchmarkGeneExpression,     500,   4960059 ns/op,  318002 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003918774 ns/op,  312616 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2369612 ns/op,  314008 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2286281 ns/op,  313109 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     85067 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1135764 ns/op,  285066 B/op,    1562 allocs/op
+BenchmarkInit,       1,5142520652 ns/op,737742632 B/op, 9002322 allocs/op
+BenchmarkGeneExpression,     500,   4992724 ns/op,  317994 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003091499 ns/op,  312168 B/op,    1733 allocs/op
+BenchmarkStd,    1000,   2345911 ns/op,  314039 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2292565 ns/op,  314028 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     81102 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1143269 ns/op,  285051 B/op,    1562 allocs/op
+BenchmarkInit,       1,5530607785 ns/op,737639752 B/op, 9001843 allocs/op
+BenchmarkGeneExpression,     500,   4936359 ns/op,  317883 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004279999 ns/op,  312584 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2352507 ns/op,  313976 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2281704 ns/op,  313724 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     80673 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1148526 ns/op,  285062 B/op,    1562 allocs/op
+BenchmarkInit,       1,5477980416 ns/op,737674920 B/op, 9002078 allocs/op
+BenchmarkGeneExpression,     500,   4961383 ns/op,  317569 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004673736 ns/op,  312216 B/op,    1733 allocs/op
+BenchmarkStd,    1000,   2364002 ns/op,  314093 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2293431 ns/op,  314218 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     80011 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1140856 ns/op,  285112 B/op,    1562 allocs/op
+BenchmarkInit,       1,5522710643 ns/op,737616696 B/op, 9001760 allocs/op
+BenchmarkGeneExpression,     500,   4962094 ns/op,  318028 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004153650 ns/op,  312376 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2374420 ns/op,  314084 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2302761 ns/op,  313755 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     80954 ns/op,    7931 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1137875 ns/op,  285090 B/op,    1562 allocs/op
+BenchmarkInit,       1,5143087025 ns/op,737644488 B/op, 9001852 allocs/op
+BenchmarkGeneExpression,     500,   4987015 ns/op,  317889 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004650761 ns/op,  310568 B/op,    1734 allocs/op
+BenchmarkStd,    1000,   2352240 ns/op,  314004 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2301872 ns/op,  313115 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     80357 ns/op,    7926 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1136031 ns/op,  285075 B/op,    1562 allocs/op
+BenchmarkInit,       1,5497664363 ns/op,737696808 B/op, 9002130 allocs/op
+BenchmarkGeneExpression,     500,   4991828 ns/op,  317815 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004500040 ns/op,  313784 B/op,    1739 allocs/op
+BenchmarkStd,    1000,   2370832 ns/op,  314064 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2302759 ns/op,  314087 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     80796 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1141278 ns/op,  285122 B/op,    1562 allocs/op
+BenchmarkInit,       1,5517638744 ns/op,737765864 B/op, 9002530 allocs/op
+BenchmarkGeneExpression,     500,   4909227 ns/op,  317973 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1006491571 ns/op,  310488 B/op,    1733 allocs/op
+BenchmarkStd,    1000,   2355113 ns/op,  313952 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2280285 ns/op,  313539 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     79409 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1141396 ns/op,  285055 B/op,    1562 allocs/op
+BenchmarkInit,       1,5507626473 ns/op,737649800 B/op, 9001974 allocs/op
+BenchmarkGeneExpression,     500,   4948625 ns/op,  318017 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004783494 ns/op,  312552 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2364655 ns/op,  314024 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2284223 ns/op,  313725 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     82571 ns/op,    7932 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1142549 ns/op,  285035 B/op,    1562 allocs/op
+BenchmarkInit,       1,5472984595 ns/op,737760952 B/op, 9002552 allocs/op
+BenchmarkGeneExpression,     500,   5039598 ns/op,  317965 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004533144 ns/op,  312296 B/op,    1734 allocs/op
+BenchmarkStd,    1000,   2369192 ns/op,  313933 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2276173 ns/op,  313057 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     80862 ns/op,    7928 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1137224 ns/op,  285052 B/op,    1562 allocs/op
+BenchmarkInit,       1,5144115557 ns/op,737728808 B/op, 9002301 allocs/op
+BenchmarkGeneExpression,     500,   4873637 ns/op,  318044 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004054893 ns/op,  355880 B/op,    1738 allocs/op
+BenchmarkStd,    1000,   2359752 ns/op,  313971 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2290971 ns/op,  313530 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81457 ns/op,    7935 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1146150 ns/op,  285074 B/op,    1562 allocs/op
+BenchmarkInit,       1,5525437455 ns/op,737710088 B/op, 9002002 allocs/op
+BenchmarkGeneExpression,     500,   4914107 ns/op,  317962 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004602999 ns/op,  310920 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2372851 ns/op,  314025 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2283711 ns/op,  313120 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81923 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1145788 ns/op,  285104 B/op,    1562 allocs/op
+BenchmarkInit,       1,5139985230 ns/op,737590808 B/op, 9001532 allocs/op
+BenchmarkGeneExpression,     500,   4969898 ns/op,  317831 B/op,    1685 allocs/op
+BenchmarkAverageDiff,       1,1004632140 ns/op,  312520 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2365711 ns/op,  314042 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2295607 ns/op,  313657 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     82206 ns/op,    7934 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1145251 ns/op,  285038 B/op,    1562 allocs/op
+BenchmarkInit,       1,5170621868 ns/op,737852744 B/op, 9002868 allocs/op
+BenchmarkGeneExpression,     500,   4998937 ns/op,  318002 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004754709 ns/op,  312376 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2351390 ns/op,  314045 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2284471 ns/op,  313487 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81073 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1139280 ns/op,  285050 B/op,    1562 allocs/op
+BenchmarkInit,       1,5493594090 ns/op,737783464 B/op, 9002563 allocs/op
+BenchmarkGeneExpression,     500,   5079137 ns/op,  318080 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004709353 ns/op,  312248 B/op,    1734 allocs/op
+BenchmarkStd,    1000,   2354275 ns/op,  313985 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2293131 ns/op,  313678 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     81371 ns/op,    7935 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1137312 ns/op,  285056 B/op,    1562 allocs/op
+BenchmarkInit,       1,5512676771 ns/op,737809272 B/op, 9002633 allocs/op
+BenchmarkGeneExpression,     500,   5016865 ns/op,  317977 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004699456 ns/op,  312440 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2370181 ns/op,  314048 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2299555 ns/op,  314077 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     81093 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1135329 ns/op,  285101 B/op,    1562 allocs/op
+BenchmarkInit,       1,5506130380 ns/op,737783128 B/op, 9002531 allocs/op
+BenchmarkGeneExpression,     500,   4971547 ns/op,  317788 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003165737 ns/op,  310856 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2358590 ns/op,  314007 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2287349 ns/op,  313960 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     81512 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1140843 ns/op,  285089 B/op,    1562 allocs/op
+BenchmarkInit,       1,5541542184 ns/op,737759784 B/op, 9002389 allocs/op
+BenchmarkGeneExpression,     500,   4929741 ns/op,  318004 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004734009 ns/op,  310776 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2365817 ns/op,  313974 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2295247 ns/op,  314205 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     82262 ns/op,    7932 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1141949 ns/op,  285078 B/op,    1562 allocs/op
+BenchmarkInit,       1,5150340860 ns/op,737660536 B/op, 9001897 allocs/op
+BenchmarkGeneExpression,     500,   5033434 ns/op,  317954 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003523278 ns/op,  312456 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2349968 ns/op,  314050 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2294428 ns/op,  313021 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81640 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1140920 ns/op,  285095 B/op,    1562 allocs/op
+BenchmarkInit,       1,5543526568 ns/op,737693128 B/op, 9002123 allocs/op
+BenchmarkGeneExpression,     500,   4959832 ns/op,  317882 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004850491 ns/op,  309064 B/op,    1734 allocs/op
+BenchmarkStd,    1000,   2357083 ns/op,  314056 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2309437 ns/op,  313397 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     80991 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1140489 ns/op,  285080 B/op,    1562 allocs/op
+BenchmarkInit,       1,5152058326 ns/op,737627512 B/op, 9001689 allocs/op
+BenchmarkGeneExpression,     500,   4928606 ns/op,  317893 B/op,    1685 allocs/op
+BenchmarkAverageDiff,       1,1002982409 ns/op,  312744 B/op,    1739 allocs/op
+BenchmarkStd,    1000,   2379704 ns/op,  314023 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2312656 ns/op,  313769 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81375 ns/op,    7928 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1142189 ns/op,  285043 B/op,    1562 allocs/op
+BenchmarkInit,       1,5140706093 ns/op,737801256 B/op, 9002645 allocs/op
+BenchmarkGeneExpression,     500,   4935322 ns/op,  318094 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004694945 ns/op,  312776 B/op,    1739 allocs/op
+BenchmarkStd,    1000,   2381350 ns/op,  313872 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2279722 ns/op,  313580 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81955 ns/op,    7932 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1147663 ns/op,  285053 B/op,    1562 allocs/op
+BenchmarkInit,       1,5492335479 ns/op,737682936 B/op, 9002087 allocs/op
+BenchmarkGeneExpression,     500,   4967928 ns/op,  317966 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004599281 ns/op,  312456 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2356333 ns/op,  314167 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2303773 ns/op,  314158 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     81444 ns/op,    7929 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1137577 ns/op,  285102 B/op,    1562 allocs/op
+BenchmarkInit,       1,5147107851 ns/op,737699304 B/op, 9002093 allocs/op
+BenchmarkGeneExpression,     500,   4947554 ns/op,  318033 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004623215 ns/op,  312312 B/op,    1734 allocs/op
+BenchmarkStd,    1000,   2349107 ns/op,  313942 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2283005 ns/op,  312969 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81133 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1142017 ns/op,  285061 B/op,    1562 allocs/op
+BenchmarkInit,       1,5483571045 ns/op,737698872 B/op, 9002055 allocs/op
+BenchmarkGeneExpression,     500,   4947748 ns/op,  318102 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1006162892 ns/op,  356168 B/op,    1741 allocs/op
+BenchmarkStd,    1000,   2440889 ns/op,  314054 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2285683 ns/op,  313073 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     82230 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1153604 ns/op,  285060 B/op,    1562 allocs/op
+BenchmarkInit,       1,5158205442 ns/op,737705816 B/op, 9002113 allocs/op
+BenchmarkGeneExpression,     500,   4912637 ns/op,  318103 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004673108 ns/op,  310600 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2371536 ns/op,  314178 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2297409 ns/op,  313781 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     80249 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1139340 ns/op,  285081 B/op,    1562 allocs/op
+BenchmarkInit,       1,5195091704 ns/op,737701016 B/op, 9001896 allocs/op
+BenchmarkGeneExpression,     500,   4936363 ns/op,  317765 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003609798 ns/op,  312520 B/op,    1738 allocs/op
+BenchmarkStd,    1000,   2361616 ns/op,  314036 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2301833 ns/op,  313134 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     82290 ns/op,    7926 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1145589 ns/op,  285035 B/op,    1562 allocs/op
+BenchmarkInit,       1,5170376224 ns/op,737617400 B/op, 9001658 allocs/op
+BenchmarkGeneExpression,     500,   4988715 ns/op,  318037 B/op,    1685 allocs/op
+BenchmarkAverageDiff,       1,1004244284 ns/op,  312488 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2362897 ns/op,  314081 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2305716 ns/op,  313913 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     81608 ns/op,    7932 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1145319 ns/op,  285052 B/op,    1562 allocs/op
+BenchmarkInit,       1,5171770419 ns/op,737662056 B/op, 9001901 allocs/op
+BenchmarkGeneExpression,     500,   5056320 ns/op,  317783 B/op,    1685 allocs/op
+BenchmarkAverageDiff,       1,1004021516 ns/op,  356232 B/op,    1742 allocs/op
+BenchmarkStd,    1000,   2351047 ns/op,  313928 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2292864 ns/op,  314099 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     83433 ns/op,    7928 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1135277 ns/op,  285071 B/op,    1562 allocs/op
+BenchmarkInit,       1,5264767130 ns/op,737715688 B/op, 9002139 allocs/op
+BenchmarkGeneExpression,     500,   4593408 ns/op,  318020 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003218734 ns/op,  310600 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2309605 ns/op,  314060 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2278722 ns/op,  313657 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     79789 ns/op,    7926 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1167122 ns/op,  285106 B/op,    1562 allocs/op
+BenchmarkInit,       1,6636870325 ns/op,737780152 B/op, 9002391 allocs/op
+BenchmarkGeneExpression,     500,   4532900 ns/op,  317867 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1005038050 ns/op,  312376 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2272275 ns/op,  313899 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2213029 ns/op,  313018 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     77706 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1212917 ns/op,  285065 B/op,    1562 allocs/op
+BenchmarkInit,       1,6986380368 ns/op,737751832 B/op, 9002396 allocs/op
+BenchmarkGeneExpression,     500,   4637168 ns/op,  317984 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003168110 ns/op,  312488 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2378374 ns/op,  314038 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2279894 ns/op,  313148 B/op,    1720 allocs/op
+BenchmarkSetScale,   50000,     73113 ns/op,    7958 B/op,      88 allocs/op
+BenchmarkBackground,    2000,   1510858 ns/op,  284980 B/op,    1561 allocs/op
+BenchmarkInit,       1,5680908078 ns/op,737684904 B/op, 9002064 allocs/op
+BenchmarkGeneExpression,     500,   4653562 ns/op,  317858 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004396037 ns/op,  312392 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2331209 ns/op,  313967 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2276917 ns/op,  313104 B/op,    1720 allocs/op
+BenchmarkSetScale,   50000,     74862 ns/op,    7958 B/op,      88 allocs/op
+BenchmarkBackground,    2000,   1163602 ns/op,  285005 B/op,    1562 allocs/op
+BenchmarkInit,       1,5265224429 ns/op,737615880 B/op, 9001695 allocs/op
+BenchmarkGeneExpression,     500,   4936640 ns/op,  317788 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003785525 ns/op,  312472 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2367969 ns/op,  314017 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2241714 ns/op,  314052 B/op,    1721 allocs/op
+BenchmarkSetScale,   50000,     71906 ns/op,    7958 B/op,      88 allocs/op
+BenchmarkBackground,    2000,   1159953 ns/op,  285009 B/op,    1561 allocs/op
+BenchmarkInit,       1,5636774991 ns/op,737784264 B/op, 9002574 allocs/op
+BenchmarkGeneExpression,     500,   4681209 ns/op,  318054 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004452127 ns/op,  310824 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2318325 ns/op,  313927 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2364795 ns/op,  313030 B/op,    1720 allocs/op
+BenchmarkSetScale,   50000,     72600 ns/op,    7958 B/op,      88 allocs/op
+BenchmarkBackground,    2000,   1168089 ns/op,  285007 B/op,    1562 allocs/op
+BenchmarkInit,       1,5606651974 ns/op,737740248 B/op, 9002373 allocs/op
+BenchmarkGeneExpression,     500,   4644785 ns/op,  317961 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003082915 ns/op,  312472 B/op,    1736 allocs/op
+BenchmarkStd,    1000,   2303149 ns/op,  314051 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2220308 ns/op,  314161 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     80247 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1158317 ns/op,  285108 B/op,    1562 allocs/op
+BenchmarkInit,       1,5270963467 ns/op,737707912 B/op, 9002129 allocs/op
+BenchmarkGeneExpression,     500,   4651671 ns/op,  317848 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1002435953 ns/op,  310872 B/op,    1737 allocs/op
+BenchmarkStd,    1000,   2308924 ns/op,  314071 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2239294 ns/op,  313923 B/op,    1720 allocs/op
+BenchmarkSetScale,   50000,     78447 ns/op,    7958 B/op,      88 allocs/op
+BenchmarkBackground,    2000,   1163156 ns/op,  285018 B/op,    1561 allocs/op
+BenchmarkInit,       1,5594114361 ns/op,737665432 B/op, 9002006 allocs/op
+BenchmarkGeneExpression,     500,   4637669 ns/op,  318084 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003471547 ns/op,  312424 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2418817 ns/op,  313984 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2259852 ns/op,  314027 B/op,    1721 allocs/op
+BenchmarkSetScale,   20000,     85906 ns/op,    7927 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1464676 ns/op,  285099 B/op,    1562 allocs/op
+BenchmarkInit,       1,5295812161 ns/op,737626088 B/op, 9001739 allocs/op
+BenchmarkGeneExpression,     500,   4640495 ns/op,  317914 B/op,    1685 allocs/op
+BenchmarkAverageDiff,       1,1003811715 ns/op,  312376 B/op,    1735 allocs/op
+BenchmarkStd,    1000,   2316136 ns/op,  313905 B/op,    1718 allocs/op
+BenchmarkVariance,    1000,   2273942 ns/op,  313679 B/op,    1720 allocs/op
+BenchmarkSetScale,   20000,     75725 ns/op,    7931 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1173995 ns/op,  285035 B/op,    1562 allocs/op
+BenchmarkInit,       1,5373842181 ns/op,737779400 B/op, 9002545 allocs/op
+BenchmarkGeneExpression,     500,   4602675 ns/op,  317865 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004311105 ns/op,  311560 B/op,    1725 allocs/op
+BenchmarkStd,       1,1002587313 ns/op,  308440 B/op,    1686 allocs/op
+BenchmarkVariance,       1,1003085130 ns/op,  306896 B/op,    1690 allocs/op
+BenchmarkSetScale,   20000,     76068 ns/op,    7933 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1213084 ns/op,  284921 B/op,    1562 allocs/op
+BenchmarkInit,       1,5921399209 ns/op,737581896 B/op, 9001469 allocs/op
+BenchmarkGeneExpression,     500,   4612395 ns/op,  318184 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1004740550 ns/op,  311528 B/op,    1725 allocs/op
+BenchmarkStd,       1,1004262108 ns/op,  306984 B/op,    1688 allocs/op
+BenchmarkVariance,       1,1004231767 ns/op,  309904 B/op,    1693 allocs/op
+BenchmarkSetScale,   20000,     75989 ns/op,    7932 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1331996 ns/op,  284915 B/op,    1562 allocs/op
+BenchmarkInit,       1,5628750267 ns/op,737707672 B/op, 9002210 allocs/op
+BenchmarkGeneExpression,     500,   4991537 ns/op,  317930 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1003209263 ns/op,  311576 B/op,    1725 allocs/op
+BenchmarkStd,       1,1002824555 ns/op,  307880 B/op,    1687 allocs/op
+BenchmarkVariance,       1,1003211022 ns/op,  308656 B/op,    1691 allocs/op
+BenchmarkSetScale,   20000,     80145 ns/op,    7933 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1184283 ns/op,  284931 B/op,    1562 allocs/op
+BenchmarkInit,       1,5638796464 ns/op,737759448 B/op, 9002441 allocs/op
+BenchmarkGeneExpression,     500,   4597101 ns/op,  318034 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1002569389 ns/op,  311480 B/op,    1724 allocs/op
+BenchmarkStd,       1,1003266292 ns/op,  308440 B/op,    1686 allocs/op
+BenchmarkVariance,       1,1003517446 ns/op,  307920 B/op,    1690 allocs/op
+BenchmarkSetScale,   20000,     83840 ns/op,    7933 B/op,      87 allocs/op
+BenchmarkBackground,    2000,   1187154 ns/op,  284925 B/op,    1562 allocs/op
+BenchmarkInit,       1,5741802371 ns/op,737707656 B/op, 9002208 allocs/op
+BenchmarkGeneExpression,     500,   4774275 ns/op,  317850 B/op,    1686 allocs/op
+BenchmarkAverageDiff,       1,1002829698 ns/op,  311544 B/op,    1725 allocs/op
+BenchmarkStd,       1,1004366978 ns/op,  308440 B/op,    1686 allocs/op
+BenchmarkVariance,       1,1002480158 ns/op,  308576 B/op,    1690 allocs/op
+BenchmarkSetScale,   50000,     73045 ns/op,    7961 B/op,      88 allocs/op
+BenchmarkBackground,    2000,   1156954 ns/op,  284869 B/op,    1562 allocs/op
+BenchmarkInit,       1,5267516254 ns/op,737628136 B/op, 9001688 allocs/op
+BenchmarkGeneExpression,     500,   4784208 ns/op,  317886 B/op,    1685 allocs/op
+BenchmarkAverageDiff,       1,1003178135 ns/op,  311560 B/op,    1725 allocs/op
+BenchmarkStd,       1,1004335722 ns/op,  308600 B/op,    1688 allocs/op
+BenchmarkVariance,       1,1003435075 ns/op,  308880 B/op,    1693 allocs/op
+BenchmarkSetScale,   50000,     76366 ns/op,    7960 B/op,      88 allocs/op
+BenchmarkBackground,    2000,   1156964 ns/op,  284845 B/op,    1561 allocs/op

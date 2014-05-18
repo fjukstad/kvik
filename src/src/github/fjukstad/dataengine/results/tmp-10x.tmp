@@ -1,0 +1,3 @@
+PASS
+BenchmarkInit	signal: killed
+FAIL	nowac/datastore	32.533s

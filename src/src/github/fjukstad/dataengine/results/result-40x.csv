@@ -1,0 +1,7 @@
+BenchmarkInit,       1,156752630161 ns/op,13744028472 B/op,172523763 allocs/op
+BenchmarkGeneExpression,     500,   6502720 ns/op,  759529 B/op,    1703 allocs/op
+BenchmarkAverageDiff,       1,1009823993 ns/op,  576200 B/op,    1749 allocs/op
+BenchmarkStd,     100,  13394573 ns/op,  578786 B/op,    1726 allocs/op
+BenchmarkVariance,     100,  13317732 ns/op,  576939 B/op,    1729 allocs/op
+BenchmarkSetScale,   20000,     80705 ns/op,    7937 B/op,      87 allocs/op
+BenchmarkBackground,    2000,    995150 ns/op,  285175 B/op,    1564 allocs/op
