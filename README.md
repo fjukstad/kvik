@@ -1,3 +1,6 @@
+![Screenshot](screenshot.png)
+
+
 # Kvik
 An interactive system for exploring the dynamics of carcinogenesis through integrated studies of biological pathways and genomic data. It provides researchers with a lightweight web application for navigating through biological pathways from the [KEGG](http://kegg.jp) database integrated with genomic data from the [NOWAC](http://site.uit.no/nowac) postgenome biobank.
 
