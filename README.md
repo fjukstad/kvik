@@ -1,17 +1,10 @@
-# Master's Thesis
-Git repo containing everything! 
+# Kvik
+An interactive system for exploring the dynamics of carcinogenesis through studies of biological pathways and genomic data.
 
-# Overview
-The doc/ directory will contain everything written and the src/ directory will contain the source code. 
+##  Howto
+Currently the git project depends on multiple submodules. These are stored on a in-house gitlab at the dept. of comp. sci. at UiT, but I'll get them out on github as soon as I can. 
 
-This repository is built from several submodules (see git submodules) and may not be viewed correctly in Gitlab. There is an issue at their github page, but I don't think they will ever fix it. Using a command line it works properly though. 
-
-# Cloning it down
-To clone down the repository first run 
-
-    $ git clone git@ice-git.cs.uit.no:fjukstad/master.git
-
-to get the master project. The run
+To get the master project. The run
 
     $ git submodule init
     $ git submodule update
