@@ -6,8 +6,9 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"nowac/kegg"
 	"strings"
+
+	"github.com/fjukstad/kegg"
 )
 
 type InputList struct {
