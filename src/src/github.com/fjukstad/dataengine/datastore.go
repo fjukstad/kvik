@@ -6,11 +6,12 @@ import (
 	"log"
 	"math"
 	"net/http"
-	"nowac/kegg"
 	"os"
 	"runtime/pprof"
 	"strconv"
 	"strings"
+
+	"github.com/fjukstad/kegg"
 
 	"code.google.com/p/gorest"
 	"github.com/fjukstad/rpcman"
