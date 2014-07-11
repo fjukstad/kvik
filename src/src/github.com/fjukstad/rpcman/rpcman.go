@@ -29,7 +29,6 @@ type Response struct {
 
 func Init(addr string) (*RPCMan, error) {
 	context, _ := zmq.NewContext()
-	major, minor, patch := zmq.Version()
 
 	socket, err := context.NewSocket(zmq.REQ)
 	if err != nil {
