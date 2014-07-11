@@ -1,12 +1,13 @@
 package main
 
 import (
-	"code.google.com/p/gorest"
 	"flag"
 	"log"
 	"net/http"
-	"nowac/kegg"
 	"strings"
+
+	"code.google.com/p/gorest"
+	"github.com/fjukstad/kegg"
 	//    "time"
 	//    "math/rand"
 	"strconv"
