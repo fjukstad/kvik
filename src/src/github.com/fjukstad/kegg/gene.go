@@ -4,11 +4,12 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"github.com/fjukstad/gocache"
 	"io"
 	"log"
 	"strconv"
 	"strings"
+
+	"github.com/fjukstad/gocache"
 )
 
 type Gene struct {
@@ -115,11 +116,14 @@ func parseGeneResponse(response io.ReadCloser) Gene {
 	tsv.LazyQuotes = true
 	tsv.TrailingComma = true
 	tsv.TrimLeadingSpace = false
+	tsv.FieldsPerRecord = -1
 
 	records, err := tsv.ReadAll()
 
 	if err != nil {
-		log.Panic("Error reading records:", err)
+		log.Println(response)
+		log.Panic("Error reading records:", err, records)
+
 	}
 	gene := Gene{}
 
@@ -155,6 +159,15 @@ func parseGeneResponse(response io.ReadCloser) Gene {
 			a := strings.Join(line[5:], " ")
 			b := strings.Split(a, " ")[0]
 			tmp = append(tmp, b)
+
+		// NOTE: We're currently not storing the BRITE field
+		case "BRITE":
+
+			if current == "PATHWAY" {
+				gene.Pathways = tmp
+			}
+
+			current = "BRITE"
 
 		case "DISEASE":
 
