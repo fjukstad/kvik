@@ -6,8 +6,6 @@ import (
 	"log"
 	"math"
 	"net/http"
-	"os"
-	"runtime/pprof"
 	"strconv"
 	"strings"
 
@@ -162,9 +160,9 @@ func (serv RestService) GeneExpression(Id string) []float64 {
 		return emptySlice
 	}
 
-	log.Println("hepp")
-
 	name := strings.Split(gene.Name, ", ")[0]
+
+	serv.Dataset.PrintDebugInfo()
 
 	var ret []float64
 	// return difference between case & ctrl
@@ -327,34 +325,25 @@ func (serv RestService) Bg(GeneId, Exprs string) string {
 func Init(path string) *RestService {
 	ds := NewDataset(path) //Dataset{} // := NewDataset(*path)
 
-	log.Print("dataset found at ", path)
-
 	ds.PrintDebugInfo()
 
 	restService := new(RestService)
 	restService.Dataset = &ds
 
+	var err error
+
 	// connect to statistics engine that will run statistics and that
 	rpcaddr := "tcp://localhost:5555" // "ipc:///tmp/datastore/0"
-	//"tcp://localhost:5555"
-	restService.RPC, _ = rpcman.Init(rpcaddr)
-	//err := restService.RPC.Connect()
+	restService.RPC, err = rpcman.Init(rpcaddr)
 
-	//log.Println("connecting to statsman")
-
-	//if err != nil{
-	//    log.Panic("Connection statistics engine failed.",err)
-	//}
+	if err != nil {
+		log.Println("RPC error", err)
+	}
 
 	return restService
 }
 
 func main() {
-
-	// enable debugging
-
-	//log.SetOutput(ioutil.Discard)
-	//defer log.SetOutput(os.Stdout)
 
 	var path = flag.String("path", "/Users/bjorn/stallo/data", "path where data files are stored")
 	var ip = flag.String("ip", "localhost", "ip to run on")
@@ -365,30 +354,9 @@ func main() {
 	restService := Init(*path)
 	log.Print("Starting datastore at ", *ip, *port)
 
-	f, err := os.Create("memprofile.prof")
-	if err != nil {
-		log.Print(err)
-		return
-	}
-	pprof.WriteHeapProfile(f)
-	f.Close()
-
 	gorest.RegisterService(restService)
 
 	http.Handle("/", gorest.Handle())
 	http.ListenAndServe(*port, nil)
 
-	/*
-
-	   // Profiling
-	   // $ go tool pprof /home/bfj001/master/src/bin/datastore memprofile.prof
-	   // (pprof) top5
-	       f, err := os.Create("memprofile.prof")
-	       if err != nil {
-	           log.Fatal(err)
-	       }
-	       pprof.WriteHeapProfile(f)
-	       f.Close()
-	       return
-	*/
 }
