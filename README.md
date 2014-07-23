@@ -1,4 +1,4 @@
-![Screenshot](screenshot.png)
+![Screenshot](kvik.gif)
 
 
 # Kvik
