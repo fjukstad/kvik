@@ -218,13 +218,19 @@ function GenerateInfoPanel(info){
     str += '<table class="table" style="word-wrap: break-word;table-layout:fixed">';
     str += '<thead><tr><th style="width: 20%"></th><th style="width: 80%"></th>'
     str += '<tbody>'
-    str += '<tr><td>Id:</td><td>hsa:' + info.Id + '</td><td>'
+    str += '<tr><td>Id:</td><td><a href="http://www.genome.jp/dbget-bin/www_bget?hsa:'+info.Id+'" target="_blank">hsa:' + info.Id + '</a></td><td>'
     str += '<tr><td>Definition:</td><td>' + info.Name + '</td><td>'
     str += '<tr><td>Orthology:</td><td>' + info.Orthology + '</td><td>'
     //str += '<tr><td>Organism:</td><td>' + info.Organism + '</td><td>'
-    str += '<tr><td>Diseases:</td><td>' + info.Diseases + '</td><td>'
-    str += '<tr><td>Modules:</td><td>' + info.Modules + '</td><td>'
-    str += '<tr><td>Drug target:</td><td>' + info.Drug_Target + '</td><td>'
+    if(info.Diseases){
+        str += '<tr><td>Diseases:</td><td>' + info.Diseases + '</td><td>'
+    }
+    if(info.Modules){ 
+        str += '<tr><td>Modules:</td><td>' + info.Modules + '</td><td>'
+    }
+    if(info["Drug_Target"]){
+        str += '<tr><td>Drug target:</td><td>' + info["Drug_Target"] + '</td><td>'
+    } 
     str += '<tr><td>Classes:</td><td>' + info.Classes + '</td><td>'
     str += '<tr><td>Position:</td><td>' + info.Position + '</td><td>'
     str += '<tr><td>Motif:</td><td>' + info.Motif + '</td><td>'
@@ -244,13 +250,16 @@ function GenerateInfoPanel(info){
 }
 
 function FetchJMOL(structure) {
-    console.log(structure) 
-    var ids = structure.split(" ")
-    var id = ids[1].toLowerCase()
-    console.log(ids) 
-    var link = "http://www.genome.jp/Fig/pdb/pdb"+id+".png"
-    var res = '<a href="'+link+'" target="_blank"><img src="'+link+'" id="jmolview"></a>'
-    return res
+    try { 
+        var ids = structure.split(" ")
+        var id = ids[1].toLowerCase()
+        console.log(ids) 
+        var link = "http://www.genome.jp/Fig/pdb/pdb"+id+".png"
+        var res = '<a href="'+link+'" target="_blank"><img src="'+link+'" id="jmolview"></a>'
+        return res
+    } catch(TypeError) {
+        return ""
+    }
 }
 
 function CreateDBLinks(links) {
