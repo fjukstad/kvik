@@ -100,6 +100,7 @@ loadCy = function(){
                 if(nodeType[0] === 'hsa'){
                     var name = d.cyTarget.data().name
                     visGenePanel(name)
+                    resizeHeader();
                 }
                 /*
                 if(nodeType[0] === 'path'){
@@ -365,12 +366,17 @@ window.onresize = function(event) {
 
 function resizeViews(){
     console.log("window is resizing") 
-    var cy = $('#cy')[0]
-    cy.style.height = $(window).height()-100+"px"
-    cy.style.width = $(".col-sm-8")[0].clientWidth-25+"px"
-    $('cy').resize() 
+    var cyt = $('#cy')[0]
+    cyt.style.height = $(window).height()-100+"px"
+    cyt.style.width = $(".col-sm-8")[0].clientWidth-25+"px"
+    
+    // center the cytoscape graph after resize
+    try { 
+        cy.center() 
+    } catch(TypeError){ 
+    } 
 
-
+    console.log($("#cy"))
     console.log($(".col-sm-4"))
     $(".col-sm-4").client
 
@@ -398,12 +404,14 @@ function resizeViews(){
         //clientWidth-50+"px"
     } catch(TypeError){ 
     } 
-
-
-
-
-
 };
 
 
+function resizeHeader(){
+    try { 
+        var header = $("#info-panel-heading")[0]
+        header.style.width = $(".col-sm-4")[0].clientWidth-46+"px"
+    } catch(TypeError){
+    }
+}
 
