@@ -229,7 +229,7 @@ function GenerateInfoPanel(info){
     str += '<tr><td>Position:</td><td>' + info.Position + '</td><td>'
     str += '<tr><td>Motif:</td><td>' + info.Motif + '</td><td>'
     str += '<tr><td>DB Links:</td><td>' + CreateDBLinks(info.DBLinks) + '</td><td>'
-    str += '<tr><td>Structure:</td><td>' + info.Structure + '</td><td>'
+    str += '<tr><td>Structure:</td><td>' + FetchJMOL(info.Structure) + '</td><td>'
     //str += '<tr><td>AASeq:</td><td>' + info.AASEQ.Sequence + '</td><td>'
     //str += '<tr><td>NTSeq:</td><td>' + info.NTSEQ.Sequence + '</td><td>'
     str += '</tbody>'
@@ -241,6 +241,16 @@ function GenerateInfoPanel(info){
     str += '</div>'
     
        return str
+}
+
+function FetchJMOL(structure) {
+    console.log(structure) 
+    var ids = structure.split(" ")
+    var id = ids[1].toLowerCase()
+    console.log(ids) 
+    var link = "http://www.genome.jp/Fig/pdb/pdb"+id+".png"
+    var res = '<a href="'+link+'" target="_blank"><img src="'+link+'" id="jmolview"></a>'
+    return res
 }
 
 function CreateDBLinks(links) {
@@ -432,6 +442,11 @@ function resizeHeader(){
     try { 
         var header = $("#info-panel-heading")[0]
         header.style.width = $(".col-sm-4")[0].clientWidth-46+"px"
+
+        var jmolview = $("img#jmolview")[0]
+        jmolview.style.width = $("#c3").width()/2 + "px"
+
+
     } catch(TypeError){
     }
 }
