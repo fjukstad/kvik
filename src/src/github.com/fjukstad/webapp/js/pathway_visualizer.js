@@ -293,7 +293,7 @@ function CreateDBLinks(links) {
 
 
 function CreatePathwayLinks(ids) {
-    var baseURL = "http://"+window.location.hostname+":8000/demo/pathwaySelect="
+    var baseURL = "http://"+window.location.hostname+":8000/browser/pathwaySelect="
     links  = "" 
 
     var currentLocation = window.location;

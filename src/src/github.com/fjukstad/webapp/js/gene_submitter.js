@@ -17,7 +17,7 @@ $(function() {
 function getGenes() {
     var genes = $('#geneSelect').serialize()
     // var result = 'http://localhost:8080/api/dataset/selectGenes/'+genes;
-    var result = "/demo/"+genes
+    var result = "/browser/"+genes
     
     window.open(result,'name','toolbar=0,status=0');
     

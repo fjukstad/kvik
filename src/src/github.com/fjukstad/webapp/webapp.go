@@ -37,8 +37,8 @@ var emptyTemplatePath = []string{"templates/_empty_page.html",
 
 var indexTemplatePath = "templates/index.html"
 var aboutTemplatePath = "templates/about.html"
-var demoTemplatePath = "templates/demo.html"
-var demoVisualizationTemplatePath = "templates/visualization.html"
+var browserTemplatePath = "templates/browser.html"
+var browserVisualizationTemplatePath = "templates/visualization.html"
 
 var indexTemplate = template.Must(template.ParseFiles(
 	append(defaultTemplatePaths, indexTemplatePath)...,
@@ -46,12 +46,12 @@ var indexTemplate = template.Must(template.ParseFiles(
 var aboutTemplate = template.Must(template.ParseFiles(
 	append(defaultTemplatePaths, aboutTemplatePath)...,
 ))
-var demoTemplate = template.Must(template.ParseFiles(
-	append(defaultTemplatePaths, demoTemplatePath)...,
+var browserTemplate = template.Must(template.ParseFiles(
+	append(defaultTemplatePaths, browserTemplatePath)...,
 ))
 
-var demoVisualizationTemplate = template.Must(template.ParseFiles(
-	append(defaultTemplatePaths, demoVisualizationTemplatePath)...,
+var browserVisualizationTemplate = template.Must(template.ParseFiles(
+	append(defaultTemplatePaths, browserVisualizationTemplatePath)...,
 ))
 
 func renderTemplate(t *template.Template, w http.ResponseWriter,
@@ -75,9 +75,9 @@ func aboutHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(aboutTemplate, w, nil)
 }
 
-const lenPath = len("/demo/")
+const lenPath = len("/browser/")
 
-func demoHandler(w http.ResponseWriter, r *http.Request) {
+func browserHandler(w http.ResponseWriter, r *http.Request) {
 	// Get selected pathways (if any)
 	selectedPathways := r.URL.Path[lenPath:]
 	log.Print("title of page:", selectedPathways)
@@ -85,7 +85,7 @@ func demoHandler(w http.ResponseWriter, r *http.Request) {
 	// if user has selected pathways render a visualization
 	if len(selectedPathways) > 1 {
 		selection := Selection{parsePathwayInput(selectedPathways)}
-		renderTemplate(demoVisualizationTemplate, w, selection)
+		renderTemplate(browserVisualizationTemplate, w, selection)
 		return
 	}
 
@@ -94,7 +94,7 @@ func demoHandler(w http.ResponseWriter, r *http.Request) {
 	pathways := kegg.GiveMeSomePathways()
 	input := InputList{pathways}
 
-	renderTemplate(demoTemplate, w, input)
+	renderTemplate(browserTemplate, w, input)
 }
 
 func parsePathwayInput(input string) []string {
@@ -141,7 +141,7 @@ func main() {
 
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/about", aboutHandler)
-	http.HandleFunc("/demo/", demoHandler)
+	http.HandleFunc("/browser/", browserHandler)
 
 	// Handling requests for css files
 	http.Handle("/css/", http.StripPrefix("/css/",
