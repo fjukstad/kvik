@@ -228,7 +228,7 @@ function GenerateInfoPanel(info){
     str += '<tr><td>Classes:</td><td>' + info.Classes + '</td><td>'
     str += '<tr><td>Position:</td><td>' + info.Position + '</td><td>'
     str += '<tr><td>Motif:</td><td>' + info.Motif + '</td><td>'
-    str += '<tr><td>DB Links:</td><td>' + info.DBLinks + '</td><td>'
+    str += '<tr><td>DB Links:</td><td>' + CreateDBLinks(info.DBLinks) + '</td><td>'
     str += '<tr><td>Structure:</td><td>' + info.Structure + '</td><td>'
     //str += '<tr><td>AASeq:</td><td>' + info.AASEQ.Sequence + '</td><td>'
     //str += '<tr><td>NTSeq:</td><td>' + info.NTSEQ.Sequence + '</td><td>'
@@ -236,12 +236,42 @@ function GenerateInfoPanel(info){
     str += '</table>';
     str += '</div></div></div>'
 
-    
+    console.log( info.DBLinks)
 
     str += '</div>'
     
        return str
 }
+
+function CreateDBLinks(links) {
+    
+    var res = "" 
+    try { 
+    var gname = '<a href="http://www.genenames.org/cgi-bin/search?search_type=symbols&search='+links.HGNC+'" target="_blank">GeneNames</a>'
+    res += gname + "</br>"
+    
+    var ensembl = '<a href="http://www.ensembl.org/Multi/Search/Results?q='+links.Ensembl+'" target="_blank">Ensembl</a>'
+
+    res += ensembl + "</br>"
+
+    var ncbigeneid = '<a href="http://www.ncbi.nlm.nih.gov/gene/?term='+links["NCBI-GeneID"]+'" target="_blank">NCBI Gene </a>'
+
+    res += ncbigeneid + "</br>"
+
+
+    var uniprot = '<a href="http://www.uniprot.org/uniprot/'+links.UniProt+'" target="_blank">UniProt</a>'
+
+    console.log(uniprot) 
+    res += uniprot
+
+    } catch (TypeError){
+        console.log(links);
+        console.log(TypeError)
+    }
+    return res
+    
+} 
+
 
 function CreatePathwayLinks(ids) {
     var baseURL = "http://"+window.location.hostname+":8000/demo/pathwaySelect="
