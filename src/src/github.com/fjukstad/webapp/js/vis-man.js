@@ -226,9 +226,7 @@ function setScale(scale) {
             
     });
     
-    // erase content of infopanel
-    document.getElementById('info-panel').innerHTML = '';
-
+    visGenePanel(latestGene)
 
 
 } 
@@ -251,14 +249,15 @@ function updateColor(scale) {
 } 
 
 
-
-
+// Latest gene variable used for resizing of window
+var latestGene;  
 function visGenePanel(name){
+    
+    latestGene = name;
+
     info = GetInfo(name);
     
     
-    //console.log("The selected node was a gene!");
-
     // remove old info body
     document.getElementById('info-panel').innerHTML = '';
 

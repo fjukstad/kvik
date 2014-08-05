@@ -24,11 +24,12 @@ function Graph(cy){
 
         //console.log("Adding node:",n); 
         n.graphics.name = n.graphics.name.split(" ")
-        console.log(n.graphics.name)
         if(n.name === "\"bg\"") {
             n.graphics.bgimage = n.graphics.name[0];
             n.graphics.bgcolor = "#fff"
             n.graphics.name = ""
+            console.log(n.graphics) 
+            console.log(n)
         }
         else{
             n.graphics.bgimage = "";
@@ -59,15 +60,12 @@ function Graph(cy){
 
         */
     
-        console.log(n.graphics.name.toString())
-
         n.graphics.name = n.graphics.name.toString().replace(/,/g, " ")
         
         n.graphics.valign = "center"
         if(n.graphics.name.substr(0,2) == "C0"){
             n.graphics.valign = "bottom"
         } 
-
 
         var no = {
             group: 'nodes',
@@ -81,7 +79,8 @@ function Graph(cy){
                 x: n.graphics.x,
                 y: n.graphics.y
             },
-            grabbable:false,
+            //grabbable: false,
+            locked: true, 
         };
         nodes.push(no);
         cy.add(no); 

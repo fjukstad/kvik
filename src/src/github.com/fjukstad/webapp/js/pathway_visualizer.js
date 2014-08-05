@@ -138,12 +138,8 @@ loadCy = function(){
                     for(var j in json.edges){
                         var e = json.edges[j]; 
                         graph.addEdge(e); 
-                                                //graph.push(ed); 
                     }
                     cy.layout();
-                    //console.log("Pathway map loaded.", nodes.length, "nodes");
-                    
-                    //console.log(json)
 
                     drawnPathway = true   
 
@@ -168,13 +164,11 @@ loadCy = function(){
             } 
             
             
-        }
+        },
     }; 
-
+    
     $('#cy').cytoscape(options); 
-
-    
-    
+    resizeViews() 
 }
 
 
@@ -364,3 +358,52 @@ function ShowBgInfo(id,exprs) {
     document.getElementById('dsidinfo').innerHTML =  bg
 
 } 
+
+window.onresize = function(event) {
+    resizeViews();
+} 
+
+function resizeViews(){
+    console.log("window is resizing") 
+    var cy = $('#cy')[0]
+    cy.style.height = $(window).height()-100+"px"
+    cy.style.width = $(".col-sm-8")[0].clientWidth-25+"px"
+    $('cy').resize() 
+
+
+    console.log($(".col-sm-4"))
+    $(".col-sm-4").client
+
+      
+    try { 
+        // update gene panel
+        visGenePanel(latestGene)
+    } catch (TypeError) {
+    }
+
+    var exprs = $("#expression-view")[0]
+    exprs.style.height =  $(window).height()-100+"px"
+    exprs.style.width = $(".col-sm-4")[0].clientWidth-30+"px"
+    
+    try { 
+        var header = $("#info-panel-heading")[0]
+        //header.style.height =  $(window).height()-100+"px"
+        header.style.width = $(".col-sm-4")[0].clientWidth-46+"px"
+        console.log(header) 
+
+        var panel = $("#info-panel-body")[0]
+        //panel.style.height =  $(window).height()-100+"px"
+        panel.style.width = $(".col-sm-4")[0].style.width;
+        console.log("DICKBALLS", panel.style.width) 
+        //clientWidth-50+"px"
+    } catch(TypeError){ 
+    } 
+
+
+
+
+
+};
+
+
+

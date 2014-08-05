@@ -2,10 +2,33 @@
     height: 700px;
     width: 850px;
     position: absolute;
-    left: 4em;
-    top: 1em;
+    left: 2em;
+    border-radius: 3px;        
     border:1px solid #AAAAAA;
 }
+
+#expression-view { 
+    overflow: scroll;
+    padding-right:1em;
+    margin-right:1em;
+} 
+
+#info-panel-heading{
+    position:fixed;
+    margin-top:-16px;
+    border-radius: 3px;        
+    border:1px solid #AAAAAA;
+    width:100%;
+} 
+.left {
+    float:left;
+}
+
+#info-panel-body{ 
+    overflow: scroll;
+    margin-top:5em;
+
+} 
 
 #jumbotron{
     height: 100%;
