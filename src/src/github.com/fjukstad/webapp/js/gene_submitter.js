@@ -15,7 +15,6 @@ $(function() {
 
 
 function getGenes() {
-    console.log("gene url in progress"); 
     var genes = $('#geneSelect').serialize()
     // var result = 'http://localhost:8080/api/dataset/selectGenes/'+genes;
     var result = "/demo/"+genes

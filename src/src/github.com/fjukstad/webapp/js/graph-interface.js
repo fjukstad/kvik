@@ -15,21 +15,16 @@ function Graph(cy){
     this.addNode = function(n){
         
 
-        //console.log("adding node")
         if(typeof findNode(n.id) != 'undefined') {
-            //console.log("returning undefined") 
             return
         }
         
 
-        //console.log("Adding node:",n); 
         n.graphics.name = n.graphics.name.split(" ")
         if(n.name === "\"bg\"") {
             n.graphics.bgimage = n.graphics.name[0];
             n.graphics.bgcolor = "#fff"
             n.graphics.name = ""
-            console.log(n.graphics) 
-            console.log(n)
         }
         else{
             n.graphics.bgimage = "";
@@ -92,7 +87,6 @@ function Graph(cy){
         var t = findNode(e.target); 
         
         if(typeof s == 'undefined' || typeof t == 'undefined'){
-            //console.log("Attempted to add a faulty edge"); 
             return
         }
 

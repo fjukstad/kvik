@@ -64,7 +64,6 @@ function AvgDiff(gene) {
         }
     });
 
-    //console.log(gene,"got avg diff: ", avg)
 
     return avg;
 
@@ -110,7 +109,6 @@ function Std(gene) {
         }
     });
 
-    //console.log(gene,"got std:", res)
 
     return res;
 
@@ -135,7 +133,6 @@ function Var(gene) {
         }
     });
 
-    //console.log(gene,"got variance:", res)
 
     return res;
 
@@ -159,7 +156,6 @@ function GetPathwayName(id) {
         }
     });
 
-    //console.log("name: ", name)
 
     return name;
 
@@ -205,14 +201,12 @@ function GetCommonGenes(ids) {
         }
     });
 
-    //console.log("Number of common genes: ", num)
 
     return num;
 
 }
 
 function setScale(scale) { 
-    console.log("js setting scale to ", scale);
     
     var baseURL = "http://"
                     +window.location.hostname
@@ -234,14 +228,12 @@ function setScale(scale) {
 function updateColor(scale) { 
     
     if(scale == "log") { 
-        //console.log("log scale") 
         color = d3.scale.linear()
             .domain([-2,2])
             .range(colorbrewer.RdYlBu[3]);
 
     } 
     else { 
-        //console.log("abs scale") 
         color = d3.scale.linear()
             .domain([-400,0,400])
             .range(colorbrewer.RdYlBu[3]);

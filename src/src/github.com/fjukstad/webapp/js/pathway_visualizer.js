@@ -2,8 +2,6 @@ var wsURL
 window.onload = function() {
     serverAddr = getVisServerAddress();
     wsURL = "ws://"+serverAddr; 
-    //console.log("visualization server is at:", wsURL); 
-    //console.log("Starting visualization..."); 
     loadCy(); 
 };
 
@@ -120,13 +118,11 @@ loadCy = function(){
 
 
             // Load data from JSON 
-            //console.log(wsURL)
             var socket = new WebSocket(wsURL); 
             socket.onmessage = function(m){
                 var message = JSON.parse(m.data); 
                 if(message.command == "\"InitGraph\""){
                     
-                    //console.log("INIT ME")
                     json = JSON.parse(JSON.parse(message.graph)); 
                     var numAdded = 0; 
                     
@@ -365,7 +361,6 @@ window.onresize = function(event) {
 } 
 
 function resizeViews(){
-    console.log("window is resizing") 
     var cyt = $('#cy')[0]
     cyt.style.height = $(window).height()-100+"px"
     cyt.style.width = $(".col-sm-8")[0].clientWidth-25+"px"
@@ -376,8 +371,6 @@ function resizeViews(){
     } catch(TypeError){ 
     } 
 
-    console.log($("#cy"))
-    console.log($(".col-sm-4"))
     $(".col-sm-4").client
 
       
@@ -395,12 +388,10 @@ function resizeViews(){
         var header = $("#info-panel-heading")[0]
         //header.style.height =  $(window).height()-100+"px"
         header.style.width = $(".col-sm-4")[0].clientWidth-46+"px"
-        console.log(header) 
 
         var panel = $("#info-panel-body")[0]
         //panel.style.height =  $(window).height()-100+"px"
         panel.style.width = $(".col-sm-4")[0].style.width;
-        console.log("DICKBALLS", panel.style.width) 
         //clientWidth-50+"px"
     } catch(TypeError){ 
     } 

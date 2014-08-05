@@ -12,7 +12,6 @@ $(function() {
 
 
 function getPathways() {
-    //console.log("Fetching those pathways for you"); 
     var pathways = $('#pathwaySelect').serialize()
     var result = "/demo/"+pathways
     window.location.assign(result)
