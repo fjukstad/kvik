@@ -12,3 +12,7 @@ The source code is found in the [src](src/src/github.com/fjukstad) directory. It
 
 ## Contact
 Feel free to contact me at bjorn.fjukstad@uit.no! 
+
+
+## Preview
+![Preview](kvik.gif)
