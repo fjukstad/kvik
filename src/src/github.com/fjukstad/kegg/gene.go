@@ -239,8 +239,7 @@ func parseGeneResponse(response io.ReadCloser) Gene {
 			tmp = append(tmp, a)
 			e := strings.Split(a, ":")
 			gene.DBLinks = make(map[string]string)
-			link := strings.Replace(e[1], " ", "", -1)
-			gene.DBLinks[e[0]] = link
+			gene.DBLinks[e[0]] = e[1]
 
 		case "STRUCTURE":
 			current = "STRUCTURE"
@@ -289,9 +288,7 @@ func parseGeneResponse(response io.ReadCloser) Gene {
 				a := strings.Join(line[0:], " ")
 				b := strings.Replace(a, "    ", "", -1)
 				e := strings.Split(b, ":")
-
-				link := strings.Replace(e[1], " ", "", -1)
-				gene.DBLinks[e[0]] = link
+				gene.DBLinks[e[0]] = e[1]
 			}
 			if current == "AASEQ" ||
 				current == "NTSEQ" {

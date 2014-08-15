@@ -13,7 +13,7 @@ $(function() {
 
 function getPathways() {
     var pathways = $('#pathwaySelect').serialize()
-    var result = "/browser/"+pathways
+    var result = "/demo/"+pathways
     window.location.assign(result)
     
    // window.open(result,'name','toolbar=0,status=0,height=700,width=1300');
