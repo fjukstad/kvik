@@ -10,6 +10,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -105,9 +106,39 @@ func GetAllHumanPathways() []string {
 
 	}
 
-	log.Println(res)
-
+	// sort list of pathways
+	res = SortPathwayIds(res)
 	return res
+
+}
+
+type ByName []Pathway
+
+func (a ByName) Len() int {
+	return len(a)
+}
+func (a ByName) Swap(i, j int) {
+	a[i], a[j] = a[j], a[i]
+}
+
+func (a ByName) Less(i, j int) bool {
+	return a[i].Name < a[j].Name
+}
+
+func SortPathwayIds(ids []string) []string {
+	pws := make([]Pathway, 0)
+	for _, id := range ids {
+		pws = append(pws, GetPathway(id))
+	}
+
+	sort.Sort(ByName(pws))
+
+	pwids := make([]string, 0)
+	for _, pw := range pws {
+		pwids = append(pwids, pw.Id)
+	}
+
+	return pwids
 
 }
 
@@ -396,6 +427,7 @@ func parsePathwayResponse(response io.ReadCloser) Pathway {
 			if current == "DBLINKS" {
 				p.DBLinks = tmp
 			}
+			current = "ORGANISM"
 			p.Organism = strings.Join(line[4:], " ")
 
 		case "GENE":
