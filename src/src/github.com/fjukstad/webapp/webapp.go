@@ -91,7 +91,7 @@ func browserHandler(w http.ResponseWriter, r *http.Request) {
 
 	// if user has not selected any pathways, fetch
 	// availible pathways from db and display them to the user
-	pathways := kegg.GiveMeSomePathways()
+	pathways := kegg.GetAllHumanPathways()
 	input := InputList{pathways}
 
 	renderTemplate(browserTemplate, w, input)

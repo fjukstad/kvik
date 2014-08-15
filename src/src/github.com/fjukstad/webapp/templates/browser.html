@@ -8,20 +8,23 @@
 
 <div class="jumbotron">
     <h1> Pathway visualization </h1>
-
-    <form id="pathwayForm" method="GET">
-        <fieldset>
-            <legend> Select pathways for visualization </legend>
-            <select multiple class="form-control" id="pathwaySelect"
-                name="pathwaySelect" size="10">
-            {{range $index, $element := .Input }}
-                <option value="{{$element}}" > {{$element}} </option>
-            {{end}}
-            </select>
-                <button id="pathwayFormSubmit" type="submit" class="btn btn-primary">Submit</button>
-            </legend>
-        </fieldset>
-    </form>
+    <div class="row">
+        <div class="pathway-list" style="width:70%"> 
+            <form id="pathwayForm" method="GET">
+                <fieldset>
+                    <legend> Select pathways for visualization </legend>
+                    <select multiple class="form-control" id="pathwaySelect"
+                        name="pathwaySelect" size="10">
+                    {{range $index, $element := .Input }}
+                        <option value="{{$element}}" > {{$element}} </option>
+                    {{end}}
+                    </select>
+                        <button id="pathwayFormSubmit" type="submit" class="btn btn-primary">Submit</button>
+                    </legend>
+                </fieldset>
+            </form>
+        </div>
+    </div> 
 </div>
 
 

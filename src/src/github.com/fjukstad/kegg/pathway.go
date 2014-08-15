@@ -74,6 +74,43 @@ type KeggSubtype struct {
 	Value string `xml:"value,attr"`
 }
 
+func GetAllHumanPathways() []string {
+
+	res := make([]string, 0)
+
+	url := "http://rest.kegg.jp/list/pathway/hsa"
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Panic("Could not fetch pathway list", err)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Panic("Could not read body of pathway list response", err)
+	}
+
+	lines := strings.Split(string(body), "\n")
+	for i := range lines {
+		line := lines[i]
+		id := strings.Split(line, "\t")[0]
+		pathid := strings.Split(id, ":")
+
+		// empty line
+		if len(pathid) < 2 {
+			continue
+		}
+
+		pwid := pathid[1]
+		res = append(res, pwid)
+
+	}
+
+	log.Println(res)
+
+	return res
+
+}
+
 func ReadablePathwayNames(ids []string) []string {
 
 	pathways := make([]string, len(ids))
