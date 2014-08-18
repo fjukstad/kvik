@@ -14,7 +14,8 @@ func main() {
 	pathway := kegg.GetPathway(pathwayId)
 	pathway.Print()
 
-	kegg.GetAllHumanPathways()
+	compoundId := "C00575"
+	kegg.GetCompound(compoundId)
 
 	return
 }
