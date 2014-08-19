@@ -2,6 +2,7 @@ package kegg
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -41,6 +42,34 @@ func GetCompound(id string) Compound {
 
 	return compound
 
+}
+
+func (c Compound) Print() {
+	fmt.Println("\nCompound")
+	fmt.Println("\tEntry:", c.Entry)
+	fmt.Println("\tName:", c.Name)
+	fmt.Println("\tFormula:", c.Formula)
+	fmt.Println("\tExact mass:", c.Exact_Mass)
+	fmt.Println("\tMol weight:", c.Mol_Weight)
+	fmt.Println("\tRemark:", c.Remark)
+	fmt.Println("\tComment:", c.Comment)
+	fmt.Println("\tReaction:", c.Reaction)
+	fmt.Println("\tPathway:", c.Pathway)
+	fmt.Println("\tModule:", c.Module)
+	fmt.Println("\tEnzyme:", c.Enzyme)
+	fmt.Println("\tBrite:", c.Brite)
+	fmt.Println("\tDBLinks:", c.DBLinks)
+	fmt.Println("\tAtom:", c.Atom)
+	fmt.Println("\tBond:", c.Bond)
+	return
+}
+
+func (c Compound) JSON() string {
+	b, err := json.Marshal(c)
+	if err != nil {
+		log.Panic("Marshaling went horrible :( ", err)
+	}
+	return string(b)
 }
 
 func parseCompoundResponse(response io.ReadCloser) Compound {
@@ -116,6 +145,10 @@ func parseCompoundResponse(response io.ReadCloser) Compound {
 			current = "ATOM"
 		case "BOND":
 			current = "BOND"
+		case "MODULE":
+			current = "MODULE"
+		case "  ORGANISM":
+			current = "ORGANISM"
 
 		default:
 			if current == "NAME" {
@@ -132,9 +165,12 @@ func parseCompoundResponse(response io.ReadCloser) Compound {
 			}
 
 			if current == "DBLINKS" {
-				a := strings.Join(line[12:], " ")
-				b := strings.Split(a, ":")
-				compound.DBLinks[b[0]] = b[1]
+				// if line is not "///" last line
+				if len(line) > 5 {
+					a := strings.Join(line[12:], " ")
+					b := strings.Split(a, ":")
+					compound.DBLinks[b[0]] = b[1]
+				}
 
 			}
 		}
@@ -144,24 +180,4 @@ func parseCompoundResponse(response io.ReadCloser) Compound {
 	compound.Print()
 	return compound
 
-}
-
-func (c Compound) Print() {
-	fmt.Println("\nCompound")
-	fmt.Println("\tEntry:", c.Entry)
-	fmt.Println("\tName:", c.Name)
-	fmt.Println("\tFormula:", c.Formula)
-	fmt.Println("\tExact mass:", c.Exact_Mass)
-	fmt.Println("\tMol weight:", c.Mol_Weight)
-	fmt.Println("\tRemark:", c.Remark)
-	fmt.Println("\tComment:", c.Comment)
-	fmt.Println("\tReaction:", c.Reaction)
-	fmt.Println("\tPathway:", c.Pathway)
-	fmt.Println("\tModule:", c.Module)
-	fmt.Println("\tEnzyme:", c.Enzyme)
-	fmt.Println("\tBrite:", c.Brite)
-	fmt.Println("\tDBLinks:", c.DBLinks)
-	fmt.Println("\tAtom:", c.Atom)
-	fmt.Println("\tBond:", c.Bond)
-	return
 }
