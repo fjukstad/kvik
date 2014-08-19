@@ -100,14 +100,23 @@ loadCy = function(){
                     visGenePanel(name)
                     resizeHeader();
                 }
-                /*
                 if(nodeType[0] === 'path'){
-                    continue
+                    var pathid = node.name.split(":")[1]
+
+                    console.log("User wants to see a pathway ", node)
+                    var a = window.location.href
+                    var b = a.split("=")
+                    var c = b[0]
+                    var url = c+"="+pathid
+
+                    window.location.assign(url)
+
                 }
+                
                 if(nodeType[0] === 'cpd'){
-                    continue
+                    console.log("Compound inbound", node) 
                 }
-                */
+                
                     
                 d.cyTarget.edges().css({
                     'line-color': 'red'
