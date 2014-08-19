@@ -247,6 +247,8 @@ function visGenePanel(name){
     
     latestGene = name;
 
+    console.log(name)
+
     info = GetInfo(name);
     
     
@@ -276,5 +278,37 @@ function visGenePanel(name){
 
     $(GetVis(info.Id)).appendTo(".visman"); 
 
+
+} 
+
+function visCompoundPanel(name) {
+
+    console.log(name)
+    
+    var info = GetInfo(name); 
+    console.log(info) 
+
+    // remove old info body
+    document.getElementById('info-panel').innerHTML = '';
+
+    // Set up new info box
+    var panelDiv = document.createElement('div');
+    panelDiv.className = 'panel panel-default';
+
+    var panelHeadingDiv = document.createElement('div');
+    panelHeadingDiv.id = 'info-panel-heading';
+    panelHeadingDiv.className = 'panel-heading';
+    var str = '<h5>'+info.Name[0]+'</h5>'
+    panelHeadingDiv.innerHTML = str
+
+    var panelBodyDiv = document.createElement('div');
+    panelBodyDiv.id = 'info-panel-body';
+    panelBodyDiv.className = 'panel-body';
+    panelBodyDiv.innerHTML = GenerateCompoundInfoPanel(info)
+    
+    panelDiv.appendChild(panelHeadingDiv);
+    panelDiv.appendChild(panelBodyDiv);
+
+    document.getElementById('info-panel').appendChild(panelDiv);
 
 } 

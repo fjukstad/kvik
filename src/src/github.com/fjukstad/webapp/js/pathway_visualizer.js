@@ -103,7 +103,6 @@ loadCy = function(){
                 if(nodeType[0] === 'path'){
                     var pathid = node.name.split(":")[1]
 
-                    console.log("User wants to see a pathway ", node)
                     var a = window.location.href
                     var b = a.split("=")
                     var c = b[0]
@@ -113,8 +112,12 @@ loadCy = function(){
 
                 }
                 
-                if(nodeType[0] === 'cpd'){
+                if(nodeType[0] === 'cpd'){  
                     console.log("Compound inbound", node) 
+                    
+                    visCompoundPanel(node.name); 
+                    resizeHeader(); 
+
                 }
                 
                     
@@ -251,12 +254,73 @@ function GenerateInfoPanel(info){
     str += '</table>';
     str += '</div></div></div>'
 
-    console.log( info.DBLinks)
+    console.log(info.DBLinks)
 
     str += '</div>'
     
        return str
 }
+
+function GenerateCompoundInfoPanel(info) {
+
+    //http://www.genome.jp/Fig/compound/C00575.gif
+
+    var str = '<div class="panel-group" id="accordion">'
+    str += '<div class="panel panel-default">';
+    str += '<div class="panel-heading">'
+    str += '<h4 class="panel-title">'
+    str += '<a data-toggle="collapse" data-parent="#accordion" href="#c1">'
+    str += 'Structure'
+    str += '</a> </div>'
+    str += '<div id="c1" class="panel-collapse collapse in">'
+    str += '<div class="panel-body">'
+    // Fetch structure vis from kegg 
+    var structURL = "http://www.genome.jp/Fig/compound/"+info.Entry+".gif" 
+    str += '<div class="visman"><img src="'+structURL+'" class="structure"></img></div>'
+    str += '</div></div></div>'
+
+    pathwayLinks = CreatePathwayLinks(info.Pathway)
+    str += '<div class="panel panel-default">';
+    str += '<div class="panel-heading">'
+    str += '<h4 class="panel-title">'
+    str += '<a data-toggle="collapse" data-parent="#accordion" href="#c2">'
+    str += 'Pathways'
+    str += '</a> </div>'
+    str += '<div id="c2" class="panel-collapse collapse in">'
+    str += '<div class="panel-body">'
+    str += pathwayLinks
+    str += '</div></div></div>'
+
+    str += '<div class="panel panel-default">';
+    str += '<div class="panel-heading">'
+    str += '<h4 class="panel-title">'
+    str += '<a data-toggle="collapse" data-parent="#accordion" href="#c3">'
+    str += 'More information'
+    str += '</a> </div>'
+    str += '<div id="c3" class="panel-collapse">'
+    str += '<div class="panel-body">'
+
+    str += '<table class="table" style="word-wrap: break-word;table-layout:fixed">';
+    str += '<thead><tr><th style="width: 20%"></th><th style="width: 80%"></th>'
+    str += '<tbody>'
+    str += '<tr><td>Id:</td><td><a href="http://www.genome.jp/dbget-bin/www_bget?'+info.Entry+'" target="_blank">' + info.Entry + '</a></td><td>'
+    str += '<tr><td>Name:</td><td>' + CreateNameList(info.Name) + '</td><td>'
+    str += '<tr><td>DB Links:</td><td>' + CreateCompoundDBLinks(info.DBLinks) + '</td><td>'
+
+
+
+    return str
+} 
+
+function CreateNameList(names) { 
+    var res = ""; 
+
+    for(i in names){
+        res += names[i]+"</br>"
+    }
+    
+    return res
+} 
 
 function FetchJMOL(structure) {
     try { 
@@ -270,6 +334,30 @@ function FetchJMOL(structure) {
         return ""
     }
 }
+
+function CreateCompoundDBLinks(links) { 
+
+    var res = ""; 
+    if(links["3DMET"]){
+        var tredmet = '<a href="http://www.3dmet.dna.affrc.go.jp/cgi/show_data.php?acc='+links["3DMET"]+'" target="_blank">3DMET</a>';
+        res += tredmet + "</br>";
+    }
+    if(links["PubChem"]){
+        var pubchem = '<a href="http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?sid='+links["PubChem"]+'" target="_blank">PubChem</a>';
+        res += pubchem + "</br>";
+    }
+
+    if(links["ChEBI"]){
+        var ChEBI = '<a href="http://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:'+links["ChEBI"]+'" target="_blank">ChEBI</a>'
+        res += ChEBI + "</br>";
+    } 
+
+    
+        
+    return res 
+
+
+} 
 
 function CreateDBLinks(links) {
     
@@ -316,14 +404,16 @@ function CreatePathwayLinks(ids) {
         
         if (id != pathwayid) {
             name = GetPathwayName(id)
-            pathwayIds = id+"+"+pathwayid
-            num = GetCommonGenes(pathwayIds)
-            test = "<div style=\" float: right; display: inline-block; width:" 
-            test += num
-            test += "px; height: 10px; background-color: #a6bbc8\"></div>"
+            if (name != "") { 
+                pathwayIds = id+"+"+pathwayid
+                num = GetCommonGenes(pathwayIds)
+                test = "<div style=\" float: right; display: inline-block; width:" 
+                test += num
+                test += "px; height: 10px; background-color: #a6bbc8\"></div>"
 
-            links += "<a href=\""+baseURL+id+"\" title=\""+id+"\">"+name+"</a>"
-            links += test + "</br>"
+                links += "<a href=\""+baseURL+id+"\" title=\""+id+"\">"+name+"</a>"
+                links += test + "</br>"
+            }
             
         }
     }
