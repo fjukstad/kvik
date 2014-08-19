@@ -310,6 +310,10 @@ function CreatePathwayLinks(ids) {
     var pathwayid = path.split("=")[1]
     for (i in ids) {
         id = ids[i];
+
+        // We only care about human pathways. 
+        id = id.replace("map", "hsa")
+        
         if (id != pathwayid) {
             name = GetPathwayName(id)
             pathwayIds = id+"+"+pathwayid
