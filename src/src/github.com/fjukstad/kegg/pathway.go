@@ -4,12 +4,14 @@ import (
 	"encoding/csv"
 	"encoding/xml"
 	"fmt"
+	"image"
 	"image/png"
 	"io"
 	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -240,6 +242,12 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph) {
 	sizeY := imgrect.Max.Y - imgrect.Min.Y
 
 	log.Print("Image is : ", sizeX, sizeY)
+
+	// Store image for later use
+	path := "public/pathways"
+	filename := keggId + ".png"
+	storeImage(path, filename, img)
+
 	// First create a node that will serve as a background image to the pathway
 	inputGraph.AddGraphicNode(
 		0,
@@ -289,6 +297,23 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph) {
 	}
 
 	return
+}
+
+func storeImage(path, filename string, image image.Image) error {
+
+	err := os.MkdirAll(path, 0755)
+	if err != nil {
+		return err
+	}
+
+	fn := path + "/" + filename
+	file, err := os.Create(fn)
+	if err != nil {
+		return err
+	}
+
+	return png.Encode(file, image)
+
 }
 
 func GetPathway(id string) Pathway {
