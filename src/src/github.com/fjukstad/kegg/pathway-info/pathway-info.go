@@ -5,9 +5,11 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
-	"nowac/kegg"
 	"os"
+
+	"github.com/fjukstad/kegg"
 )
 
 type Graph struct {
@@ -33,9 +35,23 @@ func main() {
 
 	pathwayId := flag.String("id", "hsa05200",
 		"The id of the pathway you're interested in")
+
+	all := flag.Bool("all", false, "get all human pathways")
 	flag.Parse()
 
-	pathway := kegg.NewKeggPathway(*pathwayId)
+	if *all {
+		pws := kegg.GetAllHumanPathways()
+		for i, pw := range pws {
+			PathwayGraph(pw)
+			log.Println(i, pw)
+		}
+	} else {
+		PathwayGraph(*pathwayId)
+	}
+}
+
+func PathwayGraph(pathwayId string) int {
+	pathway := kegg.NewKeggPathway(pathwayId)
 
 	nodes := make([]Node, len(pathway.Entries))
 	edges := make([]Edge, len(pathway.Relations))
@@ -57,18 +73,19 @@ func main() {
 
 	if err != nil {
 		fmt.Println("Could not marshal response ", err)
-		return
+		return 1
 	}
 
-	filename := *pathwayId + ".json"
+	filename := pathwayId + ".json"
 	file, err := os.Create(filename)
 	if err != nil {
 		fmt.Println("could not create json file ", err)
-		return
+		return 1
 	}
 	_, err = file.Write(b)
 	if err != nil {
 		fmt.Println("Could not write to json file ", err)
+		return 1
 	}
 
 	file.Close()
@@ -79,24 +96,27 @@ func main() {
 	resp, err := http.Get(url)
 	if err != nil {
 		fmt.Println("Image could not be downloaded ", err)
-		return
+		return 1
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("Could not read response ", err)
-		return
+		return 1
 	}
 
-	filename = *pathwayId + ".png"
+	filename = pathwayId + ".png"
 	file, err = os.Create(filename)
 	if err != nil {
 		fmt.Println("Could not create image file ", err)
+		return 1
 	}
 
 	_, err = file.Write(body)
 	if err != nil {
 		fmt.Println("Could not write image ", err)
-		return
+		return 1
 	}
+
+	return 0
 }
