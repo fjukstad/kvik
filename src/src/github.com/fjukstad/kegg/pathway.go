@@ -244,7 +244,7 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph) {
 	log.Print("Image is : ", sizeX, sizeY)
 
 	// Store image for later use
-	path := "../webapp/public/pathways"
+	path := "../frontend/public/pathways"
 	filename := keggId + ".png"
 	err = storeImage(path, filename, img)
 	if err != nil {
