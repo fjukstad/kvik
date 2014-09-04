@@ -139,7 +139,8 @@ func parseCompoundResponse(response io.ReadCloser) Compound {
 			a := strings.Join(line[5:], " ")
 			b := strings.Split(a, ":")
 			compound.DBLinks = make(map[string]string)
-			compound.DBLinks[b[0]] = b[1]
+			link := strings.Replace(b[1], " ", "", -1)
+			compound.DBLinks[b[0]] = link
 			current = "DBLINKS"
 		case "ATOM":
 			current = "ATOM"
@@ -169,7 +170,8 @@ func parseCompoundResponse(response io.ReadCloser) Compound {
 				if len(line) > 5 {
 					a := strings.Join(line[12:], " ")
 					b := strings.Split(a, ":")
-					compound.DBLinks[b[0]] = b[1]
+					link := strings.Replace(b[1], " ", "", -1)
+					compound.DBLinks[b[0]] = link
 				}
 
 			}
