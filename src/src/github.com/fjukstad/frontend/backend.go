@@ -16,6 +16,7 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
+	"os"
 	"os/exec"
 )
 
@@ -86,11 +87,36 @@ type NOWACService struct {
                                 path:"/resetcache/"
                                 output:"string"`
 
+	public gorest.EndPoint `method:"GET"
+									path:"/public/{...:string}"
+									output:"string"`
+
 	GraphServers map[string]string
 }
 
 type PWMap struct {
 	Map map[string]int
+}
+
+// Serve whatever is in the public folder
+func (serv NOWACService) Public(args ...string) string {
+	addAccessControlAllowOriginHeader(serv)
+	filename := ""
+	for i, v := range args {
+		filename += v
+		if i < len(args)-1 {
+			filename += "/"
+		}
+	}
+	file, err := os.Open("public/" + filename)
+	if err != nil {
+		log.Println("ERROR READING PUBLIC FILE ", err)
+	}
+	contents, err := ioutil.ReadAll(file)
+	if err != nil {
+		log.Println("Error reading in public file ", err)
+	}
+	return string(contents)
 }
 
 func (serv NOWACService) ResetCache() string {
@@ -474,7 +500,7 @@ func GeneExpression(geneid string) string {
 
 }
 
-// Returns all information possible for a gene. This includes stuff
+// Returns all information possible for different entities. This includes stuff
 // like id,name,definition etc etc.
 func (serv NOWACService) GetInfo(Items string, InfoType string) string {
 
@@ -482,18 +508,21 @@ func (serv NOWACService) GetInfo(Items string, InfoType string) string {
 
 	addAccessControlAllowOriginHeader(serv)
 
+	// get info about gene
 	if strings.Contains(Items, "hsa") {
-		// will get the first gene in the list Items. Could be more than one
-		// but for starters we'll do with just one.
-
 		geneIdString := strings.Split(Items, " ")[0]
 		geneId := strings.Split(geneIdString, ":")[1]
 
 		gene := kegg.GetGene(geneId)
 
-		//gene.Pathways = kegg.ReadablePathwayNames(gene.Pathways)
-
 		return kegg.GeneJSON(gene)
+	}
+
+	// get info about compound
+	if strings.Contains(Items, "cpd") {
+		cid := strings.Split(Items, ":")[1]
+		compound := kegg.GetCompound(cid)
+		return compound.JSON()
 	}
 
 	return Items
