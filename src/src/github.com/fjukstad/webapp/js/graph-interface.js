@@ -22,7 +22,11 @@ function Graph(cy){
 
         n.graphics.name = n.graphics.name.split(" ")
         if(n.name === "\"bg\"") {
-            n.graphics.bgimage = n.graphics.name[0];
+            console.log(n.graphics.name[0])
+            var a = n.graphics.name[0].split("/")
+            var b = a[a.length-1]
+            var url = "http://localhost:8080/public/pathways/"+b 
+            n.graphics.bgimage = url
             n.graphics.bgcolor = "#fff"
             n.graphics.name = ""
         }
