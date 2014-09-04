@@ -244,9 +244,12 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph) {
 	log.Print("Image is : ", sizeX, sizeY)
 
 	// Store image for later use
-	path := "public/pathways"
+	path := "../webapp/public/pathways"
 	filename := keggId + ".png"
-	storeImage(path, filename, img)
+	err = storeImage(path, filename, img)
+	if err != nil {
+		log.Panic("Image could not be stored", err)
+	}
 
 	// First create a node that will serve as a background image to the pathway
 	inputGraph.AddGraphicNode(
