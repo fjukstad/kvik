@@ -54,7 +54,6 @@ func Init(addr string) (*RPCMan, error) {
 		Socket:   socket,
 		mutex:    mutex}
 
-	log.Println("Connected to RPC server at", addr)
 	return &rpc, nil
 
 }
