@@ -14,7 +14,7 @@
 } 
 
 #info-panel-heading{
-    position:fixed;
+    /*position:fixed;*/
     margin-top:-16px;
     border-radius: 3px;        
     border:1px solid #AAAAAA;

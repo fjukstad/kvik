@@ -3,9 +3,12 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"io"
 	"log"
 	"math"
 	"net/http"
+	"net/url"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -14,6 +17,8 @@ import (
 	"code.google.com/p/gorest"
 	"github.com/fjukstad/rpcman"
 )
+
+var rpc *rpcman.RPCMan
 
 type RestService struct {
 
@@ -336,11 +341,61 @@ func Init(path string) *RestService {
 	rpcaddr := "tcp://localhost:5555" // "ipc:///tmp/datastore/0"
 	restService.RPC, err = rpcman.Init(rpcaddr)
 
+	// I know it's a global thing. sorry...
+	rpc = restService.RPC
+
 	if err != nil {
 		log.Println("RPC error", err)
 	}
 
 	return restService
+}
+
+func replaceOctets(s string) string {
+	res := strings.Replace(s, "%2B", "+", -1)
+	res = strings.Replace(res, "%3D", "=", -1)
+	res = strings.Replace(res, "%2C", ",", -1)
+	res = strings.Replace(res, "%2F", "/", -1)
+	return res
+}
+
+func CommandHandler(w http.ResponseWriter, r *http.Request) {
+	// Cross origin nonsense
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	log.Println(r.URL.RawQuery)
+	command, err := url.QueryUnescape(strings.Split(r.URL.RawQuery, "=")[1])
+	if err != nil {
+		log.Panic("Could not unescape query:", err)
+	}
+
+	command = replaceOctets(command)
+
+	log.Println("Recieved command", command)
+
+	// send command to rpcman
+	output, err := rpc.Call("command", command)
+	if err != nil {
+		log.Println("RPC FAILED", err)
+	}
+
+	var response string
+	t := reflect.TypeOf(output).String()
+
+	if t == "float64" {
+		res := output.(float64)
+		response = strconv.FormatFloat(res, 'f', 3, 64)
+	}
+	if t == "string" {
+		response = output.(string)
+	}
+
+	log.Println(response)
+
+	_, err = io.WriteString(w, response)
+	if err != nil {
+		log.Panic("Error writing to response", err)
+	}
 }
 
 func main() {
@@ -354,8 +409,9 @@ func main() {
 	restService := Init(*path)
 	log.Print("Starting datastore at ", *ip, *port)
 
-	gorest.RegisterService(restService)
+	http.HandleFunc("/com", CommandHandler)
 
+	gorest.RegisterService(restService)
 	http.Handle("/", gorest.Handle())
 	http.ListenAndServe(*port, nil)
 

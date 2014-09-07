@@ -89,7 +89,55 @@
     </div>
 </div>
 </div>
+<div class="row">
+    <div class="col-xs-12 col-sm-8 col-md-8" id="console">
 
+    <style>
+        #console { 
+            background-color: #fff;
+            margin-left:1em;
+        }
+        .cmd {
+            background-color: #fff;
+        }
+    </style> 
+
+
+        <script> 
+    $(function($, undefined) {
+        $('#console').terminal(function(command, term) {
+           if (command == "help") { 
+                term.echo("This is a unhelpful help message");
+                return
+            }
+                console.log(command) 
+                // WARNING, SENDING DIRECTLY TO DS 
+                var url = "http://"+window.location.hostname+":8888/com"
+                console.log("Sending to", url) 
+                var a = {Command: command}
+                console.log(a) 
+                $.ajax({
+                    url: url,
+                    data: a,
+                    success: function(d, txtstatus, jqxhdr){
+                        console.log(d)
+                        term.echo(d, { finalize: function(div){
+                            div.css("color", "black"); 
+                            }
+                            });
+                    },
+                    async: false,
+                    });
+        }, {
+            greetings: '',
+            name: 'js_demo',
+            height: 200,
+            width: "100%",
+            prompt: 'R> '});
+    });
+        </script> 
+    </div> 
+</div> 
 
     <script type="text/javascript" src="/js/info-man.js"></script>
     <script type="text/javascript" src="/js/vis-man.js"></script>
