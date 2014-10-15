@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/fjukstad/kegg"
 )
 
@@ -16,6 +18,15 @@ func main() {
 
 	compoundId := "C00575"
 	kegg.GetCompound(compoundId)
+
+	pws := kegg.GetAllHumanPathways()
+	log.Println(pws)
+
+	for _, id := range pws {
+
+		pw := kegg.NewKeggPathway(id)
+		log.Println(pw.Name, len(pw.Entries))
+	}
 
 	return
 }
