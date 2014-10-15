@@ -229,13 +229,13 @@ function updateColor(scale) {
     
     if(scale == "log") { 
         color = d3.scale.linear()
-            .domain([2,0,-2])
+            .domain([15,0,-2])
             .range(colorbrewer.RdYlBu[3]);
 
     } 
     else { 
         color = d3.scale.linear()
-            .domain([400,0,-400])
+            .domain([10000,0, 400])
             .range(colorbrewer.RdYlBu[3]);
     } 
 } 
@@ -266,7 +266,7 @@ function visGenePanel(name){
     var panelHeadingDiv = document.createElement('div');
     panelHeadingDiv.id = 'info-panel-heading';
     panelHeadingDiv.className = 'panel-heading';
-    var str = '<h5>'+info.Definition+'</h5>'
+    var str = '<h5>'+info.Name+'</h5>'
     panelHeadingDiv.innerHTML = str
 
     var panelBodyDiv = document.createElement('div');
