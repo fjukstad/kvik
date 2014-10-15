@@ -229,13 +229,13 @@ function updateColor(scale) {
     
     if(scale == "log") { 
         color = d3.scale.linear()
-            .domain([-2,2])
+            .domain([2,0,-2])
             .range(colorbrewer.RdYlBu[3]);
 
     } 
     else { 
         color = d3.scale.linear()
-            .domain([-400,0,400])
+            .domain([400,0,-400])
             .range(colorbrewer.RdYlBu[3]);
     } 
 } 
@@ -246,6 +246,10 @@ var latestGene;
 function visGenePanel(name){
     
     latestGene = name;
+    if(latestGene === undefined){
+        return
+    }
+
 
     console.log(name)
 
