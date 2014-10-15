@@ -167,8 +167,6 @@ func (serv RestService) GeneExpression(Id string) []float64 {
 
 	name := strings.Split(gene.Name, ", ")[0]
 
-	serv.Dataset.PrintDebugInfo()
-
 	var ret []float64
 	// return difference between case & ctrl
 	for _, cc := range serv.Dataset.Exprs.GeneExpression[name] {

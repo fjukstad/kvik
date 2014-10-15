@@ -21,6 +21,10 @@ class DataEngine():
 
         self.r = r
 
+        robjects.r('dataset.nowac = read.table("helper/exprs.csv",sep=",",header=TRUE)')
+
+        print "Data Engine using R is ready!"
+
     def add(self, a, b):
         return r.add(a,b)[0]
 
@@ -51,7 +55,6 @@ class DataEngine():
         except:
             return "Could not evaluate "+string
         print ret
-        print len(ret)
         print str(ret)
         if len(ret) > 1:
             #return ' '.join(str(x) for x in ret)
