@@ -55,15 +55,59 @@ type RestService struct {
                         path:"/gene/{GeneId:string}/{Exprs:string}/bg"
                         output:"string"`
 
+	setSettings gorest.EndPoint `method:"POST" 
+								path:"/setsettings/"
+								postdata:"string"`
+
+	getSettings gorest.EndPoint `method:"GET"
+	path:"/getsettings/{Things:string}"
+								output:"string"`
+
 	// Dataset holding nowac data
 	Dataset *Dataset
+
+	// Settings
+	Settings *Settings
 
 	// RPC Server for performing statistics
 	RPC *rpcman.RPCMan
 }
 
+type Settings struct {
+	Smoking        bool
+	HormoneTherapy bool
+	Disable        bool
+}
+
 type Ex struct {
 	Expression map[string]float64
+}
+
+func (serv RestService) GetSettings(Things string) string {
+
+	j, err := json.Marshal(serv.Settings)
+	if err != nil {
+		log.Println(err)
+		return ""
+	}
+	return string(j)
+
+}
+
+func (serv RestService) SetSettings(PostData string) {
+
+	j := []byte(PostData)
+
+	s := new(Settings)
+	err := json.Unmarshal(j, &s)
+	if err != nil {
+		log.Println("Could not parse JSON settings", err)
+	}
+
+	serv.Settings.Disable = s.Disable
+	serv.Settings.Smoking = s.Smoking
+	serv.Settings.HormoneTherapy = s.HormoneTherapy
+
 }
 
 func (serv RestService) AvgDiffs(args ...string) string {
@@ -170,7 +214,32 @@ func (serv RestService) GeneExpression(Id string) []float64 {
 	var ret []float64
 	// return difference between case & ctrl
 	for _, cc := range serv.Dataset.Exprs.GeneExpression[name] {
-		ret = append(ret, cc.Case-cc.Ctrl)
+		questions := serv.Dataset.Qs.Results[cc.Id]
+
+		if serv.Settings.Disable {
+			ret = append(ret, cc.Case-cc.Ctrl)
+			continue
+		}
+
+		if serv.Settings.Smoking && questions.SmokingStatus == "Yes" {
+			if serv.Settings.HormoneTherapy && questions.HormoneTherapy == "Yes" {
+				ret = append(ret, cc.Case-cc.Ctrl)
+				continue
+			} else if !serv.Settings.HormoneTherapy && questions.HormoneTherapy == "No" {
+				ret = append(ret, cc.Case-cc.Ctrl)
+				continue
+			}
+		}
+
+		if !serv.Settings.Smoking && questions.SmokingStatus == "No" {
+			if !serv.Settings.HormoneTherapy && questions.HormoneTherapy == "No" {
+				ret = append(ret, cc.Case-cc.Ctrl)
+			} else if serv.Settings.HormoneTherapy && questions.HormoneTherapy == "Yes" {
+				ret = append(ret, cc.Case-cc.Ctrl)
+				continue
+			}
+
+		}
 	}
 
 	/*
@@ -336,7 +405,8 @@ func Init(path string) *RestService {
 	var err error
 
 	// connect to statistics engine that will run statistics and that
-	rpcaddr := "tcp://localhost:5555" // "ipc:///tmp/datastore/0"
+	rpcaddr := []string{"tcp://localhost:5555", "tcp://localhost:5556"}
+	//	"tcp://localhost:5557", "tcp://localhost:5558"} // "ipc:///tmp/datastore/0"
 	restService.RPC, err = rpcman.Init(rpcaddr)
 
 	// I know it's a global thing. sorry...
@@ -345,6 +415,12 @@ func Init(path string) *RestService {
 	if err != nil {
 		log.Println("RPC error", err)
 	}
+
+	// Set up the settings
+	restService.Settings = new(Settings)
+	restService.Settings.Smoking = true
+	restService.Settings.HormoneTherapy = true
+	restService.Settings.Disable = true
 
 	return restService
 }
