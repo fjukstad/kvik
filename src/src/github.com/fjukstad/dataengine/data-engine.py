@@ -1,5 +1,6 @@
 import numpy as np
 import json
+import sys
 import ast
 import zmq
 import time
@@ -78,7 +79,15 @@ def call(obj, func, attr):
 if __name__ == "__main__":
     context = zmq.Context()
     socket = context.socket(zmq.REP)
-    socket.bind("tcp://*:5555")
+
+    port = ""
+    if len(sys.argv) < 2:
+        port = "5555"
+    else:
+        port = sys.argv[1]
+
+
+    socket.bind("tcp://*:"+port)
     #rc = socket.bind("ipc:///tmp/datastore/0")
 
 
