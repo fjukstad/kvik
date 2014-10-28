@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/csv"
-	"fmt"
 	"io"
 	"log"
 	"math"
@@ -15,6 +14,7 @@ import (
 type Dataset struct {
 	Bg    Background
 	Exprs Expression
+	Qs    Questionnaire
 
 	Scale     string
 	DiffExprs Expression
@@ -45,19 +45,31 @@ type Expression struct {
 }
 
 type CaseCtrl struct {
+	Id   string
 	Case float64
 	Ctrl float64
 }
+
+var excl []string
+var Q Questionnaire
 
 func NewDataset(path string) Dataset {
 
 	exprsFilename := path + "/exprs.csv"
 	bgFilename := path + "/background.csv"
 
+	// removing ids that we don't need
+	// Remove unwanted data .
+	exclFilename := path + "/exclude.csv"
+	getExcludes(exclFilename)
+
 	bg, err := generateBackgroundDataset(bgFilename)
 	if err != nil {
 		//log.Print(err)
 	}
+
+	qFilename := path + "/geobg.tsv"
+	q := getQuestionnaireData(qFilename)
 
 	exprs, err := generateExpressionDataset(exprsFilename)
 	if err != nil {
@@ -66,10 +78,48 @@ func NewDataset(path string) Dataset {
 
 	diffexprs := Expression{}
 	// Init data set with background and expression data.  Set scale to absolute
-	ds := Dataset{bg, exprs, "abs", diffexprs}
+	ds := Dataset{bg, exprs, q, "abs", diffexprs}
 
 	return ds
 
+}
+
+func getExcludes(filename string) {
+	exclfile, err := os.Open(filename)
+
+	if err != nil {
+		return
+	}
+
+	defer exclfile.Close()
+
+	reader := csv.NewReader(exclfile)
+	firstRow := true
+
+	for {
+		record, err := reader.Read()
+
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			log.Panic(err)
+		}
+
+		if !firstRow {
+			excl = append(excl, record[0])
+		}
+
+		firstRow = false
+	}
+}
+
+func inArray(a string, array []string) bool {
+	for _, v := range array {
+		if a == v {
+			return true
+		}
+	}
+	return false
 }
 
 func generateExpressionDataset(filename string) (Expression, error) {
@@ -126,6 +176,11 @@ func generateExpressionDataset(filename string) (Expression, error) {
 			// store an id to expression mapping.
 			IdExpression[id] = expression
 
+			// if we want to exclude the id, do it!
+			if inArray(id, excl) {
+				continue
+			}
+
 			// Store the expression value for this specific gene and id
 			// combination
 			for i, _ := range expression {
@@ -140,7 +195,6 @@ func generateExpressionDataset(filename string) (Expression, error) {
 					// Store id on same nuber without trailing _1 _2 etc
 					commonId = strings.Split(id, "_")[0]
 					cc = true
-					fmt.Println("CC MAFAKKA")
 				} else {
 					commonId = id
 					cc = false
@@ -155,13 +209,26 @@ func generateExpressionDataset(filename string) (Expression, error) {
 
 				if cc {
 					GeneExpression[gene][commonId].Ctrl = expression[i]
-					DiffGeneExpression[gene][commonId].Ctrl = math.Log2(expression[i])
+					GeneExpression[gene][commonId].Id = commonId
+					if expression[i] != 0 {
+						DiffGeneExpression[gene][commonId].Ctrl = math.Log2(expression[i])
+					} else {
+						DiffGeneExpression[gene][commonId].Ctrl = 0
+					}
+
+					DiffGeneExpression[gene][commonId].Id = commonId
 				} else {
 					// If we only have a dataset with cases, we don't need to do
 					// anything the the controls, they are automaticall set to
 					// 0.
 					GeneExpression[gene][commonId].Case = expression[i]
-					DiffGeneExpression[gene][commonId].Case = math.Log2(expression[i])
+					GeneExpression[gene][commonId].Id = commonId
+					if expression[i] != 0 {
+						DiffGeneExpression[gene][commonId].Case = math.Log2(expression[i])
+					} else {
+						DiffGeneExpression[gene][commonId].Case = 0
+					}
+					DiffGeneExpression[gene][commonId].Id = commonId
 
 				}
 			}
@@ -223,7 +290,8 @@ func getProbeToGeneMapping(filename string) (map[string]string, error) {
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			log.Println(record)
+			//log.Println(record)
+			log.Println(err)
 			//log.Panic(err)
 		}
 		if firstRow {
