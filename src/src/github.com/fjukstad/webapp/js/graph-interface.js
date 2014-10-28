@@ -7,7 +7,7 @@ var edges = [];
 var graph; 
 
 var color = d3.scale.linear()
-    .domain([10000,0,-400])
+    .domain([colmax,0,colmin])
     .range(colorbrewer.RdYlBu[3]);
     //.range(["yellow", "white", "blue"]);
 
