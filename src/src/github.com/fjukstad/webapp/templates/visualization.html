@@ -40,7 +40,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-xs-12 col-sm-6 col-md-8">    
+    <div class="col-xs-12 col-sm-8 col-md-8">    
     <!--
       <div class="btn-group btn-group-xs">
         <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -84,6 +84,87 @@
           </label>
         </div>
 
+
+
+        <div class="settings"> 
+        <label class="checkbox-inline" style="padding-right:0.2em">
+          <input type="checkbox" id="disable" value="option1"> Filtering
+          disabled 
+        </label>
+        <label class="checkbox-inline">
+          <input type="checkbox" id="smoking" value="option2"> Smoker
+        </label>
+        <label class="checkbox-inline">
+          <input type="checkbox" id="hormones" value="option3"> Hormone Therapy
+        </label>
+
+        <script>
+        $( "input#disable").change(function() {
+            var val = $( this );
+            settings.Disable = val.prop("checked")
+            setSettings() 
+        });
+
+        $( "input#smoking").change(function() {
+            var val = $( this );
+            settings.Smoking = val.prop("checked")
+            setSettings() 
+        });
+
+        $( "input#hormones").change(function() {
+            var val = $( this );
+            settings.HormoneTherapy = val.prop("checked")
+            setSettings() 
+        });
+
+    
+
+        </script> 
+</div> 
+
+<div id="scale">
+        <script>
+/*
+            
+            var w = 400,
+                h = 10
+
+            var svg = d3.select("#scale").append("svg:svg")
+                .attr("width", w)
+                .attr("height", h);
+
+            var gradient = svg.append("svg:defs")
+              .append("svg:linearGradient")
+                .attr("id", "gradient")
+                .attr("x1", "0%")
+                .attr("y1", "0%")
+                .attr("x2", "100%")
+                .attr("y2", "0%")
+                .attr("spreadMethod", "pad");
+
+            gradient.append("svg:stop")
+                .attr("offset", "0%")
+                .attr("stop-color", function(){
+                     return colorbrewer.RdYlBu[3][3];
+                     })
+                .attr("stop-opacity", 1);
+
+            gradient.append("svg:stop")
+                .attr("offset", "100%")
+                .attr("stop-color", function(){
+                     return colorbrewer.RdYlBu[3][0];
+                })
+                .attr("stop-opacity", 1);
+
+            svg.append("svg:rect")
+                .attr("width", w)
+                .attr("height", h)
+                .style("fill", "url(#gradient)");
+                */
+        </script> 
+    </div> 
+
+</div> 
 </div>
 </div>
 
