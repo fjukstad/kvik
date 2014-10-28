@@ -1,7 +1,5 @@
-<<<<<<< HEAD
 src/pkg
 src/bin
-
 src/src/github.com/golang/
 src/src/github.com/google/
 src/src/github.com/gorilla/
@@ -14,12 +12,3 @@ src/src/honnef.co/
 src/docker/
 src/src/code.google.com/
 src/src/github.com/alecthomas/
-
-=======
-src/pgk/
-src/bin/
-cache/
-offline_me/
-misc/
-src/src/code.google.com/p/go.tools/
->>>>>>> 9b0b5d82740c1dc78b25755f04ccf76f6bf25394
