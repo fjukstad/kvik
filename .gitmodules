@@ -1,0 +1,52 @@
+[submodule "src/src/nowac/backend"]
+	path = src/src/nowac/backend
+	url = git@ice-git.cs.uit.no:fjukstad/nowac-backend.git
+[submodule "src/src/nowac/webapp"]
+	path = src/src/nowac/webapp
+	url = git@ice-git.cs.uit.no:fjukstad/nowac-webapp.git
+[submodule "src/src/nowac/graph"]
+	path = src/src/nowac/graph
+	url = git@ice-git.cs.uit.no:fjukstad/nowac-graph.git
+[submodule "src/src/nowac/websocket-broadcaster"]
+	path = src/src/nowac/websocket-broadcaster
+	url = git@ice-git.cs.uit.no:fjukstad/nowac-websocket-broadcaster.git
+[submodule "doc"]
+	path = doc
+	url = git@ice-git.cs.uit.no:fjukstad/master-thesis.git
+[submodule "src/src/nowac/dataset"]
+	path = src/src/nowac/dataset
+	url = git@ice-git.cs.uit.no:fjukstad/nowac-dataset.git
+[submodule "src/src/nowac/kegg"]
+	path = src/src/nowac/kegg
+	url = git@ice-git.cs.uit.no:fjukstad/nowac-kegg.git
+[submodule "misc/ieee-vis-2013"]
+	path = misc/ieee-vis-2013
+	url = git@ice-git.cs.uit.no:fjukstad/ieee-vis-2013.git
+
+[submodule "src/src/github.com/davecheney/profile"]
+	path = src/src/github.com/davecheney/profile
+	url = git@github.com:davecheney/profile.git
+
+[submodule "src/src/github.com/fjukstad/gocache"]
+	path = "src/src/github.com/fjukstad/gocache"
+	url = git@github.com:fjukstad/gocache.git
+
+[submodule "src/src/github.com/fjukstad/gographer"]
+	path = "src/src/github.com/fjukstad/gographer"
+	url = git@github.com:fjukstad/gographer.git
+
+[submodule "src/src/github.com/fjukstad/gowebsocket"]
+	path = "src/src/github.com/fjukstad/gowebsocket"
+	url = git@github.com:fjukstad/gowebsocket.git
+[submodule "src/src/nowac/datastore"]
+	path = src/src/nowac/datastore
+	url = git@ice-git.cs.uit.no:fjukstad/nowac-datastore.git
+[submodule "src/src/nowac/js-stats"]
+	path = src/src/nowac/js-stats
+	url = git@ice-git.cs.uit.no:fjukstad/js-stats.git
+[submodule "src/src/github.com/fjukstad/rpcman"]
+	path = src/src/github.com/fjukstad/rpcman
+	url = http://github.com/fjukstad/rpcman
+[submodule "src/src/github.com/alecthomas/gozmq"]
+	path = src/src/github.com/alecthomas/gozmq
+	url = http://github.com/alecthomas/gozmq
