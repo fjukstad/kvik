@@ -20,9 +20,10 @@ class DataEngine():
             string =''.join(myfile.readlines())
         r = SignatureTranslatedAnonymousPackage(string, "r")
 
+        robjects.r(string)
+
         self.r = r
 
-        robjects.r('dataset.nowac = read.table("helper/exprs.csv",sep=",",header=TRUE)')
 
         print "Data Engine using R is ready!"
 

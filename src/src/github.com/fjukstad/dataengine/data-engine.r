@@ -1,11 +1,11 @@
-dataset.nowac = read.table("helper/exprs.csv", sep=",", header=TRUE)
+library(xlsx)
+dataset <- read.xlsx("karina/dataset.xlsx", sheetIndex=1)
 
-add <- function(a,b) {
-  a
-  b
-  return (a+b)
+get <- function(geneName) {
+  a = dataset[dataset$Genes == geneName,];
+  return (a) 
 }
 
-sub <- function(a,b){
-  return (a-b)
+add <- function(a,b){
+  return (a+b)
 }
