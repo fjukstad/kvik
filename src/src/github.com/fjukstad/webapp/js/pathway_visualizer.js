@@ -3,6 +3,11 @@ window.onload = function() {
     serverAddr = getVisServerAddress();
     wsURL = "ws://"+serverAddr; 
     loadCy(); 
+
+
+    updateSettingsView()
+
+
 };
 
 var prevSelection;
@@ -563,3 +568,13 @@ function resizeHeader(){
     }
 }
 
+var settings =  {Smoking: true, HormoneTherapy: true, Disable: true} 
+
+function updateSettingsView() {
+    settings = getSettings() 
+    console.log(settings) 
+    // check checkboxes
+    $( "input#disable").prop('checked', settings.Disable)
+    $( "input#smoking").prop('checked', settings.Smoking)
+    $( "input#hormones").prop('checked', settings.HormoneTherapy)
+} 
