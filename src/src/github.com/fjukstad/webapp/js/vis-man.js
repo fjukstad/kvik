@@ -206,8 +206,47 @@ function GetCommonGenes(ids) {
 
 }
 
-function setScale(scale) { 
+function getSettings(){
+    var baseURL = "http://"
+                    +window.location.hostname
+                    +":8080/datastore/getsettings/all";
+    var res
+    $.ajax({
+        async: false,
+        cache: true,
+        type: "GET",
+        url: baseURL,
+        dataType: "text",
+        success: function(data) {
+             res = data;
+        }
+    });
+
+    return $.parseJSON(res) 
+
+
+} 
+
+function setSettings(smoking, hormones, disable) {
+    var baseURL = "http://"
+                    +window.location.hostname
+                    +":8080/datastore/setsettings/";
+
+    console.log("Setting settings:", settings) 
+    var s = settings// {Smoking: smoking, HormoneTherapy: hormones, Disable: disable} 
     
+    $.post( baseURL, JSON.stringify(s));
+    updateNodeColors();
+    scaleDefer();
+    visGenePanel(latestGene)
+
+
+
+
+} 
+
+function setScale(scale) { 
+
     var baseURL = "http://"
                     +window.location.hostname
                     +":8080/datastore/setscale";
@@ -225,17 +264,23 @@ function setScale(scale) {
 
 } 
 
+var colmax = 500//10000
+var colmin = -500//-1000
+
+var colmaxlog = 4//20
+var colminlog = -4
+
 function updateColor(scale) { 
     
     if(scale == "log") { 
         color = d3.scale.linear()
-            .domain([15,0,-2])
+            .domain([colmaxlog,0,colminlog])
             .range(colorbrewer.RdYlBu[3]);
 
     } 
     else { 
         color = d3.scale.linear()
-            .domain([10000,0, 400])
+            .domain([colmax,0, colmin])
             .range(colorbrewer.RdYlBu[3]);
     } 
 } 
