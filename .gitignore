@@ -1,2 +1,16 @@
 src/pkg
 src/bin
+
+src/src/github.com/golang/
+src/src/github.com/google/
+src/src/github.com/gorilla/
+src/src/github.com/kisielk/
+src/src/github.com/nsf/
+src/src/github.com/pebbe/
+src/src/github.com/veandco/
+src/src/gopkg.in/
+src/src/honnef.co/
+src/docker/
+src/src/code.google.com/
+src/src/github.com/alecthomas/
+
