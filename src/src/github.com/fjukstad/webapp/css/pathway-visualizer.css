@@ -7,6 +7,10 @@
     border:1px solid #AAAAAA;
 }
 
+.scale { 
+    display: inline; 
+} 
+
 #expression-view { 
     overflow: scroll;
     padding-right:1em;
@@ -18,7 +22,7 @@
     margin-top:-16px;
     border-radius: 3px;        
     border:1px solid #AAAAAA;
-    width:31%;
+    /*width:31%;*/
 } 
 .left {
     float:left;
@@ -45,6 +49,11 @@
     background-color: #FFFFFF;
     /*color: #111111;*/
 }
+
+.settings { 
+    display: inline; 
+    padding-left: 1.2em;
+} 
 
 /*
 .btn-primary {
