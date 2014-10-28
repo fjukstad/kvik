@@ -375,6 +375,7 @@ func GeneExpression(geneid string) string {
         
         var svg = d3.select(".chart")
                     .append("svg")
+					.attr("style", "padding-top:1em;")
                     .attr("width", w)
                     .attr("height", h)
         
