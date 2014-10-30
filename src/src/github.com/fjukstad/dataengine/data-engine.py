@@ -24,32 +24,6 @@ class DataEngine():
 
         self.r = r
 
-
-        print "Data Engine using R is ready!"
-
-    def add(self, a, b):
-        return r.add(a,b)[0]
-
-    def sum(self,nums):
-        v = robjects.FloatVector(nums)
-        rsum = robjects.r['sum']
-        return rsum(v)[0]
-
-    def std(self,a):
-        v = robjects.FloatVector(a)
-        rsd = robjects.r['sd']
-        return rsd(v)[0]
-
-    def var(self,a):
-        v = robjects.FloatVector(a)
-        rvar = robjects.r['var']
-        return rvar(v)[0]
-
-    def mean(self,a):
-        v = robjects.FloatVector(a)
-        rmean = robjects.r['mean']
-        return rmean(v)[0]
-
     def command(self, string):
         print "Got the command "+string
         try:
@@ -60,6 +34,7 @@ class DataEngine():
         print str(ret)
         if len(ret) > 1:
             #return ' '.join(str(x) for x in ret)
+            print "Result:", str(ret)
             return str(ret)
         try:
             return ret[0]
@@ -87,10 +62,7 @@ if __name__ == "__main__":
     else:
         port = sys.argv[1]
 
-
     socket.bind("tcp://*:"+port)
-    #rc = socket.bind("ipc:///tmp/datastore/0")
-
 
     dataengine = DataEngine("data-engine.r")
 
