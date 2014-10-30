@@ -108,8 +108,8 @@ func RunCommand(command string) []string {
 		return []string{""}
 	}
 
-	result = strings.Trim(result, "[1]") // remove r thing
-	result = strings.Trim(result, "\n")  // unwanted newlines
+	result = strings.Trim(result, "[1] ") // remove r thing
+	result = strings.Trim(result, "\n")   // unwanted newlines
 	result = strings.TrimLeft(result, " ")
 	results := strings.Split(result, " ")
 
@@ -130,6 +130,7 @@ func WriteResponse(w http.ResponseWriter, genes []string, results []string) {
 
 	for i, gene := range genes {
 		response.Result[gene] = results[i]
+		log.Println(results[i])
 	}
 
 	b, err := json.Marshal(response)

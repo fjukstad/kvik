@@ -461,9 +461,10 @@ function updateNodeColors() {
         var n = nodes[i]; 
         name=n.data.name;
         if(!name.indexOf("hsa")){
-            hsas.push(name.split(" "))[0];
+            hsas.push(name.split(" ")[0]);
         }
     }
+
     
     // convert list to string
     var hsastring = hsas.toString().replace(/,/g,"+")
@@ -482,9 +483,11 @@ function updateNodeColors() {
             if(graphNodes[n].style().shape == "rectangle"){
                 var name = graphNodes[n].data().name.split(" ")[0];
                 fc = foldchange.Result[name]
-                console.log("foldman", fc) 
                 if(fc === "NA") { 
                    var c = "#ffffff"
+                } 
+                else if(fc === undefined){
+                    var c = "#ffffff"
                 } else { 
                     var c = color(fc)
                 }  
