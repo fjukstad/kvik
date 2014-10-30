@@ -108,15 +108,26 @@ func RunCommand(command string) []string {
 		return []string{""}
 	}
 
-	result = strings.Trim(result, "[1] ") // remove r thing
-	result = strings.Trim(result, "\n")   // unwanted newlines
-	log.Println(result)
-	results := strings.Split(result, "  ")
+	result = strings.Trim(result, "[1]") // remove r thing
+	result = strings.Trim(result, "\n")  // unwanted newlines
+	result = strings.TrimLeft(result, " ")
+	results := strings.Split(result, " ")
 
-	return results
+	var res []string
+	for _, r := range results {
+		if r != "" {
+			res = append(res, r)
+		}
+	}
+
+	return res
 }
 
-func WriteResponse(w http.ResponseWriter, response *Response) {
+func WriteResponse(w http.ResponseWriter, genes []string, results []string) {
+	response := new(Response)
+	response.Genes = genes
+	response.Results = results
+
 	b, err := json.Marshal(response)
 	if err != nil {
 		log.Println(err)
@@ -127,24 +138,32 @@ func WriteResponse(w http.ResponseWriter, response *Response) {
 
 }
 
-func FoldChangeHandler(w http.ResponseWriter, r *http.Request) {
-	list := strings.Split(r.URL.Path, "/fc/")[1]
+func parseGenes(path string, separator string) []string {
+	list := strings.Split(path, "/"+separator+"/")[1]
 	genes := strings.Split(list, "+")
-
-	command := "fc(" + ListToVector(genes) + ")"
-
-	results := RunCommand(command)
-
-	response := new(Response)
-	response.Genes = genes
-	response.Results = results
-
-	WriteResponse(w, response)
+	return genes
 
 }
 
-func PValueHandler(w http.ResponseWriter, r *http.Request) {
+func generateCommand(name string, genes []string) string {
+	command := name + "(" + ListToVector(genes) + ")"
+	return command
+}
 
+func FoldChangeHandler(w http.ResponseWriter, r *http.Request) {
+	com := "fc"
+	genes := parseGenes(r.URL.Path, com)
+	command := generateCommand(com, genes)
+	results := RunCommand(command)
+	WriteResponse(w, genes, results)
+}
+
+func PValueHandler(w http.ResponseWriter, r *http.Request) {
+	com := "pvalues"
+	genes := parseGenes(r.URL.Path, com)
+	command := generateCommand(com, genes)
+	results := RunCommand(command)
+	WriteResponse(w, genes, results)
 }
 
 func GeneExpressionHandler(w http.ResponseWriter, r *http.Request) {
@@ -172,7 +191,7 @@ func main() {
 
 	http.HandleFunc("/com", CommandHandler)
 	http.HandleFunc("/fc/", FoldChangeHandler)
-	http.HandleFunc("/pval/", PValueHandler)
+	http.HandleFunc("/pvalues/", PValueHandler)
 	http.HandleFunc("/exprs/", GeneExpressionHandler)
 	http.HandleFunc("/scale/", ScaleHandler)
 

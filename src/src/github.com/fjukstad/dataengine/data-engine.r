@@ -9,13 +9,13 @@ get <- function(geneName) {
 
 fc <- function(genes) {
     a = dataset[match(genes, dataset$Genes),];
-    b = a$dm
+    b = as.numeric(as.character(a$dm))
     return (b) 
 }
 
 pvalues <- function(genes) { 
     a = dataset[match(genes, dataset$Genes),];
-    b = a$pval_01
+    b = as.numeric(as.character(a$pval_01))
     return(b) 
 }
 
