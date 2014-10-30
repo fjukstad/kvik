@@ -69,11 +69,11 @@ function AvgDiff(gene) {
 
 }
 
-function AvgDiffs(genes) { 
-    var baseURL = "http://"+window.location.hostname+":8080/datastore/genes/";
-    url = baseURL + genes + "/avg"
+function FoldChange(genes) { 
+    var baseURL = "http://"+window.location.hostname+":8080/datastore/fc/";
+    url = baseURL + genes
 
-    var avg
+    var fc
     $.ajax({
         async: false,
         cache: false,
@@ -81,11 +81,11 @@ function AvgDiffs(genes) {
         url: url,
         dataType: "text",
         success: function(data) {
-            avg = JSON.parse(data);
+            fc = JSON.parse(data);
         }
     });
 
-    return avg
+    return fc
 
 }
 
@@ -219,10 +219,16 @@ function getSettings(){
         dataType: "text",
         success: function(data) {
              res = data;
+        },
+        error: function(xhr, ajaxOptions, thrownError){
+            console.log("Settings not implemented yet...");
+            //res = "{Smoking: true, HormoneTherapy: false, Disable: true}"
+            //return "" 
         }
     });
 
-    return $.parseJSON(res) 
+    return {Smoking:true, HormoneTherapy: false, Disable: true}
+    //$.parseJSON(res) 
 
 
 } 
@@ -264,11 +270,11 @@ function setScale(scale) {
 
 } 
 
-var colmax = 500//10000
-var colmin = -500//-1000
+var colmax = 1.4//500//10000
+var colmin = -0.7//-500//-1000
 
-var colmaxlog = 4//20
-var colminlog = -4
+var colmaxlog = 1.4//20
+var colminlog = -0.7
 
 function updateColor(scale) { 
     

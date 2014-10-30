@@ -11,14 +11,14 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/fjukstad/kegg"
 	"github.com/fjukstad/rpcman"
 )
 
 var rpc *rpcman.RPCMan
 
 type Response struct {
-	Genes   []string
-	Results []string
+	Result map[string]string
 }
 
 func InitRPC(address []string) (*rpcman.RPCMan, error) {
@@ -125,8 +125,12 @@ func RunCommand(command string) []string {
 
 func WriteResponse(w http.ResponseWriter, genes []string, results []string) {
 	response := new(Response)
-	response.Genes = genes
-	response.Results = results
+
+	response.Result = make(map[string]string, len(genes))
+
+	for i, gene := range genes {
+		response.Result[gene] = results[i]
+	}
 
 	b, err := json.Marshal(response)
 	if err != nil {
@@ -138,10 +142,18 @@ func WriteResponse(w http.ResponseWriter, genes []string, results []string) {
 
 }
 
-func parseGenes(path string, separator string) []string {
+func parseGenes(path string, separator string) ([]string, []string) {
 	list := strings.Split(path, "/"+separator+"/")[1]
-	genes := strings.Split(list, "+")
-	return genes
+	geneIds := strings.Split(list, "+")
+	var genes []string
+	for _, id := range geneIds {
+		id := strings.Split(id, ":")[1]
+		g := kegg.GetGene(id)
+		name := strings.Split(g.Name, " ")[0]
+		name = strings.TrimRight(name, ",")
+		genes = append(genes, name)
+	}
+	return genes, geneIds
 
 }
 
@@ -152,18 +164,18 @@ func generateCommand(name string, genes []string) string {
 
 func FoldChangeHandler(w http.ResponseWriter, r *http.Request) {
 	com := "fc"
-	genes := parseGenes(r.URL.Path, com)
+	genes, ids := parseGenes(r.URL.Path, com)
 	command := generateCommand(com, genes)
 	results := RunCommand(command)
-	WriteResponse(w, genes, results)
+	WriteResponse(w, ids, results)
 }
 
 func PValueHandler(w http.ResponseWriter, r *http.Request) {
 	com := "pvalues"
-	genes := parseGenes(r.URL.Path, com)
+	genes, ids := parseGenes(r.URL.Path, com)
 	command := generateCommand(com, genes)
 	results := RunCommand(command)
-	WriteResponse(w, genes, results)
+	WriteResponse(w, ids, results)
 }
 
 func GeneExpressionHandler(w http.ResponseWriter, r *http.Request) {

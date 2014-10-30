@@ -468,10 +468,10 @@ function updateNodeColors() {
     // convert list to string
     var hsastring = hsas.toString().replace(/,/g,"+")
 
-    var ex = AvgDiffs(hsastring)
+    var foldchange = FoldChange(hsastring)
 
     // check if avg diff response is valid
-    if (typeof ex === 'undefined'){
+    if (typeof foldchange === 'undefined'){
         alert("Unexpected error. Please try to refresh the web page")
     }; 
 
@@ -481,11 +481,12 @@ function updateNodeColors() {
         if(n < graphNodes.length){
             if(graphNodes[n].style().shape == "rectangle"){
                 var name = graphNodes[n].data().name.split(" ")[0];
-                avg = ex.Expression[name]
-                if(avg === 0) { 
+                fc = foldchange.Result[name]
+                console.log("foldman", fc) 
+                if(fc === "NA") { 
                    var c = "#ffffff"
                 } else { 
-                    var c = color(avg)
+                    var c = color(fc)
                 }  
                 graphNodes[n].css("background-color", c)
             }
