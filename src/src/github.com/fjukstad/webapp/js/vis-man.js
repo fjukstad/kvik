@@ -1,12 +1,6 @@
-// js for retrieving vis about gene
-function GetVis(gene) {
 
-
-    var baseURL = "http://"+window.location.hostname+":8080/vis/";
-
-    url = baseURL + gene
-
-    var viscode
+function GET(url, parse) { 
+    var response
     $.ajax({
         async: false,
         cache: true,
@@ -14,214 +8,84 @@ function GetVis(gene) {
         url: url,
         dataType: "text",
         success: function(data) {
-            viscode = data;
+            if(parse) {
+                response = JSON.parse(data);
+            } else {
+                response = data
+            } 
         },
         error: function(xhr, ajaxOptions, thrownError){
-            console.log("Bar chart not implemented yet");
-            res = "";
+            console.log("Error. Returning nothing.");
+            response = "";
         }
-
-
     });
+    return response
+}
 
-    return viscode;
-
+// js for retrieving vis about gene
+function GetVis(gene) {
+    var baseURL = "http://"+window.location.hostname+":8080/vis/";
+    url = baseURL + gene
+    return GET(url,false) 
 }
 
 // Will download a parallel coordinate plot 
 function GetParallelVis() {
-
-
     var baseURL = "http://"+window.location.hostname+":8080/parallel";
-
     url = baseURL
-
-    var viscode
-    $.ajax({
-        async: false,
-        cache: true,
-        type: "GET",
-        url: url,
-        dataType: "text",
-        success: function(data) {
-            viscode = data;
-        }
-    });
-
-    return viscode;
-
+    return GET(url, false) 
 }
 
 function FoldChange(genes) { 
     var baseURL = "http://"+window.location.hostname+":8080/datastore/fc/";
     url = baseURL + genes
-
-    var fc
-    $.ajax({
-        async: false,
-        cache: false,
-        type: "GET",
-        url: url,
-        dataType: "text",
-        success: function(data) {
-            fc = JSON.parse(data);
-        }
-    });
-
-    console.log(fc) 
-
-    return fc
-
+    return GET(url,true) 
 }
-
-
 
 // Fetches std from datastore
 function Std(gene) {
-    
     var baseURL = "http://"+window.location.hostname+":8080/datastore/gene/";
     url = baseURL + gene + "/stddev"
-
-    var res
-    $.ajax({
-        async: false,
-        cache: false,
-        type: "GET",
-        url: url,
-        dataType: "text",
-        success: function(data) {
-            res = data;
-        },
-        error: function(xhr, ajaxOptions, thrownError){
-            console.log("Standard deviation not implemented yet");
-            res = "";
-        }
-    });
-
-
-    return res;
-
+    return GET(url,false) 
 }
 
 
 // Fetches std from datastore
 function Var(gene) {
-    
     var baseURL = "http://"+window.location.hostname+":8080/datastore/gene/";
     url = baseURL + gene + "/vari"
-
-    var res
-    $.ajax({
-        async: false,
-        cache: false,
-        type: "GET",
-        url: url,
-        dataType: "text",
-        success: function(data) {
-            res = data;
-        },
-        error: function(xhr, ajaxOptions, thrownError){
-            console.log("Variance not implemented yet");
-            res = "" 
-        }
-    });
-
-
-    return res;
-
+    return GET(url, false) 
 }
 
 
 
 function GetPathwayName(id) {
     var baseURL = "http://"+window.location.hostname+":8080/info/pathway/"
-        url =  baseURL+id+"/name"
-
-    var name
-    $.ajax({
-        async: false,
-        cache: true,
-        type: "GET",
-        url: url,
-        dataType: "text",
-        success: function(data) {
-            name = data;
-        }
-    });
-
-
-    return name;
-
+    url =  baseURL+id+"/name"
+    return GET(url, false) 
 }
 
 
 
 function GetBg(geneId,exprs) {
-    /*
     var baseURL = "http://"+window.location.hostname+":8080/datastore/gene/"
         url = baseURL + geneId+"/"+exprs+"/bg"
-
-    var info
-    $.ajax({
-        async: false,
-        cache: true,
-        type: "GET",
-        url: url,
-        dataType: "text",
-        success: function(data) {
-             info = data;
-        }
-    });
-	*/
-var info = "hepp"
-    return info;
-
+    return GET(url, false) 
 }
 
 function GetCommonGenes(ids) {
     var baseURL = "http://"+window.location.hostname+":8080/info/pathway/"
         url =  baseURL+ids+"/commongenes"
-
-    var num
-    $.ajax({
-        async: false,
-        cache: true,
-        type: "GET",
-        url: url,
-        dataType: "text",
-        success: function(data) {
-             num = data;
-        }
-    });
-
-
-    return num;
-
+    return GET(url, false) 
 }
 
 function getSettings(){
-    var baseURL = "http://"
+    var url = "http://"
                     +window.location.hostname
                     +":8080/datastore/getsettings/all";
-    var res
-    $.ajax({
-        async: false,
-        cache: true,
-        type: "GET",
-        url: baseURL,
-        dataType: "text",
-        success: function(data) {
-             res = data;
-        },
-        error: function(xhr, ajaxOptions, thrownError){
-            console.log("Settings not implemented yet...");
-            //res = "{Smoking: true, HormoneTherapy: false, Disable: true}"
-            //return "" 
-        }
-    });
+    //return GET(url, true) 
 
     return {Smoking:true, HormoneTherapy: false, Disable: true}
-    //$.parseJSON(res) 
 
 
 } 
