@@ -1,0 +1,25 @@
+{{ define "title" }}
+    Gene Visualizer
+{{ end }}
+
+{{ define "content" }}
+<script src="/js/vis-man.js"></script>
+<div class="jumbotron">
+    <div class="container" >
+         {{range $index, $element := .Selection}} 
+            <h2>{{$element}}</h2> 
+        {{end}}
+    <div class="row">
+        <div id="info-panel"></div>  
+    </div>
+</div> 
+</div> 
+
+<script>
+window.onload = function() { 
+    var genename = window.location.href.split("=")[1]; 
+    var id = GetGeneId(genename)
+    visGenePanel(id)
+} 
+</script> 
+{{ end }} 

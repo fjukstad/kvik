@@ -96,6 +96,31 @@ function GetPValues(genes){
     return GET(url, true) 
 }
 
+function GetGenes(){
+    var url = "http://"+window.location.hostname+":8080/datastore/genes/all";
+    return GET(url, true) 
+} 
+
+function GetGeneId(genename) {
+    var url = "http://localhost:8080/info/genename/"+genename
+    return GET(url, false) 
+}
+
+
+// js for retrieving info about specific pathway/gene/compund etc.
+function GetInfo(name) {
+    var a = name;
+    var b = a.replace(/ /g, '+').toLowerCase();
+
+    var baseURL = "http://"+window.location.hostname+":8080/info";
+    var infoType = "all";
+
+    url = baseURL + "/" + b + "/" + infoType;
+    return GET(url, true) 
+
+}
+
+
 
 function setSettings(smoking, hormones, disable) {
     var baseURL = "http://"

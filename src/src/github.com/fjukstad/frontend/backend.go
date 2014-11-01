@@ -87,6 +87,10 @@ type NOWACService struct {
                                 path:"/resetcache/"
                                 output:"string"`
 
+	geneIdFromName gorest.EndPoint `method:"GET"
+									path:"/info/genename/{Gene:string}"
+									output:"string"`
+
 	public gorest.EndPoint `method:"GET"
 									path:"/public/{...:string}"
 									output:"string"`
@@ -96,6 +100,15 @@ type NOWACService struct {
 
 type PWMap struct {
 	Map map[string]int
+}
+
+func (serv NOWACService) GeneIdFromName(Name string) string {
+	addAccessControlAllowOriginHeader(serv)
+
+	geneId := kegg.GeneIdFromName(Name)
+
+	return geneId
+
 }
 
 // Serve whatever is in the public folder

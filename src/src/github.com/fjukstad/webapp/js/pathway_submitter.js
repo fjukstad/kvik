@@ -49,8 +49,45 @@ function GetPathwayName(id) {
 
 }
 
+
+$(function() {
+    $('#geneFormSubmit').click(function(e){
+        e.preventDefault();
+        $.get(getGenes(),function(data) {
+              $('.result').html(data);
+            });
+        }); 
+});
+
+
+
+function getGenes() {
+    var genes = $('#geneSelect').serialize()
+    var result = "/browser/"+genes
+    window.location.assign(result)
+     return result; 
+}
+
+
+
 // When window load fetch names for the pathways in the list.
 window.onload = function() {
+    ReadableInput() 
+    var genes = GetGenes().Genes
+    genes.sort();
+    
+    var form = d3
+        .select("select#geneSelect")
+        .selectAll("option")
+        .data(genes)
+        .enter().append("option")
+        .attr("value", function(d){
+            return d.replace(/\"/g, "")
+        })
+        .html(function(d){
+            return d.replace(/\"/g, "")
+        })
+
 }
 
 

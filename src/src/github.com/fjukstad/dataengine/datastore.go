@@ -190,6 +190,30 @@ func ScaleHandler(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Not implemented", http.StatusInternalServerError)
 }
 
+type GeneResponse struct {
+	Genes []string
+}
+
+func WriteGeneResponse(w http.ResponseWriter, genes []string) {
+	response := new(GeneResponse)
+	response.Genes = genes
+
+	b, err := json.Marshal(response)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	w.Write(b)
+
+}
+
+func GeneHandler(w http.ResponseWriter, r *http.Request) {
+	com := "genes()"
+	results := RunCommand(com)
+	WriteGeneResponse(w, results)
+}
+
 func main() {
 
 	var ip = flag.String("ip", "localhost", "ip to run on")
@@ -210,6 +234,7 @@ func main() {
 	http.HandleFunc("/pvalues/", PValueHandler)
 	http.HandleFunc("/exprs/", GeneExpressionHandler)
 	http.HandleFunc("/scale/", ScaleHandler)
+	http.HandleFunc("/genes/", GeneHandler)
 
 	err = http.ListenAndServe(*port, nil)
 	if err != nil {

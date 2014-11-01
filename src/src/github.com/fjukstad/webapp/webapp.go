@@ -39,6 +39,7 @@ var indexTemplatePath = "templates/index.html"
 var aboutTemplatePath = "templates/about.html"
 var browserTemplatePath = "templates/browser.html"
 var browserVisualizationTemplatePath = "templates/visualization.html"
+var geneVisualizationTemplatePath = "templates/genevis.html"
 
 var indexTemplate = template.Must(template.ParseFiles(
 	append(defaultTemplatePaths, indexTemplatePath)...,
@@ -52,6 +53,10 @@ var browserTemplate = template.Must(template.ParseFiles(
 
 var browserVisualizationTemplate = template.Must(template.ParseFiles(
 	append(defaultTemplatePaths, browserVisualizationTemplatePath)...,
+))
+
+var geneVisualizationTemplate = template.Must(template.ParseFiles(
+	append(defaultTemplatePaths, geneVisualizationTemplatePath)...,
 ))
 
 func renderTemplate(t *template.Template, w http.ResponseWriter,
@@ -79,33 +84,38 @@ const lenPath = len("/browser/")
 
 func browserHandler(w http.ResponseWriter, r *http.Request) {
 	// Get selected pathways (if any)
-	selectedPathways := r.URL.Path[lenPath:]
-	log.Print("title of page:", selectedPathways)
+	path := r.URL.Path[lenPath:]
+	log.Print("title of page:", path)
 
 	// if user has selected pathways render a visualization
-	if len(selectedPathways) > 1 {
-		selection := Selection{parsePathwayInput(selectedPathways)}
+	if strings.Contains(path, "pathwaySelect") {
+		selection := Selection{parseInput(path, "pathwaySelect")}
 		renderTemplate(browserVisualizationTemplate, w, selection)
 		return
+	} else if strings.Contains(path, "geneSelect") {
+		selection := Selection{parseInput(path, "geneSelect")}
+		renderTemplate(geneVisualizationTemplate, w, selection)
+		return
+
 	}
 
 	// if user has not selected any pathways, fetch
 	// availible pathways from db and display them to the user
 	ids := kegg.GetAllHumanPathways()
-	pathways := kegg.ReadablePathwayNames(ids)
-	input := InputList{pathways}
+	//pathways := kegg.ReadablePathwayNames(ids)
+	input := InputList{ids}
 
 	renderTemplate(browserTemplate, w, input)
 }
 
-func parsePathwayInput(input string) []string {
+func parseInput(input, separator string) []string {
 	// Remove any unwanted characters
 	a := strings.Replace(input, "%3A", ":", -1)
 	a = strings.Replace(a, "&", "", -1)
 	a = strings.Replace(a, "=", "", -1)
 
 	// Split into separate hsa:... strings
-	b := strings.Split(a, "pathwaySelect")
+	b := strings.Split(a, separator)
 
 	// Clear out first empty item
 	b = b[1:len(b)]

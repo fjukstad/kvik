@@ -108,6 +108,39 @@ func (g Gene) Print() {
 	fmt.Println("")
 }
 
+func GeneIdFromName(name string) string {
+	baseURL := "http://rest.kegg.jp/find/genes/"
+	url := baseURL + name
+
+	response, err := gocache.Get(url)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	tsv := csv.NewReader(response.Body)
+	tsv.Comma = '\t'
+	tsv.Comment = '#'
+	tsv.LazyQuotes = true
+	tsv.TrailingComma = true
+	tsv.TrimLeadingSpace = false
+	tsv.FieldsPerRecord = -1
+
+	records, err := tsv.ReadAll()
+
+	if err != nil {
+		log.Println(response)
+		log.Panic("Error reading records:", err, records)
+
+	}
+
+	gene := strings.Split(records[0][0], " ")[0]
+
+	//id := strings.TrimLeft(gene, "hsa:")
+
+	return gene
+
+}
+
 func parseGeneResponse(response io.ReadCloser) Gene {
 
 	tsv := csv.NewReader(response)

@@ -3,13 +3,15 @@
 {{ end }}
 
 {{ define "content" }}
+<script src="/js/vis-man.js"></script>
 <script src="/js/pathway_submitter.js"></script>
 
 
 <div class="jumbotron">
-    <h1> Pathway visualization </h1>
+    <div class="container" >
+        <h1> Kvik Browser </h1> 
     <div class="row">
-        <div class="pathway-list" style="width:70%"> 
+        <div class="col-xs-6 col-md-6 col-lg-6"> 
             <form id="pathwayForm" method="GET">
                 <fieldset>
                     <legend> Select a pathway</legend>
@@ -25,6 +27,22 @@
                 </fieldset>
             </form>
         </div>
+         <div class="col-xs-6 col-md-6 col-lg-6" id="genediv">   
+            <form id="geneForm" method="GET">
+                <fieldset>
+                    <legend> OR: Select a gene </legend>
+                    <select multiple class="form-control" id="geneSelect"
+                        name="geneSelect" size="10">
+                    </select>
+                        <button id="geneFormSubmit" type="submit" class="btn
+                            btn-primary">Select</button>
+                    </legend>
+                </fieldset>
+            </form>
+        </div>
+
+
+    </div> 
     </div> 
 </div>
 
