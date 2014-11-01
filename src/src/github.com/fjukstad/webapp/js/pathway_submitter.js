@@ -51,7 +51,6 @@ function GetPathwayName(id) {
 
 // When window load fetch names for the pathways in the list.
 window.onload = function() {
-    ReadableInput() 
 }
 
 
