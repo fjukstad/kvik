@@ -15,7 +15,13 @@ function GetVis(gene) {
         dataType: "text",
         success: function(data) {
             viscode = data;
+        },
+        error: function(xhr, ajaxOptions, thrownError){
+            console.log("Bar chart not implemented yet");
+            res = "";
         }
+
+
     });
 
     return viscode;
@@ -46,29 +52,6 @@ function GetParallelVis() {
 
 }
 
-// Fetches avg diff from datastore
-function AvgDiff(gene) {
-    
-    var baseURL = "http://"+window.location.hostname+":8080/datastore/gene/";
-    url = baseURL + gene + "/avg"
-
-    var avg
-    $.ajax({
-        async: false,
-        cache: false,
-        type: "GET",
-        url: url,
-        dataType: "text",
-        success: function(data) {
-            avg = data;
-        }
-    });
-
-
-    return avg;
-
-}
-
 function FoldChange(genes) { 
     var baseURL = "http://"+window.location.hostname+":8080/datastore/fc/";
     url = baseURL + genes
@@ -84,6 +67,8 @@ function FoldChange(genes) {
             fc = JSON.parse(data);
         }
     });
+
+    console.log(fc) 
 
     return fc
 
@@ -106,6 +91,10 @@ function Std(gene) {
         dataType: "text",
         success: function(data) {
             res = data;
+        },
+        error: function(xhr, ajaxOptions, thrownError){
+            console.log("Standard deviation not implemented yet");
+            res = "";
         }
     });
 
@@ -130,6 +119,10 @@ function Var(gene) {
         dataType: "text",
         success: function(data) {
             res = data;
+        },
+        error: function(xhr, ajaxOptions, thrownError){
+            console.log("Variance not implemented yet");
+            res = "" 
         }
     });
 
@@ -331,7 +324,9 @@ function visGenePanel(name){
 
     document.getElementById('info-panel').appendChild(panelDiv);
 
-    $(GetVis(info.Id)).appendTo(".visman"); 
+    var viscode = GetVis(info.Id)
+    console.log(viscode) 
+    $(viscode).appendTo(".visman"); 
 
 
 } 

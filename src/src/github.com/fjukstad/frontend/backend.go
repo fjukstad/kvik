@@ -321,6 +321,10 @@ func GeneExpression(geneid string) string {
 	}
 	ds := GetGeneExpression(id)
 
+	// No dataset for this gene, return empty thing
+	if ds == "[]" {
+		return ""
+	}
 	// Header, containing all other js
 	header := `
         <style>
@@ -424,8 +428,9 @@ func GeneExpression(geneid string) string {
             .attr("class", "y axis")
             .attr("transform", "translate(" + padding + ",0)")
             .call(yAxis);
-
-    var avg =  parseFloat(AvgDiff(info.Id))
+	
+	var keggid = "hsa:"+info.Id
+	var avg =  parseFloat(FoldChange(keggid).Result[keggid])
     svg.append("line")
         .attr("x1", padding)
         .attr("y1", h - y(avg))
@@ -590,6 +595,9 @@ func GetGeneExpression(id int) string {
 
 	if err != nil {
 		log.Panic("could not download expression ", err)
+	} else if response.StatusCode != 200 {
+		log.Println("Error from datastore")
+		return "[]"
 	}
 
 	defer response.Body.Close()

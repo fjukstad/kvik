@@ -192,7 +192,8 @@ function GenerateInfoPanel(info){
 
     var std = parseFloat(Std(info.Id)).toFixed(3) 
     var variance = parseFloat(Var(info.Id)).toFixed(3)
-    var mean = parseFloat(AvgDiff(info.Id)).toFixed(3)
+    var m = FoldChange("hsa:"+info.Id).Result["hsa:"+info.Id]
+    var mean = parseFloat(m).toFixed(3)
 
 
     var str = '<div class="panel-group" id="accordion">'

@@ -103,6 +103,9 @@ func RunCommand(command string) []string {
 
 	if t == "string" {
 		result = output.(string)
+	} else if t == "float64" {
+		res := output.(float64)
+		return []string{strconv.FormatFloat(res, 'f', 5, 64)}
 	} else {
 		log.Println("ERROR, could not parse output from data-engine")
 		return []string{""}
@@ -180,11 +183,11 @@ func PValueHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GeneExpressionHandler(w http.ResponseWriter, r *http.Request) {
-
+	http.Error(w, "Not implemented", http.StatusInternalServerError)
 }
 
 func ScaleHandler(w http.ResponseWriter, r *http.Request) {
-
+	http.Error(w, "Not implemented", http.StatusInternalServerError)
 }
 
 func main() {
