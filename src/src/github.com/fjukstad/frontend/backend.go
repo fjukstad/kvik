@@ -430,7 +430,7 @@ func GeneExpression(geneid string) string {
             .call(yAxis);
 	
 	var keggid = "hsa:"+info.Id
-	var avg =  parseFloat(FoldChange(keggid).Result[keggid])
+	var avg =  parseFloat(GetFoldChange(keggid).Result[keggid])
     svg.append("line")
         .attr("x1", padding)
         .attr("y1", h - y(avg))

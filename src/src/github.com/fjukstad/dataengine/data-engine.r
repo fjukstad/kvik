@@ -15,7 +15,7 @@ fc <- function(genes) {
 
 pvalues <- function(genes) { 
     a = dataset[match(genes, dataset$Genes),];
-    b = as.numeric(as.character(a$pval_01))
+    b = as.numeric(as.character(a$BH_adj_pval))
     return(b) 
 }
 

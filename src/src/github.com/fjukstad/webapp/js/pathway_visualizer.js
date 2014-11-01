@@ -11,7 +11,6 @@ window.onload = function() {
 };
 
 var prevSelection;
-
 var benchmarked = false
 var drawnPathway = false
 
@@ -48,6 +47,7 @@ loadCy = function(){
         showOverlay: false,
         minZoom: 0.2,
         maxZoom: 5,
+       boxSelectionEnabled: false,
         style: cytoscape.stylesheet()
             .selector('node')
             .css({
@@ -57,7 +57,7 @@ loadCy = function(){
                 'background-image': 'data(graphics.bgimage)',
                 'border-color': 'data(graphics.fgcolor)',
                 'border-opacity': '1',
-                'border-width': '1',
+                'border-width': '2',
                 'text-outline-width': '0',
                 'text-outline-color': '#fff',
                 'text-opacity': 0.9,
@@ -192,8 +192,13 @@ function GenerateInfoPanel(info){
 
     var std = parseFloat(Std(info.Id)).toFixed(3) 
     var variance = parseFloat(Var(info.Id)).toFixed(3)
-    var m = FoldChange("hsa:"+info.Id).Result["hsa:"+info.Id]
+
+    var keggid = "hsa:"+info.Id
+    var m = GetFoldChange(keggid).Result[keggid]
     var mean = parseFloat(m).toFixed(3)
+
+    var p = GetPValues(keggid).Result[keggid]
+    var pvalue = parseFloat(p).toFixed(5) 
 
 
     var str = '<div class="panel-group" id="accordion">'
@@ -208,7 +213,7 @@ function GenerateInfoPanel(info){
     str += '<div class="panel-body">'
     str += '<div class="visman"></div>'
     //str += '<button id="sort" onclick="sortBars()">Sort</button>'
-    str += '<small>Mean: '+mean+'</br>Standard deviation: '+std+'</br>Variance:'+variance+ '</small>'
+    str += '<small>P-Value: '+pvalue+'</br>Mean: '+mean+'</br>Standard deviation: '+std+'</br>Variance:'+variance+ '</small>'
     str += '<div id="dsidinfo"></div>'
     str += '</div></div></div>'
 
@@ -470,7 +475,8 @@ function updateNodeColors() {
     // convert list to string
     var hsastring = hsas.toString().replace(/,/g,"+")
 
-    var foldchange = FoldChange(hsastring)
+    var foldchange = GetFoldChange(hsastring)
+    var pvalues = GetFoldChange(hsastring) 
 
     // check if avg diff response is valid
     if (typeof foldchange === 'undefined'){
@@ -483,16 +489,28 @@ function updateNodeColors() {
         if(n < graphNodes.length){
             if(graphNodes[n].style().shape == "rectangle"){
                 var name = graphNodes[n].data().name.split(" ")[0];
-                fc = foldchange.Result[name]
+                fc = foldchange.Result[name]; 
+                var c; 
                 if(fc === "NA") { 
-                   var c = "#ffffff"
+                   c = "#ffffff"
                 } 
                 else if(fc === undefined){
-                    var c = "#ffffff"
+                    c = "#ffffff"
                 } else { 
-                    var c = color(fc)
+                    c = color(fc)
                 }  
                 graphNodes[n].css("background-color", c)
+
+                p = pvalues.Result[name]
+                if(p === "NA" || p === undefined){
+                    c = "#000";
+                    graphNodes[n].css("border-width", 0) 
+                } else {
+                    c = pcolor(p) 
+                }
+                graphNodes[n].css("border-color", c) 
+
+
             }
         }
     }

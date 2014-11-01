@@ -36,7 +36,7 @@ function GetParallelVis() {
     return GET(url, false) 
 }
 
-function FoldChange(genes) { 
+function GetFoldChange(genes) { 
     var baseURL = "http://"+window.location.hostname+":8080/datastore/fc/";
     url = baseURL + genes
     return GET(url,true) 
@@ -89,6 +89,13 @@ function getSettings(){
 
 
 } 
+
+function GetPValues(genes){
+    var baseURL = "http://"+window.location.hostname+":8080/datastore/pvalues/";
+    url = baseURL + genes
+    return GET(url, true) 
+}
+
 
 function setSettings(smoking, hormones, disable) {
     var baseURL = "http://"
