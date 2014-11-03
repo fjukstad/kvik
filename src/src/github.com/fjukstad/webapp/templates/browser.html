@@ -31,12 +31,16 @@
             <form id="geneForm" method="GET">
                 <fieldset>
                     <legend> OR: Select a gene </legend>
+                    <!--
                     <select multiple class="form-control" id="geneSelect"
                         name="geneSelect" size="10">
                     </select>
                         <button id="geneFormSubmit" type="submit" class="btn
                             btn-primary">Select</button>
-                    </legend>
+                        --> 
+                    <div id="geneselect" style="height:300px; width:100%; overflow-y:auto">
+                            <ul id="geneselect" class="list-unstyled"></ul> 
+                    </div> 
                 </fieldset>
             </form>
         </div>

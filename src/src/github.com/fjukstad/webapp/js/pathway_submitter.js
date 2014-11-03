@@ -68,25 +68,124 @@ function getGenes() {
      return result; 
 }
 
-
+var pcolor = d3.scale.linear()
+    .domain([0.0083, 0.00915, 0.010])
+    .range(colorbrewer.RdBu[3]);
+    //.range(["yellow", "white", "blue"]);
 
 // When window load fetch names for the pathways in the list.
 window.onload = function() {
     ReadableInput() 
-    var genes = GetGenes().Genes
-    genes.sort();
-    
-    var form = d3
-        .select("select#geneSelect")
-        .selectAll("option")
-        .data(genes)
-        .enter().append("option")
-        .attr("value", function(d){
-            return d.replace(/\"/g, "")
-        })
+    var rawgenes = GetGenes().Genes
+
+    console.log(rawgenes) 
+
+    var genelist = "" 
+    var genes = [] 
+    for(var i = 0; i < rawgenes.length; i++){
+        var gene = rawgenes[i].replace(/\"/g, "") // removing "" 
+        if (i > 1) { 
+            genes.push(gene) 
+            genelist = genelist + "+" + gene
+        } else {
+            genes.push(gene)
+            genelist = gene 
+        } 
+    }
+
+
+    var dataset = GetPValues(genelist).Result
+    var d_keys = Object.keys(dataset) 
+
+    console.log(dataset) 
+    var list = d3
+        .select("ul#geneselect")
+        .selectAll("li")
+        .data(d_keys)
+        .enter().append("li")
+        .style("height", "20px") 
         .html(function(d){
-            return d.replace(/\"/g, "")
+            return '<a href="http://localhost:8000/browser/geneSelect='+d+'">'+d+"</a>";
         })
+        .append("svg")
+                .attr("width", 100)
+                .attr("height", 10)
+                //.style("float", "left")
+        .append("rect") 
+        .attr("width", function(d){
+            if (dataset[d] == "NA"){
+                return 0
+            }
+            return dataset[d] * 10000;
+        })
+        .attr("height", 10) 
+        .style("fill", function(d){
+            console.log(parseFloat(dataset[d]))
+            // significant
+            if(parseFloat(dataset[d]) < 0.009978){
+                return "#67a9cf"
+
+            } else {
+                return "#ef8a62" 
+            }
+        }) 
+        
+
+    var h = $("select#pathwaySelect").height() + 18
+    $("#geneselect").height(h); 
+
+    /*
+    var h = $("select#geneSelect").height(),
+        w = $("select#geneSelect").width(); 
+
+    var formh = $("#genediv").height() 
+    var offset = 66 + "px" 
+    console.log(h,w,formh)
+
+    var div = d3.select("#genediv").append("div")
+        .attr("id", "outer")
+        .style("border", "1px solid black")
+        .style("height", h)
+        .style("width", w)
+        .style("margin", 0)
+        .style("padding", 0) 
+        .style("z-index","-1") 
+        .style("top", offset)
+        .style("position", "absolute")
+
+
+    var div2 = div.append("div")
+        .style("width", w)
+        .style("height", "100")
+                .style("z-index","-1") 
+
+        .style("overflow", "y-scroll");
+;
+
+
+    var dataset = [10,20,30,40,50,60,70,80,90];
+
+    var svg = div2.append("svg")
+                .attr("width", w)
+                .attr("height", "1000")
+                        .style("z-index","-1"); 
+
+    var rect = svg.selectAll("rect") 
+        .data(dataset)
+        .enter()
+        .append("rect");
+    
+    rect.attr("x", 250)
+        .attr("y", function(d){
+                return d *5;
+                })
+        .attr("width", function(d){
+                return d;
+                })
+        .attr("height", 10) 
+        .style("fill", "black") 
+    
+    */
 
 }
 

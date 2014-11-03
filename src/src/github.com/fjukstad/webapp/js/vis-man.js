@@ -8,6 +8,7 @@ function GET(url, parse) {
         url: url,
         dataType: "text",
         success: function(data) {
+            console.log(url,parse) 
             if(parse) {
                 response = JSON.parse(data);
             } else {
@@ -102,7 +103,7 @@ function GetGenes(){
 } 
 
 function GetGeneId(genename) {
-    var url = "http://localhost:8080/info/genename/"+genename
+    var url = "http://localhost:8080/geneid/"+genename
     return GET(url, false) 
 }
 
@@ -183,7 +184,7 @@ function updateColor(scale) {
 
 // Latest gene variable used for resizing of window
 var latestGene;  
-function visGenePanel(name){
+function visGenePanel(name,genename){
     
     latestGene = name;
     if(latestGene === undefined){
@@ -212,7 +213,7 @@ function visGenePanel(name){
     var panelBodyDiv = document.createElement('div');
     panelBodyDiv.id = 'info-panel-body';
     panelBodyDiv.className = 'panel-body';
-    panelBodyDiv.innerHTML = GenerateInfoPanel(info)
+    panelBodyDiv.innerHTML = GenerateInfoPanel(info,genename)
 
 
     panelDiv.appendChild(panelHeadingDiv);

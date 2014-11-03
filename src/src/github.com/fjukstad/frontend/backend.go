@@ -88,7 +88,7 @@ type NOWACService struct {
                                 output:"string"`
 
 	geneIdFromName gorest.EndPoint `method:"GET"
-									path:"/info/genename/{Gene:string}"
+									path:"/geneid/{Gene:string}"
 									output:"string"`
 
 	public gorest.EndPoint `method:"GET"
@@ -106,6 +106,8 @@ func (serv NOWACService) GeneIdFromName(Name string) string {
 	addAccessControlAllowOriginHeader(serv)
 
 	geneId := kegg.GeneIdFromName(Name)
+
+	log.Println("NAME,id ", Name, geneId)
 
 	return geneId
 

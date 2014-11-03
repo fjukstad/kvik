@@ -1,13 +1,21 @@
 
 
-function GenerateInfoPanel(info){
+function GenerateInfoPanel(info, genename){
     pathwayLinks = CreatePathwayLinks(info.Pathways)
+
+        console.log(genename) 
 
 
     var std = parseFloat(Std(info.Id)).toFixed(3) 
     var variance = parseFloat(Var(info.Id)).toFixed(3)
 
-    var keggid = "hsa:"+info.Id
+    var keggid = "" 
+    if(genename != undefined){
+        keggid = genename
+    } else { 
+        keggid = "hsa:"+info.Id
+    }
+    
     var m = GetFoldChange(keggid).Result[keggid]
     var mean = parseFloat(m).toFixed(3)
 
