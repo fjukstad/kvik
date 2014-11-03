@@ -151,7 +151,13 @@ func parseGenes(path string, separator string) ([]string, []string) {
 	geneIds := strings.Split(list, "+")
 	var genes []string
 	for _, id := range geneIds {
-		id := strings.Split(id, ":")[1]
+		// Split on colon, if we dont have a colon we expect the string to be a
+		// gene name and we can just return the list of these genes.
+		gene := strings.Split(id, ":")
+		if len(gene) < 2 {
+			return geneIds, geneIds
+		}
+		id := gene[1]
 		g := kegg.GetGene(id)
 		name := strings.Split(g.Name, " ")[0]
 		name = strings.TrimRight(name, ",")
