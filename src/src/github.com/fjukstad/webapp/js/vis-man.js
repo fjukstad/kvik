@@ -122,7 +122,6 @@ function GetInfo(name) {
 }
 
 
-
 function setSettings(smoking, hormones, disable) {
     var baseURL = "http://"
                     +window.location.hostname
@@ -135,9 +134,6 @@ function setSettings(smoking, hormones, disable) {
     updateNodeColors();
     scaleDefer();
     visGenePanel(latestGene)
-
-
-
 
 } 
 
