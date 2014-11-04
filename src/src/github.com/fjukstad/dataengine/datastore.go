@@ -44,15 +44,12 @@ func CommandHandler(w http.ResponseWriter, r *http.Request) {
 	// Cross origin nonsense
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	log.Println(r.URL.RawQuery)
 	command, err := url.QueryUnescape(strings.Split(r.URL.RawQuery, "=")[1])
 	if err != nil {
 		log.Panic("Could not unescape query:", err)
 	}
 
 	command = replaceOctets(command)
-
-	log.Println("Recieved command", command)
 
 	// send command to rpcman
 	output, err := rpc.Call("command", command)
@@ -70,8 +67,6 @@ func CommandHandler(w http.ResponseWriter, r *http.Request) {
 	if t == "string" {
 		response = output.(string)
 	}
-
-	log.Println(response)
 
 	_, err = io.WriteString(w, response)
 	if err != nil {
@@ -132,8 +127,11 @@ func WriteResponse(w http.ResponseWriter, genes []string, results []string) {
 	response.Result = make(map[string]string, len(genes))
 
 	for i, gene := range genes {
-		response.Result[gene] = results[i]
-		log.Println(results[i])
+
+		if results[i] != "NA" {
+			response.Result[gene] = results[i]
+		}
+
 	}
 
 	b, err := json.Marshal(response)
@@ -149,7 +147,11 @@ func WriteResponse(w http.ResponseWriter, genes []string, results []string) {
 func parseGenes(path string, separator string) ([]string, []string) {
 	list := strings.Split(path, "/"+separator+"/")[1]
 	geneIds := strings.Split(list, "+")
+
+	var ids []string
+
 	var genes []string
+
 	for _, id := range geneIds {
 		// Split on colon, if we dont have a colon we expect the string to be a
 		// gene name and we can just return the list of these genes.
@@ -159,11 +161,14 @@ func parseGenes(path string, separator string) ([]string, []string) {
 		}
 		id := gene[1]
 		g := kegg.GetGene(id)
-		name := strings.Split(g.Name, " ")[0]
-		name = strings.TrimRight(name, ",")
-		genes = append(genes, name)
+		names := strings.Split(g.Name, " ")
+		for _, n := range names {
+			name := strings.TrimRight(n, ",")
+			genes = append(genes, name)
+			ids = append(ids, id)
+		}
 	}
-	return genes, geneIds
+	return genes, ids
 
 }
 

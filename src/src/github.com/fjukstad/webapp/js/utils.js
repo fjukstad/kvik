@@ -10,16 +10,19 @@ function GenerateInfoPanel(info, genename){
     var variance = parseFloat(Var(info.Id)).toFixed(3)
 
     var keggid = "" 
+    var lookupId = "" 
     if(genename != undefined){
         keggid = genename
+        lookupId = genename
     } else { 
         keggid = "hsa:"+info.Id
+        lookupId = info.Id 
     }
-    
-    var m = GetFoldChange(keggid).Result[keggid]
+        
+    var m = GetFoldChange(keggid).Result[lookupId]
     var mean = parseFloat(m).toFixed(3)
 
-    var p = GetPValues(keggid).Result[keggid]
+    var p = GetPValues(keggid).Result[lookupId]
     var pvalue = parseFloat(p).toFixed(5) 
 
 

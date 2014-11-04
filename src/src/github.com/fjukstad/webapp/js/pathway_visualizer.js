@@ -227,13 +227,18 @@ function updateNodeColors() {
         alert("Unexpected error. Please try to refresh the web page")
     }; 
 
+    console.log("FUCKERS", foldchange.Result) 
+
     var graphNodes = cy.nodes();
 
     for (var n in graphNodes) {
         if(n < graphNodes.length){
             if(graphNodes[n].style().shape == "rectangle"){
                 var name = graphNodes[n].data().name.split(" ")[0];
-                fc = foldchange.Result[name]; 
+                name = name.split(":")[1]
+                console.log("NAME:", name) 
+                fc = foldchange.Result[name];
+                console.log("FC:",fc) 
                 var c; 
                 if(fc === "NA") { 
                    c = "#ffffff"
