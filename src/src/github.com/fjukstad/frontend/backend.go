@@ -530,13 +530,20 @@ func (serv NOWACService) GetInfo(Items string, InfoType string) string {
 	addAccessControlAllowOriginHeader(serv)
 
 	// get info about gene
-	if strings.Contains(Items, "hsa") {
+	if strings.Contains(Items, "hsa:") {
 		geneIdString := strings.Split(Items, " ")[0]
 		geneId := strings.Split(geneIdString, ":")[1]
 
 		gene := kegg.GetGene(geneId)
 
 		return kegg.GeneJSON(gene)
+	}
+
+	// info about pathway
+	if strings.Contains(Items, "hsa") {
+		pathwayIdString := strings.Split(Items, " ")[0]
+		pathway := kegg.GetPathway(pathwayIdString)
+		return kegg.PathwayJSON(pathway)
 	}
 
 	// get info about compound

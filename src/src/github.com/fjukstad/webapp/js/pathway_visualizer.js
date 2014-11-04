@@ -314,7 +314,7 @@ function resizeViews(){
     }
 
     var exprs = $("#expression-view")[0]
-    exprs.style.height =  $(window).height()-100+"px"
+    exprs.style.height =  $(window).height()-270+"px"
     exprs.style.width = $(".col-sm-4")[0].clientWidth-30+"px"
     
     try { 

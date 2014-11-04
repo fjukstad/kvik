@@ -1,8 +1,8 @@
 #cy {
     height: 700px;
-    width: 850px;
+    width: 650px;
     position: absolute;
-    left: 2em;
+    /*left: 2em;*/
     border-radius: 3px;        
     border:1px solid #AAAAAA;
 }

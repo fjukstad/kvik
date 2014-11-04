@@ -66,7 +66,12 @@ function GetPathwayName(id) {
     return GET(url, false) 
 }
 
+function GetPathway(id) { 
+    var baseURL = "http://"+window.location.hostname+":8080/info/"
+    url =  baseURL+id+"/all"
+    return GET(url, true) 
 
+}
 
 function GetBg(geneId,exprs) {
     var baseURL = "http://"+window.location.hostname+":8080/datastore/gene/"

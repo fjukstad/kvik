@@ -8,26 +8,43 @@ function getPathwayId(){
 function updatePathwayInfoPanel(){
 
     var id = getPathwayId() 
+    var p = GetPathway(id) 
+
+
+
+    console.log("GOT THAT PATHWAY: ", p) 
 
     var div = d3.select("body").selectAll("#pathway-info-view"); 
 
     var pg = div.append("div")
         .attr("class", "panel-group")
+        .attr("id", "pw-accord")
 
     var p1 = pg.append("div")
-                .attr("class", "panel panel-default")
+                .attr("class", "panel panel-default panel-collapse")
 
     var p1h = p1.append("div")
                 .attr("class", "panel-heading")
                 .append("h4")
                 .attr("class", "panel-title") 
-                .text(id) 
+                .text(p.Name) 
+                
+    var descr = p.Description.split(".")[0] + " (read more) "
+
+    if(descr == " (read more) ") {
+        descr = "More information here"
+    } 
+
+    var p1b = p1.append("div") 
+                .attr("class", "panel-body")
+                .append("a")
+                .attr("href", "http://www.kegg.jp/dbget-bin/www_bget?"+id)
+                .attr("target","_blank")
+                .text(descr) 
 } 
 
 function GenerateInfoPanel(info, genename){
     pathwayLinks = CreatePathwayLinks(info.Pathways)
-
-
 
     var std = parseFloat(Std(info.Id)).toFixed(3) 
     var variance = parseFloat(Var(info.Id)).toFixed(3)

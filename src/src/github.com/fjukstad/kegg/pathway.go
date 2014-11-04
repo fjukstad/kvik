@@ -2,6 +2,7 @@ package kegg
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"image"
@@ -24,6 +25,7 @@ import (
 type Pathway struct {
 	Id          string
 	Name        string
+	Description string
 	Class       string
 	Pathway_Map string
 	Diseases    []string
@@ -336,6 +338,15 @@ func GetPathway(id string) Pathway {
 
 }
 
+func PathwayJSON(p Pathway) string {
+	b, err := json.Marshal(p)
+	if err != nil {
+		log.Panic("marshaling went bad: ", err)
+	}
+	return string(b)
+
+}
+
 func (p Pathway) Print() {
 	fmt.Println("\nPathway")
 	fmt.Println("\tId:", p.Id)
@@ -407,6 +418,7 @@ func parsePathwayResponse(response io.ReadCloser) Pathway {
 
 	p := Pathway{}
 	tmp := make([]string, 0)
+	tmpstring := ""
 	current := ""
 	for i := range records {
 
@@ -421,7 +433,16 @@ func parsePathwayResponse(response io.ReadCloser) Pathway {
 		case "NAME":
 			p.Name = strings.Join(line[8:], " ")
 
+		case "DESCRIPTION":
+			current = "DESCRIPTION"
+			tmpstring = strings.Join(line[1:], " ")
+
 		case "CLASS":
+			if current == "DESCRIPTION" {
+				p.Description = tmpstring
+			}
+
+			current = "CLASS"
 			p.Class = strings.Join(line[8:], " ")
 
 		case "PATHWAY_MAP":
@@ -479,6 +500,10 @@ func parsePathwayResponse(response io.ReadCloser) Pathway {
 			break
 
 		default:
+			if current == "DESCRIPTION" {
+				tmpstring = tmpstring + strings.Join(line[1:], " ")
+			}
+
 			if current == "DISEASE" {
 				a := strings.Join(line[12:], " ")
 				tmp = append(tmp, a)
