@@ -220,7 +220,7 @@ function updateNodeColors() {
     var hsastring = hsas.toString().replace(/,/g,"+")
 
     var foldchange = GetFoldChange(hsastring)
-    var pvalues = GetFoldChange(hsastring) 
+    var pvalues = GetPValues(hsastring) 
 
     // check if avg diff response is valid
     if (typeof foldchange === 'undefined'){
@@ -250,7 +250,13 @@ function updateNodeColors() {
                     c = "#000";
                     graphNodes[n].css("border-width", 1) 
                 } else {
-                    c = pcolor(p) 
+                    console.log("p-value:", p) 
+                    if(parseFloat(p) < 0.009978){
+                        c = "#67a9cf"
+
+                    } else {
+                        c = "#ef8a62" 
+                    }
                 }
                 graphNodes[n].css("border-color", c) 
 
