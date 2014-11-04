@@ -104,9 +104,16 @@ window.onload = function() {
         .selectAll("tr")
         .data(d_keys)
         .enter().append("tr")
-        .style("line-height", "10px") 
+        .style("line-height", "15px") 
         
         
+        tr.append("td")
+        .attr("class", "col-md-1") 
+        .html(function(d){
+
+            return '<a style="font-size:15px" href="http://localhost:8000/browser/geneSelect='+d+'">'+d+"</a>";
+        }); 
+
     tr.append("td") 
         .attr("class", "col-md-1") 
         .append("svg")
@@ -135,15 +142,6 @@ window.onload = function() {
                 return "#ef8a62" 
             }
         })
-
-        tr.append("td")
-        .attr("class", "col-md-1") 
-        .html(function(d){
-
-            return '<a style="font-size:15px" href="http://localhost:8000/browser/geneSelect='+d+'">'+d+"</a>";
-        }); 
-
-        
 
     var h = $("select#pathwaySelect").height() + 18
     $("#geneselect").height(h); 
