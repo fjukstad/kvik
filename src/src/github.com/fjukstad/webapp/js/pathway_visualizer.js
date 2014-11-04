@@ -3,9 +3,8 @@ window.onload = function() {
     serverAddr = getVisServerAddress();
     wsURL = "ws://"+serverAddr; 
     loadCy(); 
-
-
     updateSettingsView()
+    updatePathwayInfoPanel() 
 
 
 };

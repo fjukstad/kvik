@@ -1,9 +1,32 @@
 
+function getPathwayId(){ 
+    var currentLocation = window.location;
+    var path = currentLocation.pathname
+    var pathwayid = path.split("=")[1]
+    return pathwayid
+} 
+function updatePathwayInfoPanel(){
+
+    var id = getPathwayId() 
+
+    var div = d3.select("body").selectAll("#pathway-info-view"); 
+
+    var pg = div.append("div")
+        .attr("class", "panel-group")
+
+    var p1 = pg.append("div")
+                .attr("class", "panel panel-default")
+
+    var p1h = p1.append("div")
+                .attr("class", "panel-heading")
+                .append("h4")
+                .attr("class", "panel-title") 
+                .text(id) 
+} 
 
 function GenerateInfoPanel(info, genename){
     pathwayLinks = CreatePathwayLinks(info.Pathways)
 
-        console.log(genename) 
 
 
     var std = parseFloat(Std(info.Id)).toFixed(3) 
@@ -90,7 +113,6 @@ function GenerateInfoPanel(info, genename){
     str += '</table>';
     str += '</div></div></div>'
 
-    console.log(info.DBLinks)
 
     str += '</div>'
     
@@ -162,7 +184,6 @@ function FetchJMOL(structure) {
     try { 
         var ids = structure.split(" ")
         var id = ids[1].toLowerCase()
-        console.log(ids) 
         var link = "http://www.genome.jp/Fig/pdb/pdb"+id+".png"
         var res = '<a href="'+link+'" target="_blank"><img src="'+link+'" id="jmolview"></a>'
         return res
@@ -213,7 +234,6 @@ function CreateDBLinks(links) {
 
     var uniprot = '<a href="http://www.uniprot.org/uniprot/'+links.UniProt+'" target="_blank">UniProt</a>'
 
-    console.log(uniprot) 
     res += uniprot
 
     } catch (TypeError){
