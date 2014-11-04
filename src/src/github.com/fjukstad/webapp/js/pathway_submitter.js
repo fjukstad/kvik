@@ -98,19 +98,25 @@ window.onload = function() {
     var d_keys = Object.keys(dataset) 
 
     console.log(dataset) 
-    var list = d3
-        .select("ul#geneselect")
-        .selectAll("li")
+    
+    var tr = d3
+        .select("table#geneselect")
+        .selectAll("tr")
         .data(d_keys)
-        .enter().append("li")
-        .style("height", "20px") 
-        .html(function(d){
-            return '<a href="http://localhost:8000/browser/geneSelect='+d+'">'+d+"</a>";
-        })
+        .enter().append("tr")
+        .style("line-height", "10px") 
+        
+        
+    tr.append("td") 
+        .attr("class", "col-md-1") 
         .append("svg")
                 .attr("width", 100)
                 .attr("height", 10)
-                //.style("float", "left")
+                .style("float", "left")
+        .append("svg:a")
+        .attr("xlink:href",function(d){
+            return "http://localhost:8000/browser/geneSelect="+d;
+        }) 
         .append("rect") 
         .attr("width", function(d){
             if (dataset[d] == "NA"){
@@ -128,7 +134,15 @@ window.onload = function() {
             } else {
                 return "#ef8a62" 
             }
-        }) 
+        })
+
+        tr.append("td")
+        .attr("class", "col-md-1") 
+        .html(function(d){
+
+            return '<a style="font-size:15px" href="http://localhost:8000/browser/geneSelect='+d+'">'+d+"</a>";
+        }); 
+
         
 
     var h = $("select#pathwaySelect").height() + 18
