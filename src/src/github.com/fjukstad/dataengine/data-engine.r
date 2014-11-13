@@ -25,6 +25,18 @@ pvalues <- function(genes) {
     return(b) 
 }
 
+exprs <- function(gene) { 
+  mean = fc(gene)
+  r <- rnorm2(100,mean,1)
+  return (c(r))
+}
+
+rnorm2 <- function(n,mean,sd) { 
+  return (mean+sd*scale(rnorm(n)))
+}
+
+
+
 add <- function(a,b){
   return (a+b)
 }

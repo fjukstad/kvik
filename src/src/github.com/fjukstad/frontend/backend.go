@@ -7,10 +7,11 @@ import (
 	"strings"
 
 	"code.google.com/p/gorest"
+	"github.com/fjukstad/gocache"
 	"github.com/fjukstad/kegg"
 	//    "time"
 	//    "math/rand"
-	"strconv"
+
 	// "github.com/fjukstad/gocache"
 	"bytes"
 	"encoding/json"
@@ -329,12 +330,7 @@ func (serv NOWACService) GetGeneVis(Gene string) string {
 }
 
 func GeneExpression(geneid string) string {
-
-	id, err := strconv.Atoi(geneid)
-	if err != nil {
-		log.Panic("that was not a gene id: ", geneid, " ", err)
-	}
-	ds := GetGeneExpression(id)
+	ds := GetGeneExpression(geneid)
 
 	// No dataset for this gene, return empty thing
 	if ds == "[]" {
@@ -445,7 +441,11 @@ func GeneExpression(geneid string) string {
             .call(yAxis);
 	
 	var keggid = "hsa:"+info.Id
-	var avg =  parseFloat(GetFoldChange(keggid).Result[keggid])
+	console.log(info.Name) 
+	var geneid = info.Name.split(",")[0]
+	console.log(GetFoldChange(geneid)) 
+	var avg =  parseFloat(GetFoldChange(geneid).Result[geneid])
+	console.log(avg) 
     svg.append("line")
         .attr("x1", padding)
         .attr("y1", h - y(avg))
@@ -607,28 +607,45 @@ func parsePathwayInput(input string) []string {
 
 }
 
-func GetGeneExpression(id int) string {
+type ExprsResponse struct {
+	Exprs []string
+}
+
+func GetGeneExpression(id string) string {
 
 	datastore := "http://localhost:8888"
 
-	query := "/gene/" + strconv.Itoa(id)
+	query := "/exprs/" + id
 	url := datastore + query
-	response, err := http.Get(url)
+	response, err := gocache.Get(url)
 
 	if err != nil {
 		log.Panic("could not download expression ", err)
 	} else if response.StatusCode != 200 {
+		log.Println(response)
 		log.Println("Error from datastore")
 		return "[]"
 	}
 
 	defer response.Body.Close()
 
-	exprs, err := ioutil.ReadAll(response.Body)
+	result, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		log.Panic("Could not read expression ", err)
 	}
 
-	return string(exprs)
+	exprs := new(ExprsResponse)
+	err = json.Unmarshal(result, exprs)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	// returning a string that looks like an array. sorry bout that .
+	values := strings.Join(exprs.Exprs, ",")
+	values = "[" + values
+	values = values + "]"
+
+	values = strings.Replace(values, "NA", "0", -1)
+	return values
 
 }

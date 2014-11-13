@@ -6,14 +6,6 @@ var nodes = [];
 var edges = []; 
 var graph; 
 
-var color = d3.scale.linear()
-    .domain([colmax,0,colmin])
-    .range(colorbrewer.RdYlBu[3]);
-
-var pcolor = d3.scale.linear()
-    .domain([0.0001,0.00915,0.010])
-    .range(colorbrewer.RdYlBu[3]);
-    //.range(["yellow", "white", "blue"]);
 
 function Graph(cy){
     this.addNode = function(n){
@@ -60,7 +52,6 @@ function Graph(cy){
         };
         var  gr = no.data.graphics; 
 
-        console.log(gr)  
         if(gr.name == "" && gr.bgimage == ""){
             return
         } 

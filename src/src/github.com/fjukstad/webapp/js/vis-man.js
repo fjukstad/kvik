@@ -8,7 +8,6 @@ function GET(url, parse) {
         url: url,
         dataType: "text",
         success: function(data) {
-            console.log(url,parse) 
             if(parse) {
                 response = JSON.parse(data);
             } else {
@@ -25,6 +24,7 @@ function GET(url, parse) {
 
 // js for retrieving vis about gene
 function GetVis(gene) {
+    console.log(gene) 
     var baseURL = "http://"+window.location.hostname+":8080/vis/";
     url = baseURL + gene
     return GET(url,false) 
@@ -161,11 +161,7 @@ function setScale(scale) {
 
 } 
 
-var colmax = 1.4//500//10000
-var colmin = -0.7//-500//-1000
 
-var colmaxlog = 1.4//20
-var colminlog = -0.7
 
 function updateColor(scale) { 
     
@@ -221,9 +217,14 @@ function visGenePanel(name,genename){
     panelDiv.appendChild(panelBodyDiv);
 
     document.getElementById('info-panel').appendChild(panelDiv);
+    
+    if(genename == undefined) {
+        genename = info.Name.split(",")[0]
+    }
+        
+    console.log("FUCKLORDS", info, genename) 
 
-    var viscode = GetVis(info.Id)
-    console.log(viscode) 
+    var viscode = GetVis(genename)
     $(viscode).appendTo(".visman"); 
 
 
@@ -234,7 +235,6 @@ function visCompoundPanel(name) {
     console.log(name)
     
     var info = GetInfo(name); 
-    console.log(info) 
 
     // remove old info body
     document.getElementById('info-panel').innerHTML = '';

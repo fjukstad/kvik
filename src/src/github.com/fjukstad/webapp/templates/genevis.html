@@ -18,9 +18,7 @@
 <script>
 window.onload = function() { 
     var genename = window.location.href.split("=")[1]; 
-    console.log(genename) 
     var id = GetGeneId(genename)
-    console.log("Got id:", id) 
     visGenePanel(id, genename)
 } 
 </script> 

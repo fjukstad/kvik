@@ -182,6 +182,8 @@ func FoldChangeHandler(w http.ResponseWriter, r *http.Request) {
 	genes, ids := parseGenes(r.URL.Path, com)
 	command := generateCommand(com, genes)
 	results := RunCommand(command)
+
+	log.Println(results)
 	WriteResponse(w, ids, results)
 }
 
@@ -194,11 +196,34 @@ func PValueHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GeneExpressionHandler(w http.ResponseWriter, r *http.Request) {
-	http.Error(w, "Not implemented", http.StatusInternalServerError)
+	com := "exprs"
+	genes, _ := parseGenes(r.URL.Path, com)
+	command := generateCommand(com, genes)
+	log.Println(command)
+	results := RunCommand(command)
+	WriteExprsResponse(w, results)
 }
 
 func ScaleHandler(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Not implemented", http.StatusInternalServerError)
+}
+
+type ExprsResponse struct {
+	Exprs []string
+}
+
+func WriteExprsResponse(w http.ResponseWriter, exprs []string) {
+	response := new(ExprsResponse)
+	response.Exprs = exprs
+
+	b, err := json.Marshal(response)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	w.Write(b)
+
 }
 
 type GeneResponse struct {

@@ -1,4 +1,21 @@
 
+var colmax = 1.4//500//10000
+var colmin = -0.7//-500//-1000
+
+var colmaxlog = 1.4//20
+var colminlog = -0.7
+
+    
+var color = d3.scale.linear()
+    .domain([colmax,0,colmin])
+    .range(colorbrewer.RdYlBu[3]);
+
+var pcolor = d3.scale.linear()
+    .domain([0.0001,0.00915,0.010])
+    .range(colorbrewer.RdYlBu[3]);
+    //.range(["yellow", "white", "blue"]);
+
+
 function getPathwayId(){ 
     var currentLocation = window.location;
     var path = currentLocation.pathname
@@ -59,8 +76,8 @@ function GenerateInfoPanel(info, genename){
         lookupId = info.Id 
     }
         
-    var m = GetFoldChange(keggid).Result[lookupId]
-    var mean = parseFloat(m).toFixed(3)
+    var f = GetFoldChange(keggid).Result[lookupId]
+    var fc = parseFloat(f).toFixed(3)
 
     var p = GetPValues(keggid).Result[lookupId]
     var pvalue = parseFloat(p).toFixed(5) 
@@ -78,7 +95,8 @@ function GenerateInfoPanel(info, genename){
     str += '<div class="panel-body">'
     str += '<div class="visman"></div>'
     //str += '<button id="sort" onclick="sortBars()">Sort</button>'
-    str += '<small>P-Value: '+pvalue+'</br>Mean: '+mean+'</br>Standard deviation: '+std+'</br>Variance:'+variance+ '</small>'
+    str += '<small>P-Value: '+pvalue+'</br>Fold Change: '+fc
+    //str +='</br>Standard deviation: '+std+'</br>Variance:'+variance+ '</small>'
     str += '<div id="dsidinfo"></div>'
     str += '</div></div></div>'
 
@@ -304,4 +322,12 @@ function GenerateParallelPanel() {
 
 }
 
+// Adding custom css to page 
+function addCSS(cssPath) {
+    linkElement = document.createElement("link");
+    linkElement.rel = "stylesheet";
+    linkElement.href = cssPath; 
 
+    document.head.appendChild(linkElement);
+}
+addCSS("/css/pathway-visualizer.css"); 
