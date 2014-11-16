@@ -126,8 +126,8 @@ func WriteResponse(w http.ResponseWriter, genes []string, results []string) {
 
 	response.Result = make(map[string]string, len(genes))
 
+	log.Println(results, genes)
 	for i, gene := range genes {
-
 		if results[i] != "NA" {
 			response.Result[gene] = results[i]
 		}
@@ -183,7 +183,6 @@ func FoldChangeHandler(w http.ResponseWriter, r *http.Request) {
 	command := generateCommand(com, genes)
 	results := RunCommand(command)
 
-	log.Println(results)
 	WriteResponse(w, ids, results)
 }
 
@@ -199,8 +198,8 @@ func GeneExpressionHandler(w http.ResponseWriter, r *http.Request) {
 	com := "exprs"
 	genes, _ := parseGenes(r.URL.Path, com)
 	command := generateCommand(com, genes)
-	log.Println(command)
 	results := RunCommand(command)
+	log.Println("GOT EXPRESSION", genes, results)
 	WriteExprsResponse(w, results)
 }
 

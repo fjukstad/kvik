@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"code.google.com/p/gorest"
-	"github.com/fjukstad/gocache"
 	"github.com/fjukstad/kegg"
 	//    "time"
 	//    "math/rand"
@@ -617,7 +616,7 @@ func GetGeneExpression(id string) string {
 
 	query := "/exprs/" + id
 	url := datastore + query
-	response, err := gocache.Get(url)
+	response, err := http.Get(url)
 
 	if err != nil {
 		log.Panic("could not download expression ", err)

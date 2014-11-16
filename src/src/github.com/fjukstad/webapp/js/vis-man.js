@@ -212,7 +212,6 @@ function visGenePanel(name,genename){
     panelBodyDiv.className = 'panel-body';
     panelBodyDiv.innerHTML = GenerateInfoPanel(info,genename)
 
-
     panelDiv.appendChild(panelHeadingDiv);
     panelDiv.appendChild(panelBodyDiv);
 
@@ -226,7 +225,6 @@ function visGenePanel(name,genename){
 
     var viscode = GetVis(genename)
     $(viscode).appendTo(".visman"); 
-
 
 } 
 

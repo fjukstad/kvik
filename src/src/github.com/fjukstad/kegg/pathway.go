@@ -84,7 +84,7 @@ func GetAllHumanPathways() []string {
 	res := make([]string, 0)
 
 	url := "http://rest.kegg.jp/list/pathway/hsa"
-	resp, err := http.Get(url)
+	resp, err := gocache.Get(url)
 	if err != nil {
 		log.Panic("Could not fetch pathway list", err)
 	}
