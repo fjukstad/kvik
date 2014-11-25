@@ -149,6 +149,7 @@ func main() {
 	flag.Parse()
 
 	address := *ip + *port
+	address = *port
 
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/about", aboutHandler)
