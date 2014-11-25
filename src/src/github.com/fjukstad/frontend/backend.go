@@ -22,7 +22,7 @@ import (
 
 func main() {
 
-	var ip = flag.String("ip", "localhost", "ip to run on")
+	var ip = flag.String("ip", "", "ip to run on")
 	var port = flag.String("port", ":8080", "port to run on")
 
 	flag.Parse()
