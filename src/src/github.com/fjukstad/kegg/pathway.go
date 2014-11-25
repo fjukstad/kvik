@@ -376,7 +376,7 @@ func GiveMeSomePathways() []string {
 	return pw
 }
 
-func PathwayGraphFrom(pathway string) string {
+func PathwayGraphFrom(pathway string) *gographer.Graph {
 	//pw := GetPathway(pathway)
 
 	// Set up graph
@@ -391,7 +391,7 @@ func PathwayGraphFrom(pathway string) string {
 	// TODO: maybe the graph initialization (after wsserver setup)
 	// can be done in a go routine?
 
-	return graph.ServerInfo()
+	return graph
 }
 
 // TODO: Should store ports used for visualization gateways
