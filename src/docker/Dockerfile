@@ -7,6 +7,11 @@ RUN apt-get upgrade -y
 # git python wget and all that jazz 
 RUN apt-get install -y build-essential python python-dev  python-pip wget git mercurial pkg-config wget tar r-base
 
+# supervisor for starting up kvik
+RUN apt-get install -y supervisor
+run mkdir -p /var/log/supervisor
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 RUN pip install numpy
 
 # go
@@ -32,20 +37,36 @@ WORKDIR ~/
 RUN pip install pyzmq
 
 # new ssh keys
-RUN cat /dev/zero | ssh-keygen -q -N ""
+RUN cat /dev/zero | ssh-keygen -t rsa -C "" -q -N "" -f /root/.ssh/id_rsa
 
 # now get kvik 
 WORKDIR /root
 RUN git clone https://github.com/fjukstad/kvik.git
-ENV GOPATH /root/kvik/src/
+ENV GOPATH /root/kvik/src
 ENV PATH $PATH:$GOPATH/bin
 
 # Kvik dependencies
 RUN go get code.google.com/p/gorest
 RUN go get -tags zmq_4_x github.com/alecthomas/gozmq
-RUN go get github.com/fjukstad/gographer
+RUN go get code.google.com/p/go.net/websocket
 
-RUN ls /root/kvik/src/
+# RUN ls -la /root/kvik/src/src/github.com/fjukstad/gographer
+# RUN go get -u -v -x github.com/fjukstad/gographer 
+
+#RUN git clone https://github.com/fjukstad/gographer.git gographer
+
+
+RUN git clone https://github.com/fjukstad/gowebsocket.git /root/kvik/src/src/github.com/fjukstad/gowebsocket
+WORKDIR /root/kvik/src/src/github.com/fjukstad/gowebsocket
+RUN go install
+
+RUN git clone https://github.com/fjukstad/gographer.git /root/kvik/src/src/github.com/fjukstad/gographer
+WORKDIR /root/kvik/src/src/github.com/fjukstad/gographer
+RUN go install
+
+#RUN go get github.com/fjukstad/gographer
+
+# WORKDIR /root/kvik/src/src/github.com/fjukstad/
 
 # Compile frontend, webapp and dataengine
 WORKDIR  /root/kvik/src/src/github.com/fjukstad/webapp
@@ -57,5 +78,25 @@ RUN go install
 WORKDIR /root/kvik/src/src/github.com/fjukstad/dataengine
 RUN go install 
 
-# ALSO R and RPY2
-RUN pip install rpy2
+# ALSO R things for python 
+RUN pip install rpy2 singledispatch
+
+RUN apt-get install -y default-jdk
+
+RUN wget http://cran.r-project.org/src/contrib/rJava_0.9-6.tar.gz
+RUN R CMD INSTALL rJava_0.9-6.tar.gz
+
+RUN wget http://cran.r-project.org/src/contrib/xlsxjars_0.6.1.tar.gz
+RUN R CMD INSTALL xlsxjars_0.6.1.tar.gz
+
+RUN wget http://cran.r-project.org/src/contrib/xlsx_0.5.7.tar.gz
+RUN R CMD INSTALL xlsx_0.5.7.tar.gz 
+
+ENV LD_LIBRARY_PATH /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server:${LD_LIBRARY_PATH}
+
+
+# expose port 8000 for Kvik 
+EXPOSE 8000
+
+# run supervisor! 
+CMD ["/usr/bin/supervisord"]
