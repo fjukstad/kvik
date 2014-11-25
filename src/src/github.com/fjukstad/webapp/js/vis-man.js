@@ -22,6 +22,11 @@ function GET(url, parse) {
     return response
 }
 
+function GetPathwayGraph(id) {
+    var url = "http://"+window.location.hostname+":8080/pathwayGraph/"+id
+    return GET(url, true) 
+}
+
 // js for retrieving vis about gene
 function GetVis(gene) {
     console.log(gene) 

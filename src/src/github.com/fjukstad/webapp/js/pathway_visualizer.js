@@ -1,39 +1,19 @@
 var wsURL
 window.onload = function() {
-    serverAddr = getVisServerAddress();
-    wsURL = "ws://"+serverAddr; 
     loadCy(); 
     updateSettingsView()
     updatePathwayInfoPanel() 
-
-
 };
 
 var prevSelection;
 var benchmarked = false
 var drawnPathway = false
 
-function getVisServerAddress() {
-    var baseURL = "http://"+window.location.hostname+":8080"
-    var visType = "/new/graph/pathway/"
+function pathwayId(){
     var pathwayIndex = 4; 
-    var selectedPathways = window.location.href.split('/')[pathwayIndex];
-    var url = baseURL+visType+selectedPathways;
-    var serverURL; 
-
-    $.ajax({
-        async: false,
-        cache: false,
-        type: "GET",
-        url: url,
-        dataType: "text",
-        success: function(data){
-            serverURL = window.location.hostname+data; 
-        }
-    }); 
-    return serverURL;
+    var id = window.location.href.split('=')[1];
+    return id
 }
-
 
 
 loadCy = function(){
@@ -131,52 +111,35 @@ loadCy = function(){
 
 
             });
+            var id = pathwayId() 
+            var json  = GetPathwayGraph(id); 
 
+            console.log("ID:", id) 
 
-            // Load data from JSON 
-            var socket = new WebSocket(wsURL); 
-            socket.onmessage = function(m){
-                var message = JSON.parse(m.data); 
-                if(message.command == "\"InitGraph\""){
+            var numAdded = 0; 
                     
-                    json = JSON.parse(JSON.parse(message.graph)); 
-                    var numAdded = 0; 
-                    
-                    for(var i in json.nodes){
-                        var n = json.nodes[i]; 
-                        graph.addNode(n); 
-                    }
-                    //cy.layout(); 
-                    var cy_nodes = cy.add(nodes); 
-                    for(var j in json.edges){
-                        var e = json.edges[j]; 
-                        graph.addEdge(e); 
-                    }
-                    cy.layout();
+            for(var i in json.nodes){
+                var n = json.nodes[i]; 
+                graph.addNode(n); 
+            }
+            //cy.layout(); 
+            var cy_nodes = cy.add(nodes); 
+            for(var j in json.edges){
+                var e = json.edges[j]; 
+                graph.addEdge(e); 
+            }
+            cy.layout();
 
-                    drawnPathway = true   
+            drawnPathway = true   
 
-                    if(!benchmarked){ 
-                        StartBenchmarks()
-                        benchmarked = true
-                    } 
-
-                    updateNodeColors()
-
-                    // WARNING: CLOSING SOCKET AFTER INIT
-                    socket.close()
-
-                    deferAway() 
-
-                }
-
-                if(message.command == "\"AddNode\""){
-                    graph.addNode(message); 
-                    cy.layout();
-                }
+            if(!benchmarked){ 
+                StartBenchmarks()
+                benchmarked = true
             } 
-            
-            
+
+            updateNodeColors()
+
+            deferAway() 
         },
     }; 
     

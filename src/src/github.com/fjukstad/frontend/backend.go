@@ -33,6 +33,8 @@ func main() {
 	serv.GraphServers = make(map[string]string, 0)
 
 	gorest.RegisterService(serv)
+
+	http.HandleFunc("/pathwayGraph/", PathwayGraphHandler)
 	http.Handle("/", gorest.Handle())
 
 	log.Println("Starting server on", address)
@@ -48,9 +50,11 @@ type NOWACService struct {
                         consumes:"application/json"
                         produces:"application/json"`
 
-	newPathwayGraph gorest.EndPoint `method:"GET" 
-                                    path:"/new/graph/pathway/{Pathways:string}"
-                                    output:"string"`
+	/*
+			newPathwayGraph gorest.EndPoint `method:"GET"
+		                                    path:"/new/graph/pathway/{Pathways:string}"
+		                                    output:"string"`
+	*/
 	getInfo gorest.EndPoint `method:"GET"
                             path:"/info/{Items:string}/{InfoType:string}"
                             output:"string"`
@@ -96,6 +100,26 @@ type NOWACService struct {
 									output:"string"`
 
 	GraphServers map[string]string
+}
+
+func PathwayGraphHandler(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	id := strings.Split(r.URL.Path, "/pathwayGraph/")[1]
+	log.Println("id", id)
+
+	graph := kegg.PathwayGraphFrom(id)
+
+	log.Println(graph)
+
+	b, err := json.Marshal(graph)
+	if err != nil {
+		log.Panic("Marshaling went bad: ", err)
+	}
+
+	w.Write(b)
+
 }
 
 type PWMap struct {
@@ -556,6 +580,8 @@ func (serv NOWACService) GetInfo(Items string, InfoType string) string {
 
 }
 
+/*
+
 func (serv NOWACService) NewPathwayGraph(Pathways string) string {
 	addAccessControlAllowOriginHeader(serv)
 
@@ -581,6 +607,8 @@ func (serv NOWACService) NewPathwayGraph(Pathways string) string {
 	return handlerAddress + "/" + pws[0]
 
 }
+
+*/
 
 func addAccessControlAllowOriginHeader(serv NOWACService) {
 	// Allowing access control stuff
