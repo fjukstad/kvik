@@ -7,11 +7,6 @@ RUN apt-get upgrade -y
 # git python wget and all that jazz 
 RUN apt-get install -y build-essential python python-dev  python-pip wget git mercurial pkg-config wget tar r-base
 
-# supervisor for starting up kvik
-RUN apt-get install -y supervisor
-run mkdir -p /var/log/supervisor
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
 RUN pip install numpy
 
 # go
@@ -46,15 +41,14 @@ ENV GOPATH /root/kvik/src
 ENV PATH $PATH:$GOPATH/bin
 
 # Kvik dependencies
+
+# First rollback gorest to specific changeset 
 RUN go get code.google.com/p/gorest
+WORKDIR ~/kvik/src/src/code.google.com/p/gorest
+RUN hg update -r 3ba1ba16240d
+
 RUN go get -tags zmq_4_x github.com/alecthomas/gozmq
 RUN go get code.google.com/p/go.net/websocket
-
-# RUN ls -la /root/kvik/src/src/github.com/fjukstad/gographer
-# RUN go get -u -v -x github.com/fjukstad/gographer 
-
-#RUN git clone https://github.com/fjukstad/gographer.git gographer
-
 
 RUN git clone https://github.com/fjukstad/gowebsocket.git /root/kvik/src/src/github.com/fjukstad/gowebsocket
 WORKDIR /root/kvik/src/src/github.com/fjukstad/gowebsocket
@@ -63,10 +57,6 @@ RUN go install
 RUN git clone https://github.com/fjukstad/gographer.git /root/kvik/src/src/github.com/fjukstad/gographer
 WORKDIR /root/kvik/src/src/github.com/fjukstad/gographer
 RUN go install
-
-#RUN go get github.com/fjukstad/gographer
-
-# WORKDIR /root/kvik/src/src/github.com/fjukstad/
 
 # Compile frontend, webapp and dataengine
 WORKDIR  /root/kvik/src/src/github.com/fjukstad/webapp
@@ -97,6 +87,13 @@ ENV LD_LIBRARY_PATH /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server:${LD_
 
 # expose port 8000 for Kvik 
 EXPOSE 8000
+EXPOSE 8080
+EXPOSE 8888 
+
+# supervisor for starting up kvik
+RUN apt-get install -y supervisor
+run mkdir -p /var/log/supervisor
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # run supervisor! 
 CMD ["/usr/bin/supervisord"]
