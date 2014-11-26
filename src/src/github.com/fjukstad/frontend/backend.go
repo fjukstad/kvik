@@ -50,11 +50,6 @@ type NOWACService struct {
                         consumes:"application/json"
                         produces:"application/json"`
 
-	/*
-			newPathwayGraph gorest.EndPoint `method:"GET"
-		                                    path:"/new/graph/pathway/{Pathways:string}"
-		                                    output:"string"`
-	*/
 	getInfo gorest.EndPoint `method:"GET"
                             path:"/info/{Items:string}/{InfoType:string}"
                             output:"string"`
@@ -579,36 +574,6 @@ func (serv NOWACService) GetInfo(Items string, InfoType string) string {
 	return Items
 
 }
-
-/*
-
-func (serv NOWACService) NewPathwayGraph(Pathways string) string {
-	addAccessControlAllowOriginHeader(serv)
-
-	pws := parsePathwayInput(Pathways)
-
-	log.Println("mans", pws[0])
-	log.Print(Pathways)
-
-	pathwayId := pws[0]
-	var handlerAddress string
-
-	log.Println(serv.GraphServers[pathwayId])
-
-	if serv.GraphServers[pathwayId] == "" {
-		log.Println("first time for ", pathwayId)
-		handlerAddress = kegg.PathwayGraphFrom(pws[0])
-		serv.GraphServers[pathwayId] = handlerAddress
-	} else {
-		handlerAddress = serv.GraphServers[pathwayId]
-		log.Println("second time for ", handlerAddress)
-	}
-
-	return handlerAddress + "/" + pws[0]
-
-}
-
-*/
 
 func addAccessControlAllowOriginHeader(serv NOWACService) {
 	// Allowing access control stuff
