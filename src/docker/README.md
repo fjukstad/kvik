@@ -39,4 +39,5 @@ If you want to change out the data analysis in Kvik, make your changes to
 
 in the Dockerfile and build the image from the Dockerfile. 
 
-
+# I can't make it work! 
+Let me know by submitting an [issue!](https://github.com/fjukstad/kvik/issues) 
