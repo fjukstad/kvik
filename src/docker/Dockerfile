@@ -5,7 +5,7 @@ RUN apt-get update
 RUN apt-get upgrade -y
 
 # git python wget and all that jazz 
-RUN apt-get install -y build-essential python python-dev  python-pip wget git mercurial pkg-config wget tar r-base
+RUN apt-get install -y build-essential python python-dev  python-pip wget git mercurial pkg-config wget tar r-base mercurial
 
 RUN pip install numpy
 
@@ -35,6 +35,7 @@ RUN pip install pyzmq
 RUN cat /dev/zero | ssh-keygen -t rsa -C "" -q -N "" -f /root/.ssh/id_rsa
 
 # now get kvik 
+RUN ls /etc
 WORKDIR /root
 RUN git clone https://github.com/fjukstad/kvik.git
 ENV GOPATH /root/kvik/src
@@ -44,7 +45,7 @@ ENV PATH $PATH:$GOPATH/bin
 
 # First rollback gorest to specific changeset 
 RUN go get code.google.com/p/gorest
-WORKDIR ~/kvik/src/src/code.google.com/p/gorest
+WORKDIR /root/kvik/src/src/code.google.com/p/gorest
 RUN hg update -r 3ba1ba16240d
 
 RUN go get -tags zmq_4_x github.com/alecthomas/gozmq
