@@ -85,7 +85,6 @@ RUN R CMD INSTALL xlsx_0.5.7.tar.gz
 
 ENV LD_LIBRARY_PATH /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server:${LD_LIBRARY_PATH}
 
-
 # expose port 8000 for Kvik 
 EXPOSE 8000
 EXPOSE 8080
@@ -95,6 +94,9 @@ EXPOSE 8888
 RUN apt-get install -y supervisor
 run mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# New R script? 
+# COPY data-engine.r /root/kvik/src/src/github.com/fjukstad/dataengine/
 
 # run supervisor! 
 CMD ["/usr/bin/supervisord"]
