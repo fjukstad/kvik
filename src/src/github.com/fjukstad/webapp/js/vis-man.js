@@ -113,7 +113,7 @@ function GetGenes(){
 } 
 
 function GetGeneId(genename) {
-    var url = "http://"+window.location.hostname+"/geneid/"+genename
+    var url = "http://"+window.location.hostname+":8080/geneid/"+genename
     return GET(url, false) 
 }
 
