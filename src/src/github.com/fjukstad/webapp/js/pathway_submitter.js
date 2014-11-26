@@ -110,8 +110,8 @@ window.onload = function() {
         tr.append("td")
         .attr("class", "col-md-1") 
         .html(function(d){
-
-            return '<a style="font-size:15px" href="http://localhost:8000/browser/geneSelect='+d+'">'+d+"</a>";
+            
+            return '<a style="font-size:15px" href="http://'+window.location.hostname+':8000/browser/geneSelect='+d+'">'+d+"</a>";
         }); 
 
     tr.append("td") 
@@ -122,7 +122,7 @@ window.onload = function() {
                 .style("float", "left")
         .append("svg:a")
         .attr("xlink:href",function(d){
-            return "http://localhost:8000/browser/geneSelect="+d;
+            return "http://"+window.location.hostname+":8000/browser/geneSelect="+d;
         }) 
         .append("rect") 
         .attr("width", function(d){
