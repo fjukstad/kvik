@@ -15,7 +15,7 @@ docker run -p 80:8000 -p 8080:8080 -p 8888:8888 -t fjukstad/kvik
 - Kvik now runs on port 80, [go have a look](http://localhost)
 
 
-## Building from a Dockerfile
+# Building from a Dockerfile
 You could also build the Kvik container from a Dockerfile. From this directory,
 run
 
@@ -29,7 +29,7 @@ and then
 docker run -p 80:8000 -p 8080:8080 -p 8888:8888 -t USERNAME/kvik
 ```
 
-## Making changes to Kvik 
+# Making changes to Kvik 
 If you want to change out the data analysis in Kvik, make your changes to
 [data-engine.r](data-engine.r),  uncomment [the line](https://github.com/fjukstad/kvik/blob/187c60d60216203318538f946275d438203cba74/src/docker/Dockerfile#L99) that reads 
 
