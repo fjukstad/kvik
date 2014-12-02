@@ -15,7 +15,6 @@ function GET(url, parse) {
             } 
         },
         error: function(xhr, ajaxOptions, thrownError){
-            console.log("Error. Returning nothing.");
             response = "";
         }
     });
@@ -29,7 +28,6 @@ function GetPathwayGraph(id) {
 
 // js for retrieving vis about gene
 function GetVis(gene) {
-    console.log(gene) 
     var baseURL = "http://"+window.location.hostname+":8080/vis/";
     url = baseURL + gene
     return GET(url,false) 
@@ -137,7 +135,6 @@ function setSettings(smoking, hormones, disable) {
                     +window.location.hostname
                     +":8080/datastore/setsettings/";
 
-    console.log("Setting settings:", settings) 
     var s = settings// {Smoking: smoking, HormoneTherapy: hormones, Disable: disable} 
     
     $.post( baseURL, JSON.stringify(s));
@@ -194,7 +191,6 @@ function visGenePanel(name,genename){
     }
 
 
-    console.log(name)
 
     info = GetInfo(name);
     
@@ -226,7 +222,6 @@ function visGenePanel(name,genename){
         genename = info.Name.split(",")[0]
     }
         
-    console.log("FUCKLORDS", info, genename) 
 
     var viscode = GetVis(genename)
     $(viscode).appendTo(".visman"); 
@@ -235,7 +230,6 @@ function visGenePanel(name,genename){
 
 function visCompoundPanel(name) {
 
-    console.log(name)
     
     var info = GetInfo(name); 
 

@@ -78,7 +78,6 @@ window.onload = function() {
     ReadableInput() 
     var rawgenes = GetGenes().Genes
 
-    console.log(rawgenes) 
 
     var genelist = "" 
     var genes = [] 
@@ -97,7 +96,6 @@ window.onload = function() {
     var dataset = GetPValues(genelist).Result
     var d_keys = Object.keys(dataset) 
 
-    console.log(dataset) 
     
     var tr = d3
         .select("table#geneselect")
@@ -133,7 +131,6 @@ window.onload = function() {
         })
         .attr("height", 10) 
         .style("fill", function(d){
-            console.log(parseFloat(dataset[d]))
             // significant
             if(parseFloat(dataset[d]) < 0.009978){
                 return "#67a9cf"
@@ -152,7 +149,6 @@ window.onload = function() {
 
     var formh = $("#genediv").height() 
     var offset = 66 + "px" 
-    console.log(h,w,formh)
 
     var div = d3.select("#genediv").append("div")
         .attr("id", "outer")

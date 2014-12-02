@@ -97,7 +97,6 @@ loadCy = function(){
                 }
                 
                 if(nodeType[0] === 'cpd'){  
-                    console.log("Compound inbound", node) 
                     
                     visCompoundPanel(node.name); 
                     resizeHeader(); 
@@ -114,7 +113,6 @@ loadCy = function(){
             var id = pathwayId() 
             var json  = GetPathwayGraph(id); 
 
-            console.log("ID:", id) 
 
             var numAdded = 0; 
                     
@@ -189,7 +187,6 @@ function updateNodeColors() {
         alert("Unexpected error. Please try to refresh the web page")
     }; 
 
-    console.log("FUCKERS", foldchange.Result) 
 
     var graphNodes = cy.nodes();
 
@@ -215,7 +212,6 @@ function updateNodeColors() {
                     c = "#000";
                     graphNodes[n].css("border-width", 1) 
                 } else {
-                    console.log("p-value:", p) 
                     if(parseFloat(p) < 0.009978){
                         c = "#67a9cf"
 
@@ -309,7 +305,6 @@ var settings =  {Smoking: true, HormoneTherapy: true, Disable: true}
 
 function updateSettingsView() {
     settings = getSettings() 
-    console.log(settings) 
     // check checkboxes
     $( "input#disable").prop('checked', settings.Disable)
     $( "input#smoking").prop('checked', settings.Smoking)

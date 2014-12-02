@@ -26,11 +26,6 @@ function updatePathwayInfoPanel(){
 
     var id = getPathwayId() 
     var p = GetPathway(id) 
-
-
-
-    console.log("GOT THAT PATHWAY: ", p) 
-
     var div = d3.select("body").selectAll("#pathway-info-view"); 
 
     var pg = div.append("div")
