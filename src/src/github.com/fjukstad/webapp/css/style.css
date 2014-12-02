@@ -23,3 +23,13 @@ float: right!important;
 .jumbotron {
     position:relative;
 }
+
+#div.outFooter {
+    width: 100%;
+}
+div.footer { 
+    width: 50%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
