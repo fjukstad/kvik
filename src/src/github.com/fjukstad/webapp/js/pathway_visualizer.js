@@ -252,11 +252,11 @@ window.onresize = function(event) {
 
 function resizeViews(){
     var cyt = $('#cy')[0]
-    var h = $(window).height()-160+"px"
-    cyt.style.height = h
+    var h = $(window).height()-60
+    cyt.style.height = h + "px" 
     cyt.style.width = $(".col-sm-8")[0].clientWidth-25+"px"
 
-    d3.selectAll("section").style("height", h)
+    d3.selectAll("section").style("height", h+"px")
     
     // center the cytoscape graph after resize
     try { 
