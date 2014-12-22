@@ -1,17 +1,103 @@
 {{ define "title" }}
-About 
+Tutorial 
 {{ end }}
 
 {{ define "content" }}
+
+<style> 
+img { 
+    width: 80%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto; 
+} 
+</style> 
+
 <div class="jumbotron">
     <h1> Tutorial </h1>
     <p>
     Welcome to the short introductory tutorial to Kvik. If you have any
     questions as you go through the tutorial, please leave a comment in the
-    <a href="http://github.com/fjukstad/kvik/issues">Issues-section</a> of the
-    repository on Github. 
+    <a target="_blank"
+     href="http://github.com/fjukstad/kvik/issues">Issues-section</a> 
+    of the repository on Github. 
+    </p>
+
+    <h2>1) Open the Browser</h2> 
+    <p> 
+    The first thing you want to do when you're starting the data exploration in
+    Kvik is opening up the <a target="_blank" href="/browser">Browser</a>. Head
+    back to the home page and click "Start" or click on "Browser" up in the
+    navbar. 
 
     </p>
+
+    <h2>2) Select an interesting pathway or gene </h2> 
+    <p> 
+    Now that you've opened up the Browser you get a list of pathways on the left
+    and genes on the right. 
+
+    <img src="public/tutorial/browser.png"></img> 
+
+    You can scroll through both of the lists and find the gene or pathway you're
+    interested in having a look at. Let us have a look at the renin-angiotesin
+    pathway. Find it on the list, and click Select. The image below shows a
+    visualization of the renin-angiotesin pathway we selected.
+
+
+           
+    <img src="public/tutorial/renin.png"></img> 
+
+    </p> 
+
+    <h2> 3) Exploring a pathway </h2> 
+    <p> 
+    Now that we have found a pathway that we want to look at we can start to
+    learn more about the genes and compounds in the pathway. In the pathway map,
+    Kvik has colored the genes that are significantly differentially expressed
+    between the two groups of women from <a target="_blank" href="
+    http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0067270">
+    Olsen et al. 2013</a>. We have chosen to only color the nodes that are
+    significant on the 5% level, but if we chose a different threshold more
+    genes would be colored. 
+
+    If we click on the CPA3-gene we open up a different
+    view for more detailed information about the gene. We find its associated
+    p-value and fold-change, as well as similar pathways where this gene can be
+    found. The pathways have a small bar to its right that indicate how
+    "similar" they are compared to the renin-angiotosin pathway we are looking
+    at. The level of similarity is just the number of common genes. We can click
+    on "More information" to reveal more information from the KEGG database. 
+
+    <img src="public/tutorial/cpa3.png"></img> 
+
+    We can zoom on on the pathway map by scolling in on the mouse, and pan
+    around by clicking outside the pathway map and dragging it. Due to a
+    limitation with the graph library we are using it is not possible to click
+    and drag on the pathway image itself. 
+
+    If we want to look at different pathways, we can either select one from the
+    pathway visualization (e.g. the Complement and coagulation cascades node in
+    the bottom left of the pathway map) or select one from the list of similar
+    pathway when we selected a gene. We can also go back to the browser page to
+    select one from the list. 
+    </p> 
     
+    <h2> 4) Exploring a gene </h2> 
+    <p>
+    If we go back to the Browser page we can select interesting genes we want to
+    look at. This list only contains genes that Kvik has fold change and
+    p-values available. The list is sorted alphabetically and a bar on the right
+    indicates the p-value. 
+
+    We can click on the ADIPOR1 gene to view more details about this gene. Below
+    is a screenshot of the information Kvik found about the gene. This view is
+    similar to the adjacent view when we are exploring pathways. We can view
+    more information or browse to the pathways where the gene is found, e.g. the
+    Adipocytokine signaling pathway. 
+
+    <img src="public/tutorial/adipor1.png"></img> 
+
+    </p> 
 </div>
 {{ end }}
