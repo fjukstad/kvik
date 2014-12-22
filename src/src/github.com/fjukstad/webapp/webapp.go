@@ -37,6 +37,7 @@ var emptyTemplatePath = []string{"templates/_empty_page.html",
 
 var indexTemplatePath = "templates/index.html"
 var aboutTemplatePath = "templates/about.html"
+var tutorialTemplatePath = "templates/tutorial.html"
 var browserTemplatePath = "templates/browser.html"
 var browserVisualizationTemplatePath = "templates/visualization.html"
 var geneVisualizationTemplatePath = "templates/genevis.html"
@@ -47,6 +48,11 @@ var indexTemplate = template.Must(template.ParseFiles(
 var aboutTemplate = template.Must(template.ParseFiles(
 	append(defaultTemplatePaths, aboutTemplatePath)...,
 ))
+
+var tutorialTemplate = template.Must(template.ParseFiles(
+	append(defaultTemplatePaths, tutorialTemplatePath)...,
+))
+
 var browserTemplate = template.Must(template.ParseFiles(
 	append(defaultTemplatePaths, browserTemplatePath)...,
 ))
@@ -78,6 +84,10 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 func aboutHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(aboutTemplate, w, nil)
+}
+
+func tutorialHandler(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(tutorialTemplate, w, nil)
 }
 
 const lenPath = len("/browser/")
@@ -153,6 +163,7 @@ func main() {
 
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/about", aboutHandler)
+	http.HandleFunc("/tutorial", tutorialHandler)
 	http.HandleFunc("/browser/", browserHandler)
 
 	// Handling requests for css files
