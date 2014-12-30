@@ -34,39 +34,45 @@ RUN pip install pyzmq
 # new ssh keys
 RUN cat /dev/zero | ssh-keygen -t rsa -C "" -q -N "" -f /root/.ssh/id_rsa
 
-# now get kvik 
-RUN ls /etc
-WORKDIR /root
-RUN git clone https://github.com/fjukstad/kvik.git
-ENV GOPATH /root/kvik/src
+ENV GOPATH /root/go
 ENV PATH $PATH:$GOPATH/bin
 
 # Kvik dependencies
-
 # First rollback gorest to specific changeset 
 RUN go get code.google.com/p/gorest
-WORKDIR /root/kvik/src/src/code.google.com/p/gorest
+WORKDIR /root/go/src/code.google.com/p/gorest
 RUN hg update -r 3ba1ba16240d
 
 RUN go get -tags zmq_4_x github.com/alecthomas/gozmq
 RUN go get code.google.com/p/go.net/websocket
 
-RUN git clone https://github.com/fjukstad/gowebsocket.git /root/kvik/src/src/github.com/fjukstad/gowebsocket
-WORKDIR /root/kvik/src/src/github.com/fjukstad/gowebsocket
-RUN go install
+#RUN git clone https://github.com/fjukstad/gowebsocket.git /root/go/src/github.com/fjukstad/gowebsocket
+#WORKDIR /root/go/src/github.com/fjukstad/gowebsocket
+#RUN go install
+RUN go get github.com/fjukstad/gowebsocket
 
-RUN git clone https://github.com/fjukstad/gographer.git /root/kvik/src/src/github.com/fjukstad/gographer
-WORKDIR /root/kvik/src/src/github.com/fjukstad/gographer
-RUN go install
+#RUN git clone https://github.com/fjukstad/gographer.git /root/kvik/src/src/github.com/fjukstad/gographer
+#WORKDIR /root/go/src/github.com/fjukstad/gographer
+#RUN go install
+RUN go get github.com/fjukstad/gographer
+
+RUN go get github.com/fjukstad/gocache
+
+RUN ls /root/go/src/github.com/fjukstad/
+RUN go get github.com/fjukstad/rpcman
+
+# now get kvik 
+WORKDIR /root/go/src/github.com/fjukstad
+RUN git clone -b 2.0 https://github.com/fjukstad/kvik.git
 
 # Compile frontend, webapp and dataengine
-WORKDIR  /root/kvik/src/src/github.com/fjukstad/webapp
+WORKDIR  /root/go/src/github.com/fjukstad/kvik/webapp
 RUN go install 
 
-WORKDIR /root/kvik/src/src/github.com/fjukstad/frontend
+WORKDIR /root/go/src/github.com/fjukstad/kvik/frontend
 RUN go install 
 
-WORKDIR /root/kvik/src/src/github.com/fjukstad/dataengine
+WORKDIR /root/go/src/github.com/fjukstad/kvik/dataengine
 RUN go install 
 
 # ALSO R things for python 
@@ -97,6 +103,6 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # New R script? 
 # COPY data-engine.r /root/kvik/src/src/github.com/fjukstad/dataengine/
-
+RUN ls /etc
 # run supervisor! 
 CMD ["/usr/bin/supervisord"]
