@@ -1,23 +1,19 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"flag"
+	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"os/exec"
 	"strings"
 
 	"code.google.com/p/gorest"
-	"github.com/fjukstad/kegg"
-	//    "time"
-	//    "math/rand"
-
-	// "github.com/fjukstad/gocache"
-	"bytes"
-	"encoding/json"
-	"io"
-	"io/ioutil"
-	"os"
-	"os/exec"
+	"github.com/fjukstad/kvik/kegg"
 )
 
 func main() {
