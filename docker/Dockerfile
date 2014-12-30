@@ -46,16 +46,8 @@ RUN hg update -r 3ba1ba16240d
 RUN go get -tags zmq_4_x github.com/alecthomas/gozmq
 RUN go get code.google.com/p/go.net/websocket
 
-#RUN git clone https://github.com/fjukstad/gowebsocket.git /root/go/src/github.com/fjukstad/gowebsocket
-#WORKDIR /root/go/src/github.com/fjukstad/gowebsocket
-#RUN go install
 RUN go get github.com/fjukstad/gowebsocket
-
-#RUN git clone https://github.com/fjukstad/gographer.git /root/kvik/src/src/github.com/fjukstad/gographer
-#WORKDIR /root/go/src/github.com/fjukstad/gographer
-#RUN go install
 RUN go get github.com/fjukstad/gographer
-
 RUN go get github.com/fjukstad/gocache
 
 RUN ls /root/go/src/github.com/fjukstad/
@@ -103,6 +95,5 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # New R script? 
 # COPY data-engine.r /root/kvik/src/src/github.com/fjukstad/dataengine/
-RUN ls /etc
 # run supervisor! 
 CMD ["/usr/bin/supervisord"]
