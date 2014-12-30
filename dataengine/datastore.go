@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/fjukstad/kegg"
+	"github.com/fjukstad/kvik/kegg"
 	"github.com/fjukstad/rpcman"
 )
 

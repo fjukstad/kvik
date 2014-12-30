@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/fjukstad/kegg"
+	"github.com/fjukstad/kvik/kegg"
 )
 
 type InputList struct {
