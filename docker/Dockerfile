@@ -55,7 +55,7 @@ RUN go get github.com/fjukstad/rpcman
 
 # now get kvik 
 WORKDIR /root/go/src/github.com/fjukstad
-RUN git clone -b 2.0 https://github.com/fjukstad/kvik.git
+RUN git clone https://github.com/fjukstad/kvik.git
 
 # Compile frontend, webapp and dataengine
 WORKDIR  /root/go/src/github.com/fjukstad/kvik/webapp
