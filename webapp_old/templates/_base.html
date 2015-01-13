@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head> 
+        {{template "header" . }}
+        <title> {{template "title" .}} </title>
+    </head>
+    <body>
+        {{template "navbar" .}}
+        <section id="contents">
+            {{template "content" . }}
+        </section>
+
+        <footer id="footer">
+            {{template "footer" . }}
+        </footer>
+    </body>
+</html>
