@@ -1,2 +1,3 @@
-cache/
-public/pathways/
+test-results/
+tmp/
+routes/
