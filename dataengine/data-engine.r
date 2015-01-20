@@ -12,9 +12,16 @@ genes <- function() {
 } 
 
 fc <- function(genes) {
-    a = dataset[match(genes, dataset$Genes),];
-    b = as.numeric(as.character(a$dm))
-    return (b) 
+#    a = dataset[match(genes, dataset$Genes),];
+#    b = as.numeric(as.character(a$dm))
+
+  r <- rnorm2(length(genes), 0, 1)
+  if(length(genes) == 1) {
+    r <- rnorm2(2, 0, 1)
+    return (c(r[1]))
+  }
+  return (c(r))
+#   return (b) 
 }
 
 pvalues <- function(genes) { 
@@ -24,5 +31,6 @@ pvalues <- function(genes) {
 }
 
 exprs <- function(gene) { 
+    r <- rnorm2(100,0,1)
   return 
 }
