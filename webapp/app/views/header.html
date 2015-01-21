@@ -8,11 +8,13 @@
 
     {{append . "moreStyles" "css/bootstrap.min.css"}}
     {{append . "moreStyles" "css/pace.min.css"}}
+    {{append . "moreStyles" "css/style.css"}}
     {{range .moreStyles}}
       <link rel="stylesheet" type="text/css" href="/public/{{.}}">
     {{end}}
 
     {{append . "moreScripts" "js/jquery-1.9.1.min.js"}}
+    {{append . "moreScripts" "js/jquery-ui.js"}}
     {{append . "moreScripts" "js/d3.v3.min.js"}}
     {{append . "moreScripts" "js/pace.min.js"}}
     {{append . "moreScripts" "js/cytoscape.min.js"}}
