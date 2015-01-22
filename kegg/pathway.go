@@ -79,9 +79,7 @@ type KeggSubtype struct {
 	Value string `xml:"value,attr"`
 }
 
-func GetAllHumanPathways() []string {
-
-	res := make([]string, 0)
+func GetAllHumanPathways() []Pathway {
 
 	url := "http://rest.kegg.jp/list/pathway/hsa"
 	resp, err := gocache.Get(url)
@@ -93,6 +91,8 @@ func GetAllHumanPathways() []string {
 	if err != nil {
 		log.Panic("Could not read body of pathway list response", err)
 	}
+
+	var res []string
 
 	lines := strings.Split(string(body), "\n")
 	for i := range lines {
@@ -112,7 +112,15 @@ func GetAllHumanPathways() []string {
 
 	// sort list of pathways
 	res = SortPathwayIds(res)
-	return res
+
+	// Get all info
+	var pathways []Pathway
+	//:= make([]Pathway, 0)
+	for _, id := range res {
+		pathways = append(pathways, GetPathway(id))
+	}
+
+	return pathways
 
 }
 
