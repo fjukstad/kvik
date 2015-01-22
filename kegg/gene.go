@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"strconv"
 	"strings"
@@ -36,10 +37,47 @@ type Sequence struct {
 	Sequence string
 }
 
+func GetAllHumanGenes() []Gene {
+
+	url := "http://rest.kegg.jp/list/hsa"
+	resp, err := gocache.Get(url)
+	if err != nil {
+		log.Panic("Could not fetch gene list", err)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Panic("Could not read body of gene list response", err)
+	}
+
+	var geneids []string
+
+	lines := strings.Split(string(body), "\n")
+
+	for _, line := range lines {
+		id := strings.Split(line, "\t")[0]
+		geneid := strings.Split(id, ":")
+
+		if len(geneid) < 2 {
+			continue
+		}
+
+		geneids = append(geneids, geneid[1])
+	}
+
+	var result []Gene
+	for _, id := range geneids {
+		result = append(result, GetGene(id))
+	}
+
+	return result
+
+}
+
 func GetGene(id string) Gene {
 	baseURL := "http://rest.kegg.jp/get/hsa:"
 	url := baseURL + id
-
+	log.Println(url)
 	response, err := gocache.Get(url)
 	if err != nil {
 		log.Panic("Cannot download from url:", err)
