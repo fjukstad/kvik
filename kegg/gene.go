@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -37,7 +38,7 @@ type Sequence struct {
 	Sequence string
 }
 
-func GetAllHumanGenes() []Gene {
+func GetAllHumanGenes() Genes {
 
 	url := "http://rest.kegg.jp/list/hsa"
 	resp, err := gocache.Get(url)
@@ -65,13 +66,29 @@ func GetAllHumanGenes() []Gene {
 		geneids = append(geneids, geneid[1])
 	}
 
-	var result []Gene
-	for _, id := range geneids {
-		result = append(result, GetGene(id))
+	return SortGenes(geneids)
+}
+
+type Genes []Gene
+
+func (g Genes) Len() int {
+	return len(g)
+}
+func (g Genes) Swap(i, j int) {
+	g[i], g[j] = g[j], g[i]
+}
+
+func (g Genes) Less(i, j int) bool {
+	return g[i].Name < g[j].Name
+}
+
+func SortGenes(ids []string) Genes {
+	var genes Genes
+	for _, id := range ids {
+		genes = append(genes, GetGene(id))
 	}
-
-	return result
-
+	sort.Sort(Genes(genes))
+	return genes
 }
 
 func GetGene(id string) Gene {

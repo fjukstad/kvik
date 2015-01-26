@@ -5,7 +5,7 @@ import (
 	"github.com/revel/revel"
 )
 
-var kegg *models.KEGG
+var Kegg *models.KEGG
 
 type Search struct {
 	*revel.Controller
@@ -21,11 +21,17 @@ type Content struct {
 }
 
 func (c Search) New(term string) revel.Result {
-	result := kegg.Search(term)
+	result := Kegg.Search(term)
 	response := Response{Terms: result}
 	return c.RenderJson(response)
 }
 
 func InitKEGG() {
-	kegg = models.Init()
+	Kegg = models.Init()
+}
+
+func (c Search) Pathways() revel.Result {
+	result := Kegg.Search("")
+	response := Response{Terms: result}
+	return c.RenderJson(response)
 }
