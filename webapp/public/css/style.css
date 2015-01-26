@@ -4,11 +4,12 @@
 } 
 
 .ui-widget { 
-    width: 80%;
+    width: 50%;
     margin-left: auto;
     margin-right: auto; 
     margin-top: 2em; 
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    padding-bottom: 2em;
 } 
 
 input#input { 
@@ -21,3 +22,15 @@ li {
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 12px; 
 } 
+
+#selector {
+    height: 500px;
+    max-height: 200px;
+    overflow: scroll;
+}
+
+#orhead {
+    margin-left: 3em;
+    margin-right: 3em;
+    padding-top: 2em;
+}

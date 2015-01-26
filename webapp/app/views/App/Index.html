@@ -31,23 +31,27 @@
               <input id="input">
             </div>
         </div> 
-        <div class="row">
-            Or select one from the lists below! 
+        <div class="row" id="orhead">
+            <div class="text-center">
+                <b>Or select one from the lists below! </b> 
+            </div> 
         </div> 
         <div class="row">
-            <div class="col-xs-6 col-md-4 col-lg-6"> 
-                <h3> Pathways </h3> 
-                {{ range $index, $element := .pathways}}
-                <p> {{$element.Name}}</p> 
-                {{end}} 
-            </div> 
-
-            <div class="col-xs-6 col-md-4 col-lg-6"> 
-                <h3> Genes </h3> 
-                {{ range $index, $element := .genes}}
-
+            <div class="text-center">
+                <div class="col-xs-6 col-md-4 col-lg-6" id="selector"> 
+                    <h3> Pathways </h3> 
+                    {{ range $index, $element := .pathways}}
                     <p> {{$element.Name}}</p> 
-                {{end}} 
+                    {{end}} 
+                </div> 
+
+                <div class="col-xs-6 col-md-4 col-lg-6" id="selector"> 
+                    <h3> Genes </h3> 
+                    {{ range $index, $element := .genes}}
+
+                        <p> {{$element.Name}}</p> 
+                    {{end}} 
+                </div> 
             </div> 
         </div> 
     </div> 
