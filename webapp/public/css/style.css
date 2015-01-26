@@ -2,3 +2,22 @@
     margin-left: 1em;
     margin-right: 1em;
 } 
+
+.ui-widget { 
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto; 
+    margin-top: 2em; 
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+} 
+
+input#input { 
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 0.8em; 
+    width: 25em; 
+} 
+
+li { 
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 12px; 
+} 

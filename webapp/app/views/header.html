@@ -9,6 +9,7 @@
     {{append . "moreStyles" "css/bootstrap.min.css"}}
     {{append . "moreStyles" "css/pace.min.css"}}
     {{append . "moreStyles" "css/style.css"}}
+    {{append . "moreStyles" "css/jquery-ui.css"}}
     {{range .moreStyles}}
       <link rel="stylesheet" type="text/css" href="/public/{{.}}">
     {{end}}
