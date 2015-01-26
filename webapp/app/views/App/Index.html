@@ -1,7 +1,8 @@
 {{set . "title" "Kvik"}}
 
+{{append . "moreScripts" "js/list.js"}}
+{{append . "moreScripts" "js/list.fuzzysearch.js"}}
 {{append . "moreScripts" "js/search.js"}}
-
 
 {{template "header.html" .}}
 {{template "navbar.html" .}}
@@ -26,29 +27,35 @@
                 and Cancer (NOWAC)</a> postgenome biobank.   
             </p>
 
-            <div class="ui-widget">
-              <label for="input">Search for a pathway or gene: </label>
-              <input id="input">
+        </div> 
+
+        <div class="row">
+            <input type="text" class="search"/>
+            <div id="pathway-search">
+
+                <div class="col-xs-6 col-md-4 col-lg-6"> 
+                    <h3> Pathways  ({{ len .pathways}})  </h3> 
+                    <ul class="list"> 
+                    {{ range $index, $element := .pathways}}
+                    <li><p class="name"> {{$element.Name}}</p></li>  
+                    {{end}} 
+                    </ul> 
+                </div> 
+            </div> 
+
+            <div id="gene-search">
+                <div class="col-xs-6 col-md-4 col-lg-6"> 
+                    <h3> Genes ({{ len .genes}}) </h3> 
+                    <ul class="list"> 
+                    {{ range $index, $element := .genes}}
+                    {{ if $element.Name }} 
+                        <li><p class="name"> {{$element.Name}}</p></li>
+                    {{end}}
+                    {{end}} 
+                </ul> 
+                </div> 
+                </div>
             </div>
-        </div> 
-        <div class="row">
-            Or select one from the lists below! 
-        </div> 
-        <div class="row">
-            <div class="col-xs-6 col-md-4 col-lg-6"> 
-                <h3> Pathways </h3> 
-                {{ range $index, $element := .pathways}}
-                <p> {{$element.Name}}</p> 
-                {{end}} 
-            </div> 
-
-            <div class="col-xs-6 col-md-4 col-lg-6"> 
-                <h3> Genes </h3> 
-                {{ range $index, $element := .genes}}
-
-                    <p> {{$element.Name}}</p> 
-                {{end}} 
-            </div> 
         </div> 
     </div> 
 </div> 
