@@ -1,15 +1,17 @@
 window.onload = function() { 
-    var pathwayList = new List('pathway-search', {
-        valueNames: ['name'],
-        indexAsync: true
-    }); 
-    var geneList = new List('gene-search', {
-        valueNames: ['name'],
-        indexAsync: true
-    }); 
-    $('.search').on("keyup", function(){
-        pathwayList.search($(".search").val());
-        geneList.search($(".search").val());
-    }); 
-
+    var cache = {};
+    $( "#input" ).autocomplete({
+      minLength: 2,
+      source: function( request, response ) {
+        var term = request["term"];
+        if ( term in cache ) {
+          response( cache[ term ] );
+          return;
+        }
+        $.getJSON("/search", request, function( data, status, xhr ) {
+            cache[ term ] = data.Terms;
+            response( data.Terms );
+        });
+      }
+    });
 }; 
