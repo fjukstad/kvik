@@ -1,0 +1,131 @@
+{{set . "title" "pathway vis"}}
+
+{{template "header.html" .}}
+{{template "navbar.html" .}}
+
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+    
+    var margin = {top: 5, right: 5, bottom: 5, left: 5},
+        width = 2000 - margin.left - margin.right,
+        height = 2000 - margin.top - margin.bottom; 
+
+
+    var zoom = d3.behavior.zoom()
+        .scaleExtent([-10, 10])
+        .on("zoom", zoomed);
+
+    var drag = d3.behavior.drag()
+        .origin(function(d) { return d; })
+        .on("dragstart", dragstarted)
+        .on("drag", dragged)
+        .on("dragend", dragended);
+
+
+
+    var svg = d3.select("body").append("svg") 
+                .attr("width", width+margin.left+margin.right)
+                .attr("height", height+margin.top+margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
+                .call(zoom);
+
+    var container
+
+    d3.json("/pathway/hsa05200/json", function(error,graph){
+        if(error){
+            return console.warn(error);
+        }
+
+    container = svg.append("g");
+    
+    var image = container.append("image")
+                    .attr("height", 1342)
+                    .attr("width", 1922)
+                    .attr("xlink\:href", function(d){
+                            return "http://www.genome.jp/kegg/pathway/hsa/hsa05200.png"
+                    });
+
+        
+    var node = container.append("g")
+            .attr("class", "node")
+            .selectAll("rect")
+            .data(graph.nodes)
+            .enter().append("g")
+
+    node.append("rect")
+            .attr("x", function(d){
+                console.log(d) 
+                if(d.name == "bg"){
+                    return 0
+                }
+                return d.x - d.width/2;
+            })
+            .attr("y", function(d){
+                if(d.name == "bg"){
+                    return 0
+                }
+                return d.y - d.height/2;
+            })
+            .attr("width", function(d){
+                return d.width
+            })
+            .attr("height", function(d){
+                return d.height;
+                })
+            .style("fill", function(d){
+                if(d.name == "bg") {
+                    return "url(#image)";
+                }
+                if(d.bgcolor == "none"){
+                    return "#fff"
+                }
+                return d.bgcolor
+            }) 
+            .style("stroke", "black") 
+
+    node.append("text")
+        .attr("x", function(d){
+             return d.x-d.width/2.5;
+         })
+        .attr("y", function(d){
+             return d.y + d.height/3;
+         })
+        .text(function(d){
+            if(d.shape == "circle"){
+                return ""
+            }
+
+             return d.description;
+        }) 
+                    
+                
+
+
+    
+    }); 
+
+
+function zoomed() {
+  container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+}
+
+function dragstarted(d) {
+  d3.event.sourceEvent.stopPropagation();
+  d3.select(this).classed("dragging", true);
+}
+
+function dragged(d) {
+  d3.select(this).attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y);
+}
+
+function dragended(d) {
+  d3.select(this).classed("dragging", false);
+}
+
+
+</script> 
+
+

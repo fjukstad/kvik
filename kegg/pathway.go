@@ -10,16 +10,13 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	"math/rand"
 	"net/http"
 	"os"
 	"sort"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/fjukstad/gocache"
-	"github.com/fjukstad/gographer"
 )
 
 type Pathway struct {
@@ -216,12 +213,38 @@ func NewKeggPathway(keggId string) *KeggPathway {
 
 }
 
-func createPathwayGraph(keggId string, inputGraph *gographer.Graph) {
+type Node struct {
+	Id              int    `json:"id"`
+	Name            string `json:"name"`
+	Type            int    `json:"type"`
+	Size            int    `json:"size"`
+	Description     string `json:"description"`
+	ForegroundColor string `json:"fgcolor"`
+	BackgroundColor string `json:"bgcolor"`
+	Shape           string `json:"shape"`
+	X               int    `json:"x"`
+	Y               int    `json:"y"`
+	Height          int    `json:"height"`
+	Width           int    `json:"width"`
+}
+
+type Edge struct {
+	Source int `json:"source"`
+	Target int `json:"target"`
+	Index  int `json:"index"`
+	Weight int `json:"weight"`
+}
+
+type Graph struct {
+	Nodes []Node `json:"nodes"`
+	Edges []Edge `json:"edges"`
+}
+
+func PathwayGraph(keggId string) Graph {
 
 	baseURL := "http://rest.kegg.jp/get/" + keggId
 	url := baseURL + "/kgml"
 
-	// url := "http://localhost:8000/public/pathway.kgml"
 	pw := getMap(url)
 
 	pathway := new(KeggPathway)
@@ -233,13 +256,11 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph) {
 
 	imgurl := "http://www.genome.jp/kegg/pathway/hsa/" + keggId + ".png"
 
-	log.Print("downloading image...")
 	resp, err := http.Get(imgurl)
 	if err != nil {
 		log.Panic("Image could not be downloaded ", err)
 	}
 
-	log.Print("image downloaded....")
 	img, err := png.Decode(resp.Body)
 
 	if err != nil {
@@ -251,10 +272,8 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph) {
 	sizeX := imgrect.Max.X - imgrect.Min.X
 	sizeY := imgrect.Max.Y - imgrect.Min.Y
 
-	log.Print("Image is : ", sizeX, sizeY)
-
 	// Store image for later use
-	path := "../frontend/public/pathways"
+	path := "public/pathways/"
 	filename := keggId + ".png"
 	err = storeImage(path, filename, img)
 	if err != nil {
@@ -262,7 +281,7 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph) {
 	}
 
 	// First create a node that will serve as a background image to the pathway
-	inputGraph.AddGraphicNode(
+	var background = Node{
 		0,
 		"bg",
 		0,
@@ -271,10 +290,17 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph) {
 		"#fff",
 		"#fff",
 		"rectangle",
-		sizeX/2,
-		sizeY/2,
+		sizeX / 2,
+		sizeY / 2,
 		sizeY,
-		sizeX)
+		sizeX}
+
+	var node Node
+	var edge Edge
+	var nodes []Node
+	var edges []Edge
+
+	nodes = append(nodes, background)
 
 	// Generate some nodes
 	for j := range pathway.Entries {
@@ -287,7 +313,6 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph) {
 
 		// Trimming away :title for the node containing the pathway name
 		description := strings.TrimPrefix(strings.Split(graphics.Name, ",")[0], "TITLE:")
-		log.Println("description", description)
 		fgcolor := graphics.Fgcolor
 		bgcolor := graphics.Bgcolor
 		shape := graphics.Type
@@ -296,8 +321,10 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph) {
 		height, _ := strconv.Atoi(graphics.Height)
 		width, _ := strconv.Atoi(graphics.Width)
 
-		inputGraph.AddGraphicNode(id, name, t, size, description, fgcolor, bgcolor, shape,
-			x, y, height, width)
+		node = Node{id, name, t, size, description, fgcolor, bgcolor, shape,
+			x, y, height, width}
+
+		nodes = append(nodes, node)
 	}
 
 	// Generate some edges
@@ -306,10 +333,14 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph) {
 		source, _ := strconv.Atoi(rel.Entry1)
 		target, _ := strconv.Atoi(rel.Entry2)
 		weight := 19
-		inputGraph.AddEdge(source, target, i, weight)
+		edge = Edge{source, target, i, weight}
+		edges = append(edges, edge)
 	}
 
-	return
+	graph := Graph{nodes, edges}
+
+	return graph
+
 }
 
 func storeImage(path, filename string, image image.Image) error {
@@ -332,8 +363,6 @@ func storeImage(path, filename string, image image.Image) error {
 func GetPathway(id string) Pathway {
 	baseURL := "http://rest.kegg.jp/get/"
 	url := baseURL + id
-
-	log.Print(url)
 
 	response, err := gocache.Get(url)
 	if err != nil {
@@ -383,32 +412,6 @@ func GiveMeSomePathways() []string {
 	}
 	return pw
 }
-
-func PathwayGraphFrom(pathway string) *gographer.Graph {
-	//pw := GetPathway(pathway)
-
-	// Set up graph
-	port := getRandomPort()
-	graph := gographer.NewGraphAt(":" + strconv.Itoa(port))
-
-	// Create a graph from pathways. Will add nodes and
-	// edges and all that jazz
-	createPathwayGraph(pathway, graph)
-
-	// Return address where client can retrieve graph
-	// TODO: maybe the graph initialization (after wsserver setup)
-	// can be done in a go routine?
-
-	return graph
-}
-
-// TODO: Should store ports used for visualization gateways
-
-func getRandomPort() int {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	return 1024 + r.Intn(45000)
-}
-
 func parsePathwayResponse(response io.ReadCloser) Pathway {
 
 	tsv := csv.NewReader(response)
