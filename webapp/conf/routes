@@ -6,6 +6,8 @@ module:testrunner
 
 GET     /                                       App.Index
 GET     /search                                 Search.New
+GET     /pathway                               Pathway.Index
+GET     /pathway/:id                           Pathway.JSON
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

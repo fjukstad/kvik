@@ -25,11 +25,12 @@
                 data from the <a href="http://site.uit.no/nowac">Norwegian Women
                 and Cancer (NOWAC)</a> postgenome biobank.   
             </p>
-
+        <div class="centered text">
             <div class="ui-widget">
               <label for="input">Search for a pathway or gene: </label>
               <input id="input">
             </div>
+        </div>
         </div> 
         <div class="row" id="orhead">
             <div class="text-center">
@@ -37,21 +38,19 @@
             </div> 
         </div> 
         <div class="row">
-            <div class="text-center">
-                <div class="col-xs-6 col-md-4 col-lg-6" id="selector"> 
-                    <h3> Pathways </h3> 
-                    {{ range $index, $element := .pathways}}
+            <div class="col-xs-4 col-md-4 col-lg-4" id="selector"> 
+                <h3> Pathways </h3> 
+                {{ range $index, $element := .pathways}}
+                <p> {{$element.Name}}</p> 
+                {{end}} 
+            </div> 
+
+            <div class="col-xs-4 col-md-4 col-lg-4" id="selector"> 
+                <h3> Genes </h3> 
+                {{ range $index, $element := .genes}}
+
                     <p> {{$element.Name}}</p> 
-                    {{end}} 
-                </div> 
-
-                <div class="col-xs-6 col-md-4 col-lg-6" id="selector"> 
-                    <h3> Genes </h3> 
-                    {{ range $index, $element := .genes}}
-
-                        <p> {{$element.Name}}</p> 
-                    {{end}} 
-                </div> 
+                {{end}} 
             </div> 
         </div> 
     </div> 

@@ -16,3 +16,7 @@ func (c App) Pathways() revel.Result {
 
 	return c.Render()
 }
+
+func (c App) Pathway() revel.Result {
+	return c.Render()
+}
