@@ -136,19 +136,21 @@ function zoomed() {
 
     var moveX = d3.event.sourceEvent.webkitMovementX;
     var moveY = d3.event.sourceEvent.webkitMovementY; 
-    var offsetX = d3.event.sourceEvent.offsetX;
-    var offsetY = d3.event.sourceEvent.offsetY;
+    var clientX = d3.event.sourceEvent.clientX;
+    var clientY = d3.event.sourceEvent.clientY;
     var scroll = d3.event.sourceEvent.wheelDelta; 
 
+    console.log("x:", translate[0], clientX)
+        console.log("y:", translate[1], clientY) 
     console.log(d3.event.sourceEvent) 
 
-    translate[0] = translate[0] + moveX;
-    translate[1] = translate[1] + moveY;
     if(typeof scroll !== 'undefined'){ 
         scale = scale + (scroll * 0.001); 
-
-    } 
-
+        // TODO: Do not move when scaling
+    } else {  
+        translate[0] = translate[0] + moveX;
+        translate[1] = translate[1] + moveY;
+    }
 
     console.log(translate, scale)
     d3.select("g#"+selected).attr("transform", "translate(" + translate + ")scale(" + scale + ")");
