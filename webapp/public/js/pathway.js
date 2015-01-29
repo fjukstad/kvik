@@ -63,6 +63,15 @@ function pathway(id, element, h, w){
                                 return bg.description
                         }); 
 
+        container.append("circle")
+                .attr("cx", bg.width)
+                .attr("cy", 0) 
+                .attr("r", 5)
+                .style("fill", "red") 
+                .on("click", function(){
+                        d3.select("g#"+id).remove() 
+                    }); 
+
             
         var node = container.append("g")
                 .attr("class", "node")
@@ -116,6 +125,8 @@ function pathway(id, element, h, w){
 
                  return d.description;
             }) 
+
+
         }); 
     return container 
 
@@ -140,19 +151,21 @@ function zoomed() {
     var clientY = d3.event.sourceEvent.clientY;
     var scroll = d3.event.sourceEvent.wheelDelta; 
 
-    console.log("x:", translate[0], clientX)
-        console.log("y:", translate[1], clientY) 
-    console.log(d3.event.sourceEvent) 
 
     if(typeof scroll !== 'undefined'){ 
-        scale = scale + (scroll * 0.001); 
+        var newscale =  scale + (scroll * 0.001); 
+        if(newscale > 0.05){
+            scale = newscale
+        }
         // TODO: Do not move when scaling
     } else {  
-        translate[0] = translate[0] + moveX;
-        translate[1] = translate[1] + moveY;
+        if(typeof translate === 'undefined'){
+            return;
+        } else { 
+            translate[0] = translate[0] + moveX;
+            translate[1] = translate[1] + moveY;
+        }
     }
-
-    console.log(translate, scale)
     d3.select("g#"+selected).attr("transform", "translate(" + translate + ")scale(" + scale + ")");
 
     translates[selected] = translate
