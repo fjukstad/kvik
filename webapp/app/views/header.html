@@ -10,6 +10,7 @@
     {{append . "moreStyles" "css/pace.min.css"}}
     {{append . "moreStyles" "css/style.css"}}
     {{append . "moreStyles" "css/jquery-ui.css"}}
+    {{append . "moreStyles" "css/sweet-alert.css"}}
     {{range .moreStyles}}
       <link rel="stylesheet" type="text/css" href="/public/{{.}}">
     {{end}}
@@ -21,6 +22,7 @@
     {{append . "moreScripts" "js/cytoscape.min.js"}}
     {{append . "moreScripts" "js/colorbrewer.v1.min.js"}}
     {{append . "moreScripts" "js/bootstrap.min.js"}}
+    {{append . "moreScripts" "js/sweet-alert.js"}}
     {{range .moreScripts}}
       <script src="/public/{{.}}" type="text/javascript" charset="utf-8"></script>
     {{end}}

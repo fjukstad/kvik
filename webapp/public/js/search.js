@@ -1,5 +1,10 @@
 window.onload = function() { 
+    
+    var idmap = {} 
+    
     var cache = {};
+
+
     $( "#input" ).autocomplete({
       minLength: 2,
       source: function( request, response ) {
@@ -11,7 +16,42 @@ window.onload = function() {
         $.getJSON("/search", request, function( data, status, xhr ) {
             cache[ term ] = data.Terms;
             response( data.Terms );
+
+            if(data.Terms.length > 0){ 
+                for(i=0;i<data.Terms.length;i++){
+                    pw = data.Terms[i]
+                    idmap[ pw.label ] = pw.id
+                }
+            }
+
+
         });
       }
     });
+
+    $('input').bind("enterKey", function(e){
+        searchterm = $('input').val()
+
+        id = idmap[searchterm]
+        if(typeof id === 'undefined'){
+            swal({
+                title: "Could not find what you we're searching for, sorry!",
+                text: "You searched for '"+searchterm+"'",
+                type: "warning"
+            }) 
+            return
+        } else { 
+            window.location = window.location.origin+"/pathway/"+id
+        }
+    });
+
+    $('input').keyup(function(e){
+        if(e.keyCode == 13) {
+            $(this).trigger("enterKey");
+        }
+    }) 
+
 }; 
+
+
+

@@ -5,8 +5,11 @@
 {{template "navbar.html" .}}
 
 <script>
-container = pathway("hsa05200", "body", 500,500)
-pathway("hsa04915", "body",  500, 500) 
+var h = window.innerHeight;
+var w = window.innerWidth; 
+{{ range $index, $element := .ids}}
+    pathway({{ $element }}, "body",h,w) 
+{{ end }} 
 </script> 
 
 
