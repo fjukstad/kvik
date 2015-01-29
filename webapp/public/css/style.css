@@ -37,3 +37,34 @@ li {
 g.pathway { 
     pointer-events: all;
 }
+
+#content { 
+    background: #fff;
+}
+
+#settings-and-that {
+    min-height: 1.8em;
+    margin-bottom: 0px;
+    margin-top: 0.1em;
+}
+
+#topnav {
+    margin-bottom: 0px;
+    margin-top: 0px;
+
+}
+
+.navbar { 
+    background-color: #f1f1f1;
+  -webkit-border-radius: 0 !important;
+     -moz-border-radius: 0 !important;
+          border-radius: 0 !important;
+}
+
+button#searchbtn { 
+    float: right;
+}
+
+.snap-drawer{
+    background-color: #f2f2f2;
+}

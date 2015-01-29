@@ -6,7 +6,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
 
-    {{append . "moreStyles" "css/bootstrap.min.css"}}
+    {{append . "moreStyles" "css/bootstrap.css"}}
+    {{append . "moreStyles" "css/bootstrap-theme.css"}}
     {{append . "moreStyles" "css/pace.min.css"}}
     {{append . "moreStyles" "css/style.css"}}
     {{append . "moreStyles" "css/jquery-ui.css"}}
@@ -23,6 +24,7 @@
     {{append . "moreScripts" "js/colorbrewer.v1.min.js"}}
     {{append . "moreScripts" "js/bootstrap.min.js"}}
     {{append . "moreScripts" "js/sweet-alert.js"}}
+
     {{range .moreScripts}}
       <script src="/public/{{.}}" type="text/javascript" charset="utf-8"></script>
     {{end}}

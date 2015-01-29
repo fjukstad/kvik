@@ -35,7 +35,7 @@ window.onload = function() {
             }) 
             return
         } else { 
-            window.location = window.location.origin+"/pathway/"+id
+            pathway(id,"content",0,0) 
         }
     });
 
@@ -46,3 +46,4 @@ window.onload = function() {
     }) 
 
 }; 
+
