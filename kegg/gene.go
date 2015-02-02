@@ -92,7 +92,12 @@ func SortGenes(ids []string) Genes {
 }
 
 func GetGene(id string) Gene {
-	baseURL := "http://rest.kegg.jp/get/hsa:"
+	var baseURL string
+	if strings.Contains(id, "hsa:") {
+		baseURL = "http://rest.kegg.jp/get/"
+	} else {
+		baseURL = "http://rest.kegg.jp/get/hsa:"
+	}
 	url := baseURL + id
 	log.Println(url)
 	response, err := gocache.Get(url)

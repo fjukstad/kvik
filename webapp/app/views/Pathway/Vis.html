@@ -36,12 +36,9 @@ $("#searchbtn").click(function(){
     } else {
         panels.open('right');
         d3.select("#search-panel").style("z-index", 1); 
-        d3.select("#gene-info-panel").style("z-index", -1); 
-        d3.select("#gene-info-panel").style("opacity", 0); 
+        d3.select("#gene-info-panel").style("z-index", -1).style("opacity", 0); 
     }
 });
-
-
 
 </script> 
 <script>

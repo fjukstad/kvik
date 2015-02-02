@@ -104,7 +104,13 @@ function pathway(id, element, h, w){
                             console.log("should show info panel for pathway", d.name); 
                             pathwayInfo(id); 
                         }
+                        return
                     }
+                    if(d.shape == "rectangle"){
+                        id = d.name.split(" ")[0]
+                        geneInfo(id) 
+                    }
+                    
                 }) 
                 //.call(drag) 
 
