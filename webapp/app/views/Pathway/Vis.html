@@ -1,4 +1,6 @@
 {{set . "title" "pathway vis"}}
+
+{{append . "moreScripts" "js/info.js"}}
 {{append . "moreScripts" "js/pathway.js"}}
 {{append . "moreScripts" "js/vis-search.js"}}
 {{append . "moreScripts" "js/snap.js"}}
@@ -8,32 +10,34 @@
 {{template "header.html" .}}
 {{template "navbar.html" .}}
 
-{{ template "geishad.html" . }} 
+{{ template "panels.html" . }} 
 <div id="content" class="snap-content" data-snap-ignore="true">
 </div> 
 
 <script>
-var geishad = new Snap({
+var panels = new Snap({
     element: document.getElementById("content"),
     dragger: null
 }); 
 
 $("#geishabtn").click(function(){
-    if( geishad.state().state=="left" ){
-        geishad.close();
+    if( panels.state().state=="left" ){
+        panels.close();
     } else {
-        geishad.open('left');
+        panels.open('left');
+        d3.select("#geishad-panel").style("z-index", 1).style("opacity", 100); 
+        d3.select("#pathway-info-panel").style("z-index", -1).style("opacity", 0); 
     }
 });
 
 $("#searchbtn").click(function(){
-    if( geishad.state().state=="right"){
-        geishad.close();
+    if( panels.state().state=="right"){
+        panels.close();
     } else {
-        geishad.open('right');
+        panels.open('right');
         d3.select("#search-panel").style("z-index", 1); 
-        d3.select("#info-panel").style("z-index", -1); 
-        d3.select("#info-panel").style("opacity", 0); 
+        d3.select("#gene-info-panel").style("z-index", -1); 
+        d3.select("#gene-info-panel").style("opacity", 0); 
     }
 });
 

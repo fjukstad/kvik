@@ -66,7 +66,6 @@ function pathway(id, element, h, w){
             return console.warn(error);
         }
         
-
         var bg = graph.nodes[0]
         var image = container.append("image")
                         .attr("height", bg.height)
@@ -103,6 +102,7 @@ function pathway(id, element, h, w){
                         }
                         else { 
                             console.log("should show info panel for pathway", d.name); 
+                            pathwayInfo(id); 
                         }
                     }
                 }) 

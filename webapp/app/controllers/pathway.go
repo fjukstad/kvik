@@ -28,3 +28,8 @@ func (c Pathway) JSON(id string) revel.Result {
 	graph := kegg.PathwayGraph(id)
 	return c.RenderJson(graph)
 }
+
+func (c Pathway) Info(id string) revel.Result {
+	pw := kegg.GetPathway(id)
+	return c.RenderJson(pw.JSON())
+}

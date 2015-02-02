@@ -9,6 +9,9 @@ GET     /search                                 Search.New
 GET     /pathway                                Pathway.Index
 GET     /pathway/:id                            Pathway.Vis
 GET     /pathway/:id/json                       Pathway.JSON
+GET     /pathway/:id/info                       Pathway.Info
+
+GET     /gene/:id/info                          Gene.Info
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

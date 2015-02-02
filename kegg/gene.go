@@ -112,6 +112,14 @@ func GetGene(id string) Gene {
 	return gene
 }
 
+func (g Gene) JSON() string {
+	b, err := json.Marshal(g)
+	if err != nil {
+		log.Panic("marshaling went bad: ", err)
+	}
+	return string(b)
+}
+
 type GenePathways struct {
 	GeneId   string
 	Pathways []string

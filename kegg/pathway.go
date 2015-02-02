@@ -380,7 +380,7 @@ func GetPathway(id string) Pathway {
 
 }
 
-func PathwayJSON(p Pathway) string {
+func (p Pathway) JSON() string {
 	b, err := json.Marshal(p)
 	if err != nil {
 		log.Panic("marshaling went bad: ", err)
