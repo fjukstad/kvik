@@ -6,9 +6,18 @@ var selected = ""
 var translates = {} 
 var scales = {} 
 
-
 function pathway(id, element, h, w){ 
-    
+
+    // First check if the pathway is already there
+   try {
+       d3.select("g#"+id).attr("id");
+       swal({
+            title: "Pathway already in view!"
+        }) 
+       return
+   } 
+   catch(err){
+   } 
     var margin = {top: 5, right: 5, bottom: 5, left: 5},
         width = w - margin.left - margin.right,
         height = h - margin.top - margin.bottom; 
@@ -42,7 +51,10 @@ function pathway(id, element, h, w){
             .on("mouseout", function() { 
                 selected = "" 
             }) 
-    
+            .on("click", function(d) {
+                console.log("should bring",d3.select(this).attr("id"),"to front");
+            }); 
+
     containers.push(id) 
 
     translates[id] = []
@@ -64,8 +76,10 @@ function pathway(id, element, h, w){
                         }); 
 
         container.append("circle")
-                .attr("cx", bg.width)
-                .attr("cy", 0) 
+                .attr("cx", function(){
+                    return bg.width + 5;
+                })
+                .attr("cy", -2.5) 
                 .attr("r", 5)
                 .style("fill", "red") 
                 .on("click", function(){
@@ -78,6 +92,20 @@ function pathway(id, element, h, w){
                 .selectAll("rect")
                 .data(graph.nodes)
                 .enter().append("g")
+                .on("click", function(d){
+                    console.log(d) 
+                    // Click on pathway in vis
+                    if(d.name.indexOf("path") >= 0){
+                        var id = d.name.split("path:")[1];
+                        // if the pathway label was clicked show info panel
+                        if(d.id > 1){ 
+                            pathway(id, "content", 0, 0) 
+                        }
+                        else { 
+                            console.log("should show info panel for pathway", d.name); 
+                        }
+                    }
+                }) 
                 //.call(drag) 
 
         node.append("rect")
@@ -119,7 +147,7 @@ function pathway(id, element, h, w){
                  return d.y + d.height/3;
              })
             .text(function(d){
-                if(d.shape == "circle"){
+                if(d.shape == "circle" || d.name =="bg"){
                     return ""
                 }
 

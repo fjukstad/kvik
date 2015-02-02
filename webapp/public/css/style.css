@@ -66,5 +66,9 @@ button#searchbtn {
 }
 
 .snap-drawer{
-    background-color: #f2f2f2;
+    background-color: #ededed;
+}
+
+.snap-drawer-right { 
+    padding-left: 1em;
 }

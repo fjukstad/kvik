@@ -1,4 +1,4 @@
-window.onload = function() { 
+function initSearch() { 
     var idmap = {} 
     var cache = {};
 
@@ -34,7 +34,7 @@ window.onload = function() {
                 type: "warning"
             }) 
             return
-        } else { 
+        } else {  
             pathway(id,"content",0,0) 
         }
     });
@@ -44,6 +44,5 @@ window.onload = function() {
             $(this).trigger("enterKey");
         }
     }) 
-
 }; 
 

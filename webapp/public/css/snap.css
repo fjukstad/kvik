@@ -9,7 +9,7 @@ html, body {
 
 .snap-content {
   position: absolute;
-  top: 6.6em;
+  top: 6em;
   right: 0;
   bottom: 0;
   left: 0;
@@ -27,7 +27,7 @@ html, body {
 
 .snap-drawers {
   position: absolute;
-  top: 4em;
+  top: 6em;
   right: 0;
   bottom: 0;
   left: 0;
@@ -37,7 +37,7 @@ html, body {
 
 .snap-drawer {
   position: absolute;
-  top: 2em;
+  top: 0em;
   right: auto;
   bottom: 0;
   left: auto;

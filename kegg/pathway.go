@@ -251,7 +251,12 @@ func PathwayGraph(keggId string) Graph {
 	err := xml.Unmarshal(pw, pathway)
 
 	if err != nil {
-		log.Panic("Could not unmarshal KGML ", err)
+		log.Print("Could not unmarshal KGML ", keggId, err)
+		pw := getMap(url)
+		err = xml.Unmarshal(pw, pathway)
+		if err != nil {
+			log.Panic("Could not unmarshal KGML for the second time", keggId, err)
+		}
 	}
 
 	imgurl := "http://www.genome.jp/kegg/pathway/hsa/" + keggId + ".png"
