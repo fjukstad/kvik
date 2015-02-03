@@ -52,7 +52,6 @@ function pathway(id, element, h, w){
                 selected = "" 
             }) 
             .on("click", function(d) {
-                console.log("should bring",d3.select(this).attr("id"),"to front");
             }); 
 
     containers.push(id) 
@@ -82,7 +81,7 @@ function pathway(id, element, h, w){
                 .attr("r", 5)
                 .style("fill", "red") 
                 .on("click", function(){
-                        d3.select("g#"+id).remove() 
+                        d3.select("g#"+id).remove(); 
                     }); 
 
             
@@ -92,7 +91,6 @@ function pathway(id, element, h, w){
                 .data(graph.nodes)
                 .enter().append("g")
                 .on("click", function(d){
-                    console.log(d) 
                     // Click on pathway in vis
                     if(d.name.indexOf("path") >= 0){
                         var id = d.name.split("path:")[1];
@@ -101,14 +99,18 @@ function pathway(id, element, h, w){
                             pathway(id, "content", 0, 0) 
                         }
                         else { 
-                            console.log("should show info panel for pathway", d.name); 
                             pathwayInfo(id); 
                         }
                         return
                     }
                     if(d.shape == "rectangle"){
-                        id = d.name.split(" ")[0]
-                        geneInfo(id) 
+                        var id = d.name.split(" ")[0]
+                        if(id === "bg"){
+                            return
+                        } else { 
+                            geneInfo(id) 
+                            highlightGene(id)
+                        }
                     }
                     
                 }) 
@@ -143,6 +145,11 @@ function pathway(id, element, h, w){
                     return d.bgcolor
                 }) 
                 .style("stroke", "black") 
+                .attr("id", function(d){
+                    var id = d.name.split(" ")[0]
+                    id = id.replace(":","")
+                    return id
+                }) 
                     
 
         node.append("text")
@@ -160,10 +167,33 @@ function pathway(id, element, h, w){
                  return d.description;
             }) 
 
-
+        highlightGene(oldgene) 
         }); 
+    
+        
     return container 
 
+}
+
+var oldgene = "" 
+function highlightGene(id){
+    
+    if(id.indexOf(":") > -1){
+        id = id.replace(":","")
+    }
+
+    console.log("SHIT", id) 
+
+    try { 
+        d3.selectAll("rect#"+oldgene)
+          .style("stroke", "black")
+          .style("stroke-width", 1); 
+    } catch(err) {
+    }
+
+    d3.selectAll("rect#"+id).style("stroke", "red").style("stroke-width", 2); 
+    
+    oldgene = id; 
 }
 
 function zoomed() {

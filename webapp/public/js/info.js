@@ -14,19 +14,8 @@ function pathwayInfo(id){
         
         name = pathway.Name.split("-")[0]
 
-        panel = d3.select("#pathway-info-panel")
-                  .append("div")
-                  .attr("class", "panel panel-default");
+        addPanel("#pathway-info-panel", name, pathway.Description)
         
-        panel.append("div")
-              .attr("class", "panel-heading")
-              .append("h4")
-              .text(name);
-    
-        panel.append("div")
-              .attr("class", "panel-body")
-              .text(pathway.Description) 
-
     }); 
     
 }
@@ -41,22 +30,61 @@ function geneInfo(id) {
         gene = JSON.parse(gene) 
 
         console.log(gene) 
-        panel = d3.select("#gene-info-panel")
-                  .append("div")
-                  .attr("class", "panel panel-default");
+        panel = addPanel("#gene-info-panel", gene.Name, gene.Definition) 
         
-        panel.append("div")
-              .attr("class", "panel-heading")
-              .append("h4")
-              .text(gene.Name);
-    
-        panel.append("div")
-              .attr("class", "panel-body")
-              .text(gene.Definition) 
+        var pathways = newPanelWithHeader("#gene-info-panel", "Pathways") 
+        console.log(gene.Pathways) 
+        
+        var list = pathways.append("div")
+                .attr("class", "panel-body")
+                .append("ul")
+                .selectAll("li")
+                .data(gene.Pathways)
+                .enter()
+                .append("li")
+                .append("a")
+                .attr("id", function(d){
+                    return d;
+                })
+                .text(function(d){
+                    var resp = $.get("/pathway/"+d+"/name", function(data){
+                        var name = data.split(" - Homo")[0];
+                        d3.select("a#"+d).text(name); 
+                        return data;
+                    })
+                })
+                .on("click", function(d){
+                    pathway(d, "content", 0,0);
 
+                }); 
 
     }); 
 }
+
+function addPanel(element, header, body) {
+
+    var panel = newPanelWithHeader(element, header) 
+        
+    panel.append("div")
+          .attr("class", "panel-body")
+          .text(body) 
+          
+    return panel
+}
+
+function newPanelWithHeader(element, header) { 
+    
+    var panel = d3.select(element)
+              .append("div")
+              .attr("class", "panel panel-default");
+    
+    panel.append("div")
+          .attr("class", "panel-heading")
+          .append("h4")
+          .text(header);
+
+    return panel
+} 
 
 // side: left or right
 // hidden: which panel to hide

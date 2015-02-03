@@ -33,3 +33,8 @@ func (c Pathway) Info(id string) revel.Result {
 	pw := kegg.GetPathway(id)
 	return c.RenderJson(pw.JSON())
 }
+
+func (c Pathway) Name(id string) revel.Result {
+	pw := kegg.GetPathway(id)
+	return c.RenderText(pw.Name)
+}
