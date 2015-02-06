@@ -15,7 +15,6 @@ function pathwayInfo(id){
         name = pathway.Name.split("-")[0]
 
         addPanel("#pathway-info-panel", name, pathway.Description)
-        
     }); 
     
 }
@@ -55,9 +54,7 @@ function geneInfo(id) {
                 })
                 .on("click", function(d){
                     pathway(d, "content", 0,0);
-
                 }); 
-
     }); 
 }
 

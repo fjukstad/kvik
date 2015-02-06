@@ -112,7 +112,6 @@ function pathway(id, element, h, w){
                             highlightGene(id)
                         }
                     }
-                    
                 }) 
                 //.call(drag) 
 
