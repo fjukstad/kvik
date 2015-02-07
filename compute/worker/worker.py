@@ -32,7 +32,6 @@ class Worker():
         print ret
         print str(ret)
         if len(ret) > 1:
-            #return ' '.join(str(x) for x in ret)
             print "Result:", str(ret)
             return str(ret)
         try:
@@ -89,7 +88,7 @@ if __name__ == "__main__":
             resp = json.dumps({"Response":result,"Status":status})
         #  Send reply back to client
         socket.send(resp)
-
+`
         time = datetime.datetime.now().strftime("%H:%M:%S.%f")
 
         print time, "Completed RPC call"

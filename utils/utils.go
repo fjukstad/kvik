@@ -14,7 +14,7 @@ type Command struct {
 }
 
 type ComputeResponse struct {
-	Status  string
+	Status  int
 	Message string
 }
 
