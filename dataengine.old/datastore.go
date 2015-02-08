@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -88,6 +89,7 @@ func ListToVector(list []string) string {
 }
 
 func RunCommand(command string) []string {
+	fmt.Println("commander:", command)
 	output, err := rpc.Call("command", command)
 	if err != nil {
 		log.Println(err)
@@ -259,7 +261,7 @@ func main() {
 	log.Print("Starting datastore at ", *ip, *port)
 
 	var err error
-	rpc, err = rpcman.Init([]string{"tcp://localhost:5555"})
+	rpc, err = rpcman.Init([]string{"tcp://localhost:5000"})
 	if err != nil {
 		log.Panic(err)
 	}

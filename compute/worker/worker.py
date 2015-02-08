@@ -45,10 +45,10 @@ def call(obj, func, attr):
             return 0, getattr(obj,func)(*attr)
         except TypeError as err:
             print "Type error:",err
-            return -1,0
+            return -1,"TYPE ERROR: obj="+str(obj)+" method="+str(func)+" attr="+str(attr)
     else:
         print "ERROR: Method",func,"not found"
-        return -1, 0
+        return -1, "METHOD not found"
 
 if __name__ == "__main__":
     context = zmq.Context()
@@ -80,7 +80,7 @@ if __name__ == "__main__":
         met = req["Method"]
         args = req["Args"]
 
-        status,result = call(worker,met,args)
+        status,result = call(worker, met, args)
 
         if result == 0:
             resp = json.dumps({"Response":result,"Status":status})
@@ -88,7 +88,7 @@ if __name__ == "__main__":
             resp = json.dumps({"Response":result,"Status":status})
         #  Send reply back to client
         socket.send(resp)
-`
+
         time = datetime.datetime.now().strftime("%H:%M:%S.%f")
 
         print time, "Completed RPC call"

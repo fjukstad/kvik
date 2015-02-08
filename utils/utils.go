@@ -18,6 +18,16 @@ type ComputeResponse struct {
 	Message string
 }
 
+type WorkerRequest struct {
+	Method string
+	Args   interface{}
+}
+
+type WorkerResponse struct {
+	Response interface{}
+	Status   int
+}
+
 func CreateDirectories(filename string) error {
 
 	filepath := path.Dir(filename)
@@ -40,4 +50,17 @@ func CreateDirectories(filename string) error {
 	}
 
 	return nil
+}
+
+func ListToVector(list []string) string {
+	str := "c("
+	for i, b := range list {
+		if i < 1 {
+			str = str + "\"" + b + "\""
+		} else {
+			str = str + "," + "\"" + b + "\""
+		}
+	}
+	str = str + ")"
+	return str
 }
