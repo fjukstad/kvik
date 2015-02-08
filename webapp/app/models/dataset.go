@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"reflect"
+	"strconv"
+	"strings"
 
 	"github.com/fjukstad/kvik/utils"
 	zmq "github.com/pebbe/zmq4"
@@ -17,22 +20,59 @@ type Dataset struct {
 }
 
 // Retrieve Gene expression for the given genes
-func (d *Dataset) Exprs(genes []string) string {
+func (d *Dataset) Exprs(genes []string) []string {
 	geneVector := utils.ListToVector(genes)
 	command := "exprs(" + geneVector + ")"
 
-	fmt.Println("COMMANDWER:", command)
 	resp, err := d.Call(command)
 	if err != nil {
 		log.Panic(err)
 	}
-	fmt.Println("REPLY AFTER ACLL:", resp)
-	return "exprs"
+
+	response := prepareResponse(resp)
+	return response
+}
+
+func prepareResponse(resp interface{}) []string {
+
+	var response string
+	t := reflect.TypeOf(resp).String()
+
+	if t == "float64" {
+		res := resp.(float64)
+		response = strconv.FormatFloat(res, 'f', 9, 64)
+	}
+	if t == "string" {
+		response = resp.(string)
+	}
+
+	response = strings.Trim(response, "[1] ") // remove r thing
+	response = strings.Trim(response, "\n")   // unwanted newlines
+	response = strings.TrimLeft(response, " ")
+	results := strings.Split(response, " ")
+
+	var res []string
+	for _, r := range results {
+		if r != "" {
+			res = append(res, r)
+		}
+	}
+
+	return res
 }
 
 // Retrieve fold change and associated p-value for the genes
-func (d *Dataset) Fc(genes []string) string {
-	return "fc"
+func (d *Dataset) Fc(genes []string) []string {
+	geneVector := utils.ListToVector(genes)
+	command := "fc(" + geneVector + ")"
+
+	resp, err := d.Call(command)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	response := prepareResponse(resp)
+	return response
 }
 
 func (d *Dataset) Call(args ...interface{}) (interface{}, error) {

@@ -25,7 +25,7 @@ func init() {
 	// revel.OnAppStart(InitDB)
 	// revel.OnAppStart(FillCache)
 
-	//revel.OnAppStart(controllers.InitKEGG)
+	revel.OnAppStart(controllers.InitKEGG)
 	revel.OnAppStart(controllers.InitDataset)
 }
 

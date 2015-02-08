@@ -7,25 +7,34 @@ import (
 	"strings"
 )
 
+// Command to compute master
 type Command struct {
 	Type    int
 	Command string
 	File    []byte
 }
 
+// Response from compute master
 type ComputeResponse struct {
 	Status  int
 	Message string
 }
 
+// Requests to compute workers
 type WorkerRequest struct {
 	Method string
 	Args   interface{}
 }
 
+// Response from compute workers
 type WorkerResponse struct {
 	Response interface{}
 	Status   int
+}
+
+// Used to send results from statistical analyses back to the client
+type ClientCompResponse struct {
+	Output map[string]string
 }
 
 func CreateDirectories(filename string) error {

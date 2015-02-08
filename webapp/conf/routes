@@ -13,7 +13,8 @@ GET     /pathway/:id/info                       Pathway.Info
 GET     /pathway/:id/name                       Pathway.Name
 
 GET     /gene/:id/info                          Gene.Info
-GET     /gene/:id/exprs                         Gene.Exprs
+GET     /gene/:genes/exprs                      Gene.Exprs
+GET     /gene/:genes/fc                         Gene.Fc
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

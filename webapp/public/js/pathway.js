@@ -151,6 +151,9 @@ function pathway(id, element, h, w){
                 }) 
                     
 
+        loadFc(graph.nodes) 
+
+            
         node.append("text")
             .attr("x", function(d){
                  return d.x-d.width/2.5;
@@ -167,6 +170,7 @@ function pathway(id, element, h, w){
             }) 
 
         highlightGene(oldgene) 
+
         }); 
     
         
@@ -190,10 +194,63 @@ function highlightGene(id){
     } catch(err) {
     }
 
-    d3.selectAll("rect#"+id).style("stroke", "red").style("stroke-width", 2); 
+    try { 
+        d3.selectAll("rect#"+id).style("stroke", "red").style("stroke-width", 2); 
+    } catch(err){
+    }
     
     oldgene = id; 
 }
+
+
+function loadFc(nodes){ 
+
+
+    var color = d3.scale.linear()
+        .domain([0, 0.5, 1])
+        .range(["red", "white", "green"]);
+
+
+
+    var genes = ""
+    for(var i = 0; i < nodes.length; i++){
+        node = nodes[i];
+        if(node.name.indexOf("hsa:") >= 0){
+            geneName = node.name.split(" ")[0];
+            if (i < nodes.length -1) { 
+                genes = genes + geneName + "+"; 
+            } else if(i == 0){
+                genes = geneName + "+";
+            } else {
+                genes = genes + geneName
+            }
+        }
+    }
+
+    d3.json("/gene/"+genes+"/fc", function(error,fc){
+        
+        if(error){
+            return console.warn(error);
+        }
+
+        console.log(fc) 
+        var genes = Object.keys(fc.Output);
+
+        console.log(fc.Output) 
+        
+        for(var i = 0; i < genes.length;  i++){
+            var gene = genes[i]
+            var res = fc.Output[gene]; 
+            console.log(gene) 
+            if(gene != ""){
+                var geneName = gene.replace(":","")
+                console.log("rect#"+geneName)
+                d3.selectAll("rect#"+geneName).style("fill", color(res))
+            }
+        }
+    }); 
+}
+
 
 function zoomed() {
     
@@ -229,7 +286,10 @@ function zoomed() {
             translate[1] = translate[1] + moveY;
         }
     }
-    d3.select("g#"+selected).attr("transform", "translate(" + translate + ")scale(" + scale + ")");
+    try {
+        d3.select("g#"+selected).attr("transform", "translate(" + translate + ")scale(" + scale + ")");
+    } catch(err){
+    }
 
     translates[selected] = translate
         scales[selected] = scale
