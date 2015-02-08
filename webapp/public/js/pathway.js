@@ -185,8 +185,6 @@ function highlightGene(id){
         id = id.replace(":","")
     }
 
-    console.log("SHIT", id) 
-
     try { 
         d3.selectAll("rect#"+oldgene)
           .style("stroke", "black")
@@ -210,8 +208,6 @@ function loadFc(nodes){
         .domain([0, 0.5, 1])
         .range(["red", "white", "green"]);
 
-
-
     var genes = ""
     for(var i = 0; i < nodes.length; i++){
         node = nodes[i];
@@ -233,18 +229,13 @@ function loadFc(nodes){
             return console.warn(error);
         }
 
-        console.log(fc) 
         var genes = Object.keys(fc.Output);
-
-        console.log(fc.Output) 
         
         for(var i = 0; i < genes.length;  i++){
             var gene = genes[i]
             var res = fc.Output[gene]; 
-            console.log(gene) 
             if(gene != ""){
                 var geneName = gene.replace(":","")
-                console.log("rect#"+geneName)
                 d3.selectAll("rect#"+geneName).style("fill", color(res))
             }
         }
