@@ -6,6 +6,10 @@ var selected = ""
 var translates = {} 
 var scales = {} 
 
+var visibleNodes = []
+var color
+var nodeId = 0; 
+    
 function pathway(id, element, h, w){ 
 
     // First check if the pathway is already there
@@ -18,6 +22,10 @@ function pathway(id, element, h, w){
    } 
    catch(err){
    } 
+    color = d3.scale.ordinal()
+        .domain([-1, 0, 1])
+        .range(colorbrewer.RdYlBu[5]);
+
     var margin = {top: 5, right: 5, bottom: 5, left: 5},
         width = w - margin.left - margin.right,
         height = h - margin.top - margin.bottom; 
@@ -72,7 +80,8 @@ function pathway(id, element, h, w){
                         .attr("xlink\:href", function(d){
                                 return bg.description
                         }); 
-
+    
+        console.log(graph.nodes); 
         container.append("circle")
                 .attr("cx", function(){
                     return bg.width + 5;
@@ -83,8 +92,9 @@ function pathway(id, element, h, w){
                 .on("click", function(){
                         d3.select("g#"+id).remove(); 
                     }); 
+                
+        loadFc(graph.nodes);  
 
-            
         var node = container.append("g")
                 .attr("class", "node")
                 .selectAll("rect")
@@ -94,12 +104,13 @@ function pathway(id, element, h, w){
                     // Click on pathway in vis
                     if(d.name.indexOf("path") >= 0){
                         var id = d.name.split("path:")[1];
+                        console.log(d) 
                         // if the pathway label was clicked show info panel
-                        if(d.id > 1){ 
-                            pathway(id, "content", 0, 0) 
+                        if(d.id < 1 || d.y == 58){ 
+                            pathwayInfo(id); 
                         }
                         else { 
-                            pathwayInfo(id); 
+                            pathway(id, "content", 0, 0) 
                         }
                         return
                     }
@@ -129,11 +140,24 @@ function pathway(id, element, h, w){
                     return d.y - d.height/2;
                 })
                 .attr("width", function(d){
+                    if(d.name == "undefined"){
+                        return 0
+                    }                     
                     return d.width
                 })
                 .attr("height", function(d){
+                    if(d.name == "undefined"){
+                        return 0
+                    }                     
                     return d.height;
-                    })
+                })
+                .attr("class", function(d){
+                    console.log(d) 
+                    if(d.name.indexOf("hsa:") >=0){
+                        return "gene"
+                    }
+                    return "" 
+                })
                 .style("fill", function(d){
                     if(d.name == "bg") {
                         return "url(#image)";
@@ -141,18 +165,22 @@ function pathway(id, element, h, w){
                     if(d.bgcolor == "none"){
                         return "#fff"
                     }
-                    return d.bgcolor
+                    return d.bgcolor 
                 }) 
+                
                 .style("stroke", "black") 
                 .attr("id", function(d){
                     var id = d.name.split(" ")[0]
                     id = id.replace(":","")
                     return id
                 }) 
+                .attr("nodeid", function(d){
+                    d.nodeId = nodeId; 
+                    nodeId = nodeId + 1; 
                     
-
-        loadFc(graph.nodes) 
-
+                    return d.nodeId;
+                }) 
+                    
             
         node.append("text")
             .attr("x", function(d){
@@ -187,13 +215,28 @@ function highlightGene(id){
 
     try { 
         d3.selectAll("rect#"+oldgene)
+            .attr("width", function(d){
+                return d.width;
+            })
+            .attr("heigth", function(d){
+                return d.height;
+            })
           .style("stroke", "black")
           .style("stroke-width", 1); 
     } catch(err) {
     }
 
     try { 
-        d3.selectAll("rect#"+id).style("stroke", "red").style("stroke-width", 2); 
+        var stroke = 5; 
+        d3.selectAll("rect#"+id)
+            .attr("width", function(d) {
+                return d.width + stroke;
+            })
+            .attr("height", function(d){
+                return d.height + stroke;
+            })
+            .style("stroke", "#e7298a")
+            .style("stroke-width", stroke); 
     } catch(err){
     }
     
@@ -202,12 +245,6 @@ function highlightGene(id){
 
 
 function loadFc(nodes){ 
-
-
-    var color = d3.scale.linear()
-        .domain([0, 0.5, 1])
-        .range(["red", "white", "green"]);
-
     var genes = ""
     for(var i = 0; i < nodes.length; i++){
         node = nodes[i];
@@ -231,14 +268,22 @@ function loadFc(nodes){
 
         var genes = Object.keys(fc.Output);
         
-        for(var i = 0; i < genes.length;  i++){
-            var gene = genes[i]
-            var res = fc.Output[gene]; 
-            if(gene != ""){
-                var geneName = gene.replace(":","")
-                d3.selectAll("rect#"+geneName).style("fill", color(res))
+        for(var i = 0; i < nodes.length; i++){
+            var node = nodes[i]
+            if(node.name.indexOf("hsa:") >= 0){
+                geneName = node.name.split(" ")[0];
+                var res = fc.Output[geneName]; 
+                nodes[i].fc = res; 
             }
         }
+
+        d3.selectAll("rect.gene")
+        .attr("fc", function(d){
+            return d.fc;
+        })
+        .style("fill", function(d){
+            return color(d.fc)
+        }) 
     }); 
 }
 
@@ -302,5 +347,17 @@ function dragended(d) {
 }
 
 
+// hide percent many genes from the vis, i.e. color them white
+function hide(percent) { 
+    var tops = (nodeId * percent)/100;
+    var maxid = nodeId + 5 - tops; 
 
-
+    d3.selectAll("rect.gene")
+        .style("fill", function(d){
+            if(d.nodeId > maxid){
+                return "#fff";
+            } 
+            return color(d.fc)
+        }) 
+ 
+} 

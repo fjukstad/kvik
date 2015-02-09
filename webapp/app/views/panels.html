@@ -53,7 +53,14 @@
                 </div>
                 <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
                   <div class="panel-body">
-                      Third step! 
+                      <b>
+                          Genes have to be expressed in at least
+                              <span id="sliderman">1%</span>
+                          of the samples. 
+                      </b> 
+                    <input id="ex1" data-slider-id='ex1Slider' type="text"
+                    data-slider-min="1" data-slider-max="100"
+                    data-slider-step="1" data-slider-value="1"/>
                   </div>
                 </div>
               </div>
@@ -69,8 +76,8 @@
                 <h3> Search! </h3> 
                     <div class="centered text">
                         <div class="ui-widget">
-                          <label for="input">Search for a pathway or gene: </label>
-                          <input id="input"></input> 
+                          <label for="search">Search for a pathway or gene: </label>
+                          <input id="search"></input> 
                         </div>
                     </div>
                 </div> 
@@ -78,7 +85,6 @@
             </div>
             <div class="snap-drawer snap-drawer-right" id="gene-info-panel">
                 <div>
-                    <h3> Other right thing </h3> 
                 </div>
             </div> 
 </div> 

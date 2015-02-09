@@ -3,8 +3,10 @@
 {{append . "moreScripts" "js/info.js"}}
 {{append . "moreScripts" "js/pathway.js"}}
 {{append . "moreScripts" "js/vis-search.js"}}
+{{append . "moreScripts" "js/bootstrap-slider.js"}}
 {{append . "moreScripts" "js/snap.js"}}
 {{append . "moreStyles" "css/snap.css"}}
+{{append . "moreStyles" "css/bootstrap-slider.css"}}
 
 
 {{template "header.html" .}}
@@ -35,7 +37,7 @@ $("#searchbtn").click(function(){
         panels.close();
     } else {
         panels.open('right');
-        d3.select("#search-panel").style("z-index", 1); 
+        d3.select("#search-panel").style("z-index", 1).style("opacity", 100); 
         d3.select("#gene-info-panel").style("z-index", -1).style("opacity", 0); 
     }
 });
@@ -50,6 +52,19 @@ window.onload = function() {
     {{ end }} 
 
     initSearch(); 
+
+    // Without JQuery
+    var slider = new Slider('#ex1', {
+        formatter: function(value) {
+            return value + "%";
+        }
+    });
+    slider.on("slide", function(slideEvent){
+            console.log(slideEvent);
+            hide(slideEvent); 
+            $("#sliderman").text(slideEvent + "%"); 
+    });
+    
 }
 </script> 
 

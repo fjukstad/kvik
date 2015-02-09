@@ -12,7 +12,7 @@
     padding-bottom: 2em;
 } 
 
-input#input { 
+input#search { 
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 0.8em; 
     width: 40%; 
@@ -72,3 +72,8 @@ button#searchbtn {
 .snap-drawer-right { 
     padding-left: 1em;
 }
+
+#ex1Slider .slider-selection {
+	background: #BABABA;
+}
+

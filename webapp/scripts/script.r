@@ -8,6 +8,6 @@ exprs <- function(genes) {
 
 fc <- function(genes) { 
     len = length(genes) 
-    res = runif(len, 0.0, 1.0)
+    res = runif(len, -1.0, 1.0)
     return (res)
 }

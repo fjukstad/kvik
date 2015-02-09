@@ -2,7 +2,7 @@ function initSearch() {
     var idmap = {} 
     var cache = {};
 
-    $( "#input" ).autocomplete({
+    $( "input#search" ).autocomplete({
       minLength: 2,
       source: function( request, response ) {
         var term = request["term"];
@@ -24,8 +24,8 @@ function initSearch() {
       }
     });
 
-    $('input').bind("enterKey", function(e){
-        searchterm = $('input').val()
+    $("input#search").bind("enterKey", function(e){
+        searchterm = $("input#search").val()
         id = idmap[searchterm]
         if(typeof id === 'undefined'){
             swal({
@@ -39,7 +39,7 @@ function initSearch() {
         }
     });
 
-    $('input').keyup(function(e){
+    $("input#search").keyup(function(e){
         if(e.keyCode == 13) {
             $(this).trigger("enterKey");
         }

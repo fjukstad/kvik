@@ -26,13 +26,18 @@
             </p>
         <div class="centered text">
             <div class="ui-widget">
-              <label for="input">Search for a pathway or gene: </label>
-              <input id="input"></input> 
+              <label for="search">Search for a pathway or gene: </label>
+              <input id="search"></input> 
             </div>
         </div>
         </div> 
     </div> 
 </div> 
 
+<script>
+window.onload = function() { 
+    initSearch(); 
+};
+</script>
 
 {{template "footer.html" .}}
