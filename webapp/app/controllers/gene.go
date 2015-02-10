@@ -43,22 +43,20 @@ func (c Gene) Fc() revel.Result {
 }
 
 func (c Gene) Exprs() revel.Result {
-	genes := getGenes(c)
-	geneNames := idToNames(genes)
-	output := dataset.Exprs(geneNames)
-	result, err := prepareResult(genes, output)
-	if err != nil {
-		c.RenderText(fmt.Sprintf("%s", err))
-	}
+	gene := getGenes(c)[0]
+	output := dataset.Exprs("BRCA1")
+	result := make(map[string]interface{})
+	result[gene] = output
+	log.Println(output)
 	response := utils.ClientCompResponse{result}
 	return c.RenderJson(response)
 }
 
-func prepareResult(genes, output []string) (map[string]string, error) {
+func prepareResult(genes, output []string) (map[string]interface{}, error) {
 	if len(genes) != len(output) {
 		return nil, errors.New("List of genes and output from data is of different lengths" + strconv.Itoa(len(genes)) + " and " + strconv.Itoa(len(output)))
 	}
-	result := make(map[string]string)
+	result := make(map[string]interface{})
 	for i, g := range genes {
 		result[g] = output[i]
 	}

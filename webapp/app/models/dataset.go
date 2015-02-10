@@ -20,9 +20,8 @@ type Dataset struct {
 }
 
 // Retrieve Gene expression for the given genes
-func (d *Dataset) Exprs(genes []string) []string {
-	geneVector := utils.ListToVector(genes)
-	command := "exprs(" + geneVector + ")"
+func (d *Dataset) Exprs(gene string) []string {
+	command := "exprs(" + gene + ")"
 
 	resp, err := d.Call(command)
 	if err != nil {

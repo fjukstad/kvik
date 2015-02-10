@@ -23,7 +23,7 @@ function pathway(id, element, h, w){
    catch(err){
    } 
     color = d3.scale.ordinal()
-        .domain([-1, 0, 1])
+        .domain([-1.0, -0.5, 0.0, 0.5, 1.0])
         .range(colorbrewer.RdYlBu[5]);
 
     var margin = {top: 5, right: 5, bottom: 5, left: 5},
@@ -152,7 +152,6 @@ function pathway(id, element, h, w){
                     return d.height;
                 })
                 .attr("class", function(d){
-                    console.log(d) 
                     if(d.name.indexOf("hsa:") >=0){
                         return "gene"
                     }

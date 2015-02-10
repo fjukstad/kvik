@@ -34,7 +34,7 @@ type WorkerResponse struct {
 
 // Used to send results from statistical analyses back to the client
 type ClientCompResponse struct {
-	Output map[string]string
+	Output map[string]interface{}
 }
 
 func CreateDirectories(filename string) error {

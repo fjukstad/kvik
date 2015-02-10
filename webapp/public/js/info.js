@@ -33,28 +33,39 @@ function geneInfo(id) {
         
         var pathways = newPanelWithHeader("#gene-info-panel", "Pathways") 
         console.log(gene.Pathways) 
-        
-        var list = pathways.append("div")
-                .attr("class", "panel-body")
-                .append("ul")
-                .selectAll("li")
-                .data(gene.Pathways)
-                .enter()
-                .append("li")
-                .append("a")
-                .attr("id", function(d){
-                    return d;
-                })
-                .text(function(d){
-                    var resp = $.get("/pathway/"+d+"/name", function(data){
-                        var name = data.split(" - Homo")[0];
-                        d3.select("a#"+d).text(name); 
-                        return data;
+        // If the gene is a member of a pathway, generate the list 
+        if(gene.Pathways){
+            var list = pathways.append("div")
+                    .attr("class", "panel-body")
+                    .append("ul")
+                    .selectAll("li")
+                    .data(gene.Pathways)
+                    .enter()
+                    .append("li")
+                    .append("a")
+                    .attr("id", function(d){
+                        return d;
                     })
-                })
-                .on("click", function(d){
-                    pathway(d, "content", 0,0);
-                }); 
+                    .text(function(d){
+                        var resp = $.get("/pathway/"+d+"/name", function(data){
+                            var name = data.split(" - Homo")[0];
+                            d3.select("a#"+d).text(name); 
+                            return data;
+                        })
+                    })
+                    .on("click", function(d){
+                        pathway(d, "content", 0,0);
+                    }); 
+        }
+
+        d3.json("/gene/"+id+"/exprs", function(error,exprs){
+            
+            if(error){
+                return console.warn(error);
+            }
+
+            geneBars(panel, exprs.Output[id]) 
+        }); 
     }); 
 }
 
