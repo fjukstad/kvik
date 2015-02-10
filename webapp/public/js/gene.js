@@ -49,8 +49,8 @@ function geneBars(element, data){
              }
              return h/2; 
         })
-        .attr("fill", function(d){
-            console.log(d, color(d), color(parseFloat(d))) 
+        .attr("fill", function(d,i){
+            console.log(i, color(i), color(parseFloat(i))) 
             return color(d)
         }) 
         .attr("width", 3)
