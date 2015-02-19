@@ -18,36 +18,71 @@ import (
 
 // workerPort holds the next available port to start up a worker.
 var workerPort int
+var workerfile = "worker.py"
 
 func worker(b []byte, filename string) error {
 	err := storeScript(b, filename)
 	if err != nil {
 		return err
 	}
-	err = startWorker(filename)
+
+	p := path.Dir(filename)
+	err = copyWorker(p)
+	if err != nil {
+		return err
+	}
+
+	rscript := path.Base(filename)
+	err = startWorker(p, rscript)
 	if err != nil {
 		return err
 	}
 	workerPort += 1
 
-	path := path.Dir(filename) + "/images"
-	err = startWebServer(path)
+	startWebServer(p)
 
-	return err
+	return nil
 }
 
-func startWebServer(path string) error {
+// copies the python worker code into the directory where the r-script is tored
+// and where all of the rest of the magic is supposed to happen.
+func copyWorker(path string) error {
+
+	cmd := exec.Command("cp", "worker/"+workerfile, path+"/")
+	err := cmd.Run()
+
+	return err
+
+}
+
+func startWebServer(path string) {
+	path = path
+	err := utils.CreateDirectories(path)
+	if err != nil {
+		log.Panic(err)
+	}
+
 	p := strconv.Itoa(workerPort)
 	port := ":" + p
 	workerPort += 1
 	fmt.Println("Starting web server at", port, path)
-	err := http.ListenAndServe(port, http.FileServer(http.Dir(path)))
-	return err
+	go func() {
+		err := http.ListenAndServe(port, http.FileServer(http.Dir(path)))
+		if err != nil {
+			log.Panic(err)
+		}
+	}()
+
+	fmt.Println("Started...")
 }
 
-func startWorker(filename string) error {
-	cmd := exec.Command("python", "worker/worker.py", strconv.Itoa(workerPort),
-		filename)
+func startWorker(path, rscript string) error {
+	cmd := exec.Command("python", workerfile, strconv.Itoa(workerPort), rscript)
+
+	cmd.Dir = path
+
+	fmt.Println(path)
+
 	err := cmd.Start()
 	if err != nil {
 		return err
@@ -86,6 +121,11 @@ func successResponse(msg string) utils.ComputeResponse {
 	return utils.ComputeResponse{1, msg}
 }
 
+func cleanScriptsDirectory(path string) error {
+	cmd := exec.Command("rm", "-rf", path+"/*")
+	return cmd.Run()
+}
+
 // Compute is the component of Kvik responsible for starting/stopping workers
 // that perform the statistical analyses. It exposes a http rest interface to
 // the outside world.
@@ -93,6 +133,8 @@ func main() {
 
 	var ip = flag.String("ip", "*", "ip to run on")
 	var port = flag.String("port", ":8888", "port to run on")
+	var scriptDir = flag.String("scripts", "scripts",
+		"folder where the workers should store scripts and also images")
 
 	flag.Parse()
 
@@ -102,6 +144,11 @@ func main() {
 	addr := "tcp://" + *ip + *port
 
 	err := responder.Bind(addr)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	err = cleanScriptsDirectory(*scriptDir)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -133,13 +180,14 @@ func main() {
 			break
 
 		case cmd.Command == "startWorker":
-			path := "scripts/" + strconv.Itoa(id) + "/script.r"
+			thisWorker := workerPort
+			path := *scriptDir + "/" + strconv.Itoa(id) + "/script.r"
 			err = worker(cmd.File, path)
 			if err != nil {
 				log.Println(err)
 				Response = errorResponse("Could not start worker")
 			} else {
-				Response = successResponse(strconv.Itoa(workerPort))
+				Response = successResponse(strconv.Itoa(thisWorker))
 			}
 
 		case cmd.Command == "killall":
