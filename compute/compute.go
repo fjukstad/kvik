@@ -3,8 +3,10 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
+	"path"
 	"strconv"
 
 	"github.com/fjukstad/kvik/utils"
@@ -26,7 +28,21 @@ func worker(b []byte, filename string) error {
 	if err != nil {
 		return err
 	}
-	return nil
+	workerPort += 1
+
+	path := path.Dir(filename) + "/images"
+	err = startWebServer(path)
+
+	return err
+}
+
+func startWebServer(path string) error {
+	p := strconv.Itoa(workerPort)
+	port := ":" + p
+	workerPort += 1
+	fmt.Println("Starting web server at", port, path)
+	err := http.ListenAndServe(port, http.FileServer(http.Dir(path)))
+	return err
 }
 
 func startWorker(filename string) error {
@@ -138,6 +154,5 @@ func main() {
 		resp, _ := json.Marshal(Response)
 		responder.Send(string(resp), 0)
 		id += 1
-		workerPort += 1
 	}
 }
