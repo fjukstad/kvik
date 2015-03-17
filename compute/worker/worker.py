@@ -2,7 +2,11 @@ import numpy as np
 import json
 import sys
 import ast
+
 import zmq
+import zmq.auth
+from zmq.auth.thread import ThreadAuthenticator
+
 import time
 import datetime
 import rpy2
@@ -24,11 +28,11 @@ class Worker():
         self.r = r
 
     def command(self, string):
-        print "Got the command "+string
+        print "Got the command ", string
         try:
             ret = robjects.r(string)
         except:
-            return "Could not evaluate "+string
+            return ":( Could not evaluate "+string
         print ret
         print str(ret)
         if len(ret) > 1:
@@ -37,7 +41,10 @@ class Worker():
         try:
             return ret[0]
         except IndexError:
-            return "Could not evaluate "+string
+            return "IndexErrro: Could not evaluate "+string
+
+    def ping(self):
+        return "pong"
 
 def call(obj, func, attr):
     if hasattr(obj,func):
@@ -52,7 +59,11 @@ def call(obj, func, attr):
 
 if __name__ == "__main__":
     context = zmq.Context()
-    socket = context.socket(zmq.REP)
+
+    # Only allow connections from localhost
+    #auth = ThreadAuthenticator(context)
+    #auth.start()
+    #auth.allow('127.0.0.1')
 
     port = ""
     if len(sys.argv) < 2:
@@ -62,6 +73,7 @@ if __name__ == "__main__":
         port = sys.argv[1]
         script = sys.argv[2]
 
+    socket = context.socket(zmq.REP)
     socket.bind("tcp://*:"+port)
 
     worker = Worker(script)

@@ -1,10 +1,18 @@
 package utils
 
 import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path"
+	"reflect"
+	"strconv"
 	"strings"
+
+	zmq "github.com/pebbe/zmq4"
 )
 
 // Command to compute master
@@ -35,6 +43,10 @@ type WorkerResponse struct {
 // Used to send results from statistical analyses back to the client
 type ClientCompResponse struct {
 	Output map[string]interface{}
+}
+
+type SearchResponse struct {
+	Terms []string
 }
 
 func CreateDirectories(filename string) error {
@@ -72,4 +84,83 @@ func ListToVector(list []string) string {
 	}
 	str = str + ")"
 	return str
+}
+
+// Contacts the compute master to start up a new worker
+func StartWorker(addr string, filename string) (string, error) {
+
+	requester, _ := zmq.NewSocket(zmq.REQ)
+	//defer requester.Close()
+
+	err := requester.Connect(addr)
+	if err != nil {
+		fmt.Println("Coud not connect to compute at ", addr)
+		return "", err
+	}
+
+	f, err := ioutil.ReadFile(filename)
+	if err != nil {
+		fmt.Println("Could not read file")
+		return "", err
+	}
+
+	// Send start worker message to the master
+	c := Command{0, "startWorker", f}
+	msg, err := json.Marshal(c)
+	if err != nil {
+		fmt.Println("Could not marshal start worker message")
+		return "", err
+	}
+
+	requester.Send(string(msg), 0)
+
+	// Get reply which contains the port where the new worker runs
+	reply, err := requester.Recv(0)
+	if err != nil {
+		fmt.Println("Did not recv worker port")
+		return "", err
+	}
+
+	worker := new(ComputeResponse)
+
+	err = json.Unmarshal([]byte(reply), worker)
+	if err != nil {
+		fmt.Println("Could not unmarshal response from compute", reply)
+		return "", err
+	}
+
+	if worker.Status != 1 {
+		err = errors.New("Worker not started")
+		return "", err
+	}
+
+	return worker.Message, nil
+}
+
+func PrepareResponse(resp interface{}) []string {
+
+	var response string
+	t := reflect.TypeOf(resp).String()
+
+	if t == "float64" {
+		res := resp.(float64)
+		response = strconv.FormatFloat(res, 'f', 9, 64)
+	}
+	if t == "string" {
+		response = resp.(string)
+	}
+
+	response = strings.Trim(response, "[1] ") // remove r thing
+	response = strings.Trim(response, "\n")   // unwanted newlines
+	response = strings.TrimLeft(response, " ")
+	results := strings.Split(response, " ")
+
+	var res []string
+	for _, r := range results {
+		if r != "" {
+			res = append(res, r)
+		}
+	}
+
+	return res
 }
