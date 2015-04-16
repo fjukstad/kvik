@@ -226,6 +226,8 @@ type Node struct {
 	Y               int    `json:"y"`
 	Height          int    `json:"height"`
 	Width           int    `json:"width"`
+	Fc              string `json:"fc"`
+	Pvalue          string `json:"pvalue"`
 }
 
 type Edge struct {
@@ -261,28 +263,31 @@ func PathwayGraph(keggId string) Graph {
 
 	imgurl := "http://www.genome.jp/kegg/pathway/hsa/" + keggId + ".png"
 
+	var sizeX, sizeY int
 	resp, err := http.Get(imgurl)
 	if err != nil {
-		log.Panic("Image could not be downloaded ", err)
-	}
 
-	img, err := png.Decode(resp.Body)
+		log.Println("Image could not be downloaded ", err)
+	} else {
 
-	if err != nil {
-		log.Panic("Image could not be decoded ", err)
-	}
+		img, err := png.Decode(resp.Body)
 
-	imgrect := img.Bounds()
+		if err != nil {
+			log.Panic("Image could not be decoded ", err)
+		}
 
-	sizeX := imgrect.Max.X - imgrect.Min.X
-	sizeY := imgrect.Max.Y - imgrect.Min.Y
+		imgrect := img.Bounds()
 
-	// Store image for later use
-	path := "public/pathways/"
-	filename := keggId + ".png"
-	err = storeImage(path, filename, img)
-	if err != nil {
-		log.Panic("Image could not be stored", err)
+		sizeX = imgrect.Max.X - imgrect.Min.X
+		sizeY = imgrect.Max.Y - imgrect.Min.Y
+
+		// Store image for later use
+		path := "public/pathways/"
+		filename := keggId + ".png"
+		err = storeImage(path, filename, img)
+		if err != nil {
+			log.Panic("Image could not be stored", err)
+		}
 	}
 
 	// First create a node that will serve as a background image to the pathway
@@ -298,7 +303,9 @@ func PathwayGraph(keggId string) Graph {
 		sizeX / 2,
 		sizeY / 2,
 		sizeY,
-		sizeX}
+		sizeX,
+		"",
+		""}
 
 	var node Node
 	var edge Edge
@@ -327,7 +334,7 @@ func PathwayGraph(keggId string) Graph {
 		width, _ := strconv.Atoi(graphics.Width)
 
 		node = Node{id, name, t, size, description, fgcolor, bgcolor, shape,
-			x, y, height, width}
+			x, y, height, width, "", ""}
 
 		nodes = append(nodes, node)
 	}
@@ -511,7 +518,12 @@ func parsePathwayResponse(response io.ReadCloser) Pathway {
 			tmp = append(tmp, a)
 
 		case "REFERENCE":
-			p.Compounds = tmp
+			if current == "GENE" {
+				p.Genes = tmp
+			}
+			if current == "COMPOUND" {
+				p.Compounds = tmp
+			}
 			current = "REFERENCE"
 			break
 
