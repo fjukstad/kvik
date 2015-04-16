@@ -99,7 +99,6 @@ func GetGene(id string) Gene {
 		baseURL = "http://rest.kegg.jp/get/hsa:"
 	}
 	url := baseURL + id
-	log.Println(url)
 	response, err := gocache.Get(url)
 	if err != nil {
 		log.Panic("Cannot download from url:", err)
