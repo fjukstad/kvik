@@ -5,7 +5,7 @@ RUN apt-get update
 RUN apt-get upgrade -y
 
 # git python wget and all that jazz 
-RUN apt-get install -y build-essential python python-dev  python-pip wget git mercurial pkg-config wget tar r-base mercurial
+RUN apt-get install -y build-essential python python-dev python-pip wget git mercurial pkg-config wget tar r-base mercurial
 
 RUN pip install numpy
 
