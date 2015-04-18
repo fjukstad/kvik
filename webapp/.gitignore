@@ -1,3 +1,5 @@
 test-results/
 tmp/
 routes/
+public/pathways
+cache/
