@@ -2,13 +2,15 @@ package kompute
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
 )
 
 type Kompute struct {
-	Addr string
+	Addr     string
+	Username string
 }
 
 // Plots and stores to file
@@ -59,7 +61,8 @@ func (k *Kompute) Rpc(fun, args, format string) (string, error) {
 
 func (k *Kompute) Call(fun, args string) (s *Session, err error) {
 
-	url := getUrl(k.Addr, fun)
+	url := k.getUrl(fun)
+	fmt.Println(url)
 	postArgs := strings.NewReader(args)
 
 	resp, err := http.Post(url, "application/json", postArgs)
@@ -105,8 +108,13 @@ func (k *Kompute) Call(fun, args string) (s *Session, err error) {
 
 }
 
-func getUrl(hostname, fun string) string {
-	return hostname + "/ocpu/library/" + fun
+func (k *Kompute) getUrl(fun string) string {
+	url := k.Addr
+	if k.Username != "" {
+		url = url + "/" + k.Username
+	}
+	url = url + "/ocpu/library/" + fun
+	return url
 }
 
 type Session struct {
@@ -131,6 +139,7 @@ func (s *Session) GetResult(format string) (string, error) {
 	}
 
 	if resp.StatusCode != 200 {
+		fmt.Println(url)
 		return "", errors.New(resp.Status)
 	}
 

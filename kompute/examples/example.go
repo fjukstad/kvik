@@ -8,9 +8,8 @@ import (
 
 func main() {
 
-	k := kompute.Kompute{"http://opencpu:8004"}
+	k := kompute.Kompute{"http://opencpu:8004/", ""}
 
-	k.Call("stats/R/rnorm", `{"n":10, "mean": 10, "sd":10}`)
 	a, err := k.Rpc("stats/R/rnorm", `{"n":10, "mean": 10, "sd":10}`, "json")
 	if err != nil {
 		fmt.Println(err)
