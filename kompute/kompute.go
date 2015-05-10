@@ -11,6 +11,15 @@ import (
 type Kompute struct {
 	Addr     string
 	Username string
+	Password string
+}
+
+func NewKompute(addr, username, password string) *Kompute {
+	komp := new(Kompute)
+	komp.Addr = "http://" + addr
+	komp.Username = username
+	komp.Password = password
+	return komp
 }
 
 // Plots and stores to file
@@ -48,13 +57,16 @@ func (k *Kompute) Plot(fun, args, filetype, filename string) error {
 // format e.g. json or csv
 func (k *Kompute) Rpc(fun, args, format string) (string, error) {
 
+	fmt.Println("-H \"Content-Type: application/json\" -d '", args, "'")
+
 	s, err := k.Call(fun, args)
 
 	if err != nil {
+		fmt.Println("Call error != nil")
 		return "", err
 	}
 
-	s.GetResult(format)
+	s.GetResult(k, format)
 
 	return s.Result, err
 }
@@ -62,20 +74,37 @@ func (k *Kompute) Rpc(fun, args, format string) (string, error) {
 func (k *Kompute) Call(fun, args string) (s *Session, err error) {
 
 	url := k.getUrl(fun)
-	fmt.Println(url)
 	postArgs := strings.NewReader(args)
 
-	resp, err := http.Post(url, "application/json", postArgs)
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", url, postArgs)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	header := map[string][]string{
+		"Content-Type": {"application/json"},
+	}
+
+	req.Header = header
+	req.SetBasicAuth(k.Username, k.Password)
+
+	resp, err := client.Do(req)
+
+	//resp, err := http.Post(url, "application/json", postArgs)
 	if err != nil {
 		return nil, err
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		fmt.Println("empty body")
 		return nil, err
 	}
 
 	if resp.StatusCode != 201 {
+		fmt.Println("Statuscode != 201")
 		return nil, errors.New(string(body))
 	}
 
@@ -109,12 +138,7 @@ func (k *Kompute) Call(fun, args string) (s *Session, err error) {
 }
 
 func (k *Kompute) getUrl(fun string) string {
-	url := k.Addr
-	if k.Username != "" {
-		url = url + "/" + k.Username
-	}
-	url = url + "/ocpu/library/" + fun
-	return url
+	return k.Addr + "/ocpu/library/" + fun
 }
 
 type Session struct {
@@ -130,9 +154,20 @@ type Session struct {
 	source      string
 }
 
-func (s *Session) GetResult(format string) (string, error) {
+func (s *Session) GetResult(k *Kompute, format string) (string, error) {
 	url := s.val + "/" + format
-	resp, err := http.Get(url)
+
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+	req.SetBasicAuth(k.Username, k.Password)
+
+	resp, err := client.Do(req)
+
+	//resp, err := http.Get(url)
 
 	if err != nil {
 		return "", nil
@@ -145,6 +180,7 @@ func (s *Session) GetResult(format string) (string, error) {
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		fmt.Println("bodu thing wrong", err)
 		return "", nil
 	}
 
