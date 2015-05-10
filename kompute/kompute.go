@@ -29,7 +29,7 @@ func (k *Kompute) Plot(fun, args, filetype, filename string) error {
 		return err
 	}
 
-	url := s.graphics + "/" + filetype
+	url := s.Graphics + "/" + filetype
 	resp, err := http.Get(url)
 
 	if err != nil {
@@ -129,7 +129,7 @@ func (k *Kompute) Call(fun, args string) (s *Session, err error) {
 		case strings.Contains(line, "console"):
 			s.console = k.Addr + line
 		case strings.Contains(line, "graphics"):
-			s.graphics = k.Addr + line
+			s.Graphics = k.Addr + line
 		}
 	}
 
@@ -150,7 +150,7 @@ type Session struct {
 	val         string
 	info        string
 	description string
-	graphics    string
+	Graphics    string
 	source      string
 }
 
