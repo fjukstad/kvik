@@ -304,7 +304,24 @@ func createPathwayGraph(keggId string, inputGraph *gographer.Graph) {
 	return
 }
 
-func storeImage(path, filename string, image image.Image) error {
+func GetImage(keggId string) image.Image {
+	imgurl := "http://rest.kegg.jp/get/" + keggId + "/image"
+	resp, err := http.Get(imgurl)
+	if err != nil {
+		log.Println("Image could not be downloaded ", err)
+		return nil
+	} else {
+		img, err := png.Decode(resp.Body)
+
+		if err != nil {
+			log.Panic("Image could not be decoded ", err)
+			return nil
+		}
+		return img
+	}
+}
+
+func StoreImage(path, filename string, image image.Image) error {
 
 	err := os.MkdirAll(path, 0755)
 	if err != nil {
