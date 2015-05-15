@@ -154,8 +154,12 @@ type Session struct {
 	source      string
 }
 
+func (s *Session) GetUrl(format string) (url string) {
+	return s.val + "/" + format
+}
+
 func (s *Session) GetResult(k *Kompute, format string) (string, error) {
-	url := s.val + "/" + format
+	url := s.GetUrl(format)
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
