@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	//"time"
 )
 
 type Kompute struct {
@@ -29,7 +30,7 @@ func (k *Kompute) Plot(fun, args, filetype, filename string) error {
 		return err
 	}
 
-	url := s.graphics + "/" + filetype
+	url := s.Graphics + "/" + filetype
 	resp, err := http.Get(url)
 
 	if err != nil {
@@ -57,24 +58,37 @@ func (k *Kompute) Plot(fun, args, filetype, filename string) error {
 // format e.g. json or csv
 func (k *Kompute) Rpc(fun, args, format string) (string, error) {
 
-	fmt.Println("-H \"Content-Type: application/json\" -d '", args, "'")
+	//	fmt.Println("-H \"Content-Type: application/json\" -d '", args, "'")
 
 	s, err := k.Call(fun, args)
 
 	if err != nil {
-		fmt.Println("Call error != nil")
-		return "", err
+
+		fmt.Println("Call error != nil", err)
+		s, err = k.Call(fun, args)
+		if err != nil {
+			fmt.Println("failed a second time...", err)
+			return "", err
+		}
+
 	}
 
-	s.GetResult(k, format)
+	//	time.Sleep(100 * time.Millisecond)
 
-	return s.Result, err
+	res, err := s.GetResult(k, format)
+	if err != nil {
+		res, err = s.GetResult(k, format)
+		fmt.Println("Get result error second time ")
+	}
+	return res, err
 }
 
 func (k *Kompute) Call(fun, args string) (s *Session, err error) {
 
 	url := k.getUrl(fun)
 	postArgs := strings.NewReader(args)
+
+	fmt.Println(url, postArgs)
 
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, postArgs)
@@ -129,7 +143,7 @@ func (k *Kompute) Call(fun, args string) (s *Session, err error) {
 		case strings.Contains(line, "console"):
 			s.console = k.Addr + line
 		case strings.Contains(line, "graphics"):
-			s.graphics = k.Addr + line
+			s.Graphics = k.Addr + line
 		}
 	}
 
@@ -150,32 +164,54 @@ type Session struct {
 	val         string
 	info        string
 	description string
-	graphics    string
+	Graphics    string
 	source      string
 }
 
+func (s *Session) GetUrl(format string) (url string) {
+	return s.val + "/" + format
+}
+
 func (s *Session) GetResult(k *Kompute, format string) (string, error) {
-	url := s.val + "/" + format
+	url := s.GetUrl(format)
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fmt.Println(err)
-		return "", err
+		req, err = http.NewRequest("GET", url, nil)
+		if err != nil {
+			fmt.Println("failed second time")
+			return "", err
+		}
 	}
+	header := map[string][]string{
+		"Content-Type": {"application/json"},
+	}
+
+	req.Header = header
 	req.SetBasicAuth(k.Username, k.Password)
 
 	resp, err := client.Do(req)
 
-	//resp, err := http.Get(url)
-
 	if err != nil {
-		return "", nil
+		fmt.Println("Client did not")
+		return "", err
 	}
 
 	if resp.StatusCode != 200 {
 		fmt.Println(url)
-		return "", errors.New(resp.Status)
+		fmt.Println(req)
+		fmt.Println(resp)
+		error, _ := ioutil.ReadAll(resp.Body)
+		errorText := string(error)
+		fmt.Println("Status code not 200 in GetResult", string(error))
+		resp, err = client.Do(req)
+		if err != nil && resp.StatusCode != 200 {
+			fmt.Println("status code second time jesus christ")
+			return "", errors.New(errorText)
+		}
+
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
