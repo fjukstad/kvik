@@ -4,7 +4,9 @@ import "github.com/fjukstad/kvik/gsea"
 import "fmt"
 
 func main() {
-	a, err := gsea.Abstract("BIOCARTA_HER2_PATHWAY")
+	abstract, _ := gsea.Abstract("BIOCARTA_HER2_PATHWAY")
+	fmt.Println(abstract)
 
-	fmt.Println(a, err)
+	brief, _ := gsea.BriefDescription("PID_HES_HEY_PATHWAY")
+	fmt.Println(brief)
 }
