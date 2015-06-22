@@ -155,6 +155,32 @@ func (k *Kompute) getUrl(fun string) string {
 	return k.Addr + "/ocpu/library/" + fun
 }
 
+func (k *Kompute) Get(key, filetype string) ([]byte, error) {
+	var url string
+	if strings.Contains(filetype, "png") || strings.Contains(filetype, "pdf") {
+		url = k.Addr + "/ocpu/tmp/" + key + "/graphics/last/" + filetype
+	} else {
+		url = k.Addr + "/ocpu/tmp/" + key + "/R/.val/" + filetype
+	}
+
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		fmt.Println("Culd not create request", err)
+		return nil, err
+	}
+
+	req.SetBasicAuth(k.Username, k.Password)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Could not get", err)
+		return nil, err
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	return body, err
+}
+
 type Session struct {
 	Key         string
 	Url         string
