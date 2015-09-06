@@ -97,8 +97,15 @@ func (k *Kompute) Call(fun, args string) (s *Session, err error) {
 		return nil, err
 	}
 
+	var contentType string
+	if strings.Contains(args, "{") {
+		contentType = "application/json"
+	} else {
+		contentType = "application/x-www-form-urlencoded"
+	}
+
 	header := map[string][]string{
-		"Content-Type": {"application/json"},
+		"Content-Type": {contentType},
 	}
 
 	req.Header = header
