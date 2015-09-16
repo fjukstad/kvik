@@ -3,9 +3,11 @@ package pipeline
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fjukstad/kvik/kompute"
 	"os"
+	"strconv"
 	"strings"
+
+	"github.com/fjukstad/kvik/kompute"
 )
 
 type Stage struct {
@@ -46,6 +48,61 @@ func NewStage(name, function, pkg string, argnames, args []string) Stage {
 	return s
 }
 
+func (p *Pipeline) RunParallel() ([]*Pipeline, error) {
+
+	pipeMap := map[string]*Pipeline{}
+	pipes := []*Pipeline{}
+
+	i := 0
+
+	for _, stage := range p.Stages {
+
+		deps := stage.GetDependencies()
+		// if it's not dependent on anything we can place it
+		// in a new pipeline.
+		if len(deps) == 0 {
+			pipe := NewPipeline(p.Name+"-par-"+strconv.Itoa(i), p.Kompute)
+			pipe.AddStage(*stage)
+			pipeMap[stage.Name] = &pipe
+			i++
+
+			pipes = append(pipes, &pipe)
+
+		} else {
+			pipe := pipeMap[deps[0]]
+			fmt.Println(pipe)
+			pipe.AddStage(*stage)
+			pipeMap[stage.Name] = pipe
+			fmt.Println("Pipeline", len(pipe.Stages))
+		}
+	}
+
+	for _, pipe := range pipes {
+		fmt.Println(pipe.Name, len(pipe.Stages))
+		pipe.Run()
+	}
+
+	return pipes, nil
+}
+
+func (s Stage) GetDependencies() []string {
+	deps := []string{}
+	for _, arg := range s.Arguments {
+		if strings.Contains(arg, "from:") {
+			argname := strings.Split(arg, "from:")[1]
+			deps = append(deps, argname)
+		}
+	}
+
+	return deps
+}
+
+func (p *Pipeline) GetResult(format string) string {
+	lastStage := p.Stages[len(p.Stages)-1]
+	res, _ := lastStage.Session.GetResult(p.Kompute, format)
+	return res
+}
+
 func (p *Pipeline) Run() error {
 
 	for _, stage := range p.Stages {
@@ -63,7 +120,6 @@ func (p *Pipeline) Run() error {
 		}
 
 		stage.Session = s
-		stage.Print()
 	}
 
 	return nil
