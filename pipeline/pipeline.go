@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/fjukstad/kvik/kompute"
 )
@@ -58,17 +59,17 @@ func (p *Pipeline) RunParallel() ([]*Pipeline, error) {
 	for _, stage := range p.Stages {
 
 		deps := stage.GetDependencies()
-		// if it's not dependent on anything we can place it
+		// if it's not dependent on anything we
 		// in a new pipeline.
 		if len(deps) == 0 {
 			pipe := NewPipeline(p.Name+"-par-"+strconv.Itoa(i), p.Kompute)
 			pipe.AddStage(*stage)
 			pipeMap[stage.Name] = &pipe
 			i++
-
 			pipes = append(pipes, &pipe)
 
 		} else {
+
 			pipe := pipeMap[deps[0]]
 			fmt.Println(pipe)
 			pipe.AddStage(*stage)
@@ -85,6 +86,117 @@ func (p *Pipeline) RunParallel() ([]*Pipeline, error) {
 	return pipes, nil
 }
 
+type Result struct {
+	m     *sync.Mutex
+	c     *sync.Cond
+	Key   string
+	Error error
+}
+
+func (p *Pipeline) WorkMagic() ([]*Result, error) {
+
+	resultMap := make(map[string]*Result, 0)
+
+	for _, stage := range p.Stages {
+		m := sync.Mutex{}
+		c := sync.NewCond(&m)
+		resultMap[stage.Name] = &Result{&m, c, "", nil}
+	}
+
+	for _, stage := range p.Stages {
+		deps := stage.GetDependencies()
+		r := resultMap[stage.Name]
+
+		if len(deps) == 0 {
+			go func(r *Result, stage *Stage) {
+				r.m.Lock()
+				key, err := p.ExecuteStage(stage)
+				r.Key = key
+				r.Error = err
+				//resultMap[stage.Name] = &Result{l, key, err}
+				r.m.Unlock()
+				r.c.Broadcast()
+
+			}(r, stage)
+		} else {
+			m := make(chan bool, len(deps)-1)
+
+			for _, dep := range deps {
+				r := resultMap[dep]
+				go func(r *Result, stage *Stage, dep string) {
+
+					r.m.Lock()
+
+					for r.Key == "" {
+						r.c.Wait()
+					}
+
+					stage.ReplaceArg(dep, r.Key)
+					m <- true
+				}(r, stage, dep)
+			}
+
+			//		PARALLELIZE FOR LOOP:
+
+			for i := 0; i < len(deps); i++ {
+				<-m
+			}
+
+			go func(r *Result, stage *Stage) {
+				r.m.Lock()
+
+				r.Key, r.Error = p.ExecuteStage(stage)
+
+				r.m.Unlock()
+				r.c.Broadcast()
+
+			}(r, stage)
+
+		}
+	}
+
+	results := []*Result{}
+	for _, stage := range p.Stages {
+		r := resultMap[stage.Name]
+		if r.Key == "" {
+			r.m.Lock()
+		}
+		for r.Key == "" {
+			r.c.Wait()
+		}
+		results = append(results, r)
+	}
+
+	return results, nil
+}
+
+func (s *Stage) ReplaceArg(oldarg string, newarg string) {
+	for i, arg := range s.Arguments {
+		if strings.Contains(arg, oldarg) {
+			s.Arguments[i] = newarg
+			return
+		}
+	}
+}
+
+func (p *Pipeline) ExecuteStage(stage *Stage) (string, error) {
+
+	args := stage.GetArguments()
+	fun := stage.GetFullFunctionName()
+
+	s, err := p.Kompute.Call(fun, args)
+
+	if err != nil {
+		s, err = p.Kompute.Call(fun, args)
+
+		if err != nil {
+			fmt.Println("ERROR", err)
+			return "", err
+		}
+	}
+	return s.Key, nil
+}
+
 func (s Stage) GetDependencies() []string {
 	deps := []string{}
 	for _, arg := range s.Arguments {
@@ -93,7 +205,6 @@ func (s Stage) GetDependencies() []string {
 			deps = append(deps, argname)
 		}
 	}
-
 	return deps
 }
 
@@ -107,7 +218,7 @@ func (p *Pipeline) Run() error {
 
 	for _, stage := range p.Stages {
 
-		args := stage.GetArguments(p)
+		args := stage.GetArguments()
 		fun := stage.GetFullFunctionName()
 
 		s, err := p.Kompute.Call(fun, args)
@@ -147,22 +258,12 @@ func (s *Stage) GetFullFunctionName() string {
 	return s.Package + "/R/" + s.Function
 }
 
-func (s *Stage) GetArguments(p *Pipeline) string {
+func (s *Stage) GetArguments() string {
 
 	str := ""
 	i := 0
 
 	for k, v := range s.Arguments {
-
-		// fix dependency. get session key from "from:" stage
-		if strings.Contains(v, "from:") {
-			stageName := strings.Split(v, "from:")[1]
-			for _, stage := range p.Stages {
-				if stage.Name == stageName {
-					v = stage.Session.Key
-				}
-			}
-		}
 
 		if strings.Contains(v, "/") || strings.Contains(v, ".") {
 			v = "\"" + v + "\""
@@ -186,7 +287,9 @@ func (s *Stage) Print() {
 	for k, v := range s.Arguments {
 		fmt.Println("\t\t", k, "\t", v)
 	}
-	fmt.Println("\tSession: ", s.Session.Key)
-	fmt.Println("\tURL: /ocpu/tmp/" + s.Session.Key + "/R/")
+	if s.Session != nil {
+		fmt.Println("\tSession: ", s.Session.Key)
+		fmt.Println("\tURL: /ocpu/tmp/" + s.Session.Key + "/R/")
+	}
 
 }
