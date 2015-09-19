@@ -4,8 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"strings"
+	"time"
+
 	//"time"
 )
 
@@ -111,11 +114,26 @@ func (k *Kompute) Call(fun, args string) (s *Session, err error) {
 	req.Header = header
 	req.SetBasicAuth(k.Username, k.Password)
 
-	resp, err := client.Do(req)
+	defer req.Body.Close()
 
+	var resp *http.Response
+	resp, err = client.Do(req)
+
+	maxretry := 100
 	//resp, err := http.Post(url, "application/json", postArgs)
 	if err != nil {
-		return nil, err
+		r := rand.New(rand.NewSource(int64(time.Now().Nanosecond())))
+		for i := 0; i < maxretry; i++ {
+			randTime := r.Intn(200)
+			time.Sleep(time.Duration(randTime) * time.Millisecond)
+			resp, err = client.Do(req)
+			if err == nil {
+				break
+			}
+		}
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -123,6 +141,8 @@ func (k *Kompute) Call(fun, args string) (s *Session, err error) {
 		fmt.Println("empty body")
 		return nil, err
 	}
+
+	defer resp.Body.Close()
 
 	if resp.StatusCode != 201 {
 		fmt.Println("Statuscode != 201")
