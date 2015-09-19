@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 	"sync"
 
@@ -49,43 +48,6 @@ func NewStage(name, function, pkg string, argnames, args []string) Stage {
 	return s
 }
 
-func (p *Pipeline) RunParallel() ([]*Pipeline, error) {
-
-	pipeMap := map[string]*Pipeline{}
-	pipes := []*Pipeline{}
-
-	i := 0
-
-	for _, stage := range p.Stages {
-
-		deps := stage.GetDependencies()
-		// if it's not dependent on anything we
-		// in a new pipeline.
-		if len(deps) == 0 {
-			pipe := NewPipeline(p.Name+"-par-"+strconv.Itoa(i), p.Kompute)
-			pipe.AddStage(*stage)
-			pipeMap[stage.Name] = &pipe
-			i++
-			pipes = append(pipes, &pipe)
-
-		} else {
-
-			pipe := pipeMap[deps[0]]
-			fmt.Println(pipe)
-			pipe.AddStage(*stage)
-			pipeMap[stage.Name] = pipe
-			fmt.Println("Pipeline", len(pipe.Stages))
-		}
-	}
-
-	for _, pipe := range pipes {
-		fmt.Println(pipe.Name, len(pipe.Stages))
-		pipe.Run()
-	}
-
-	return pipes, nil
-}
-
 type Result struct {
 	m     *sync.Mutex
 	c     *sync.Cond
@@ -93,7 +55,7 @@ type Result struct {
 	Error error
 }
 
-func (p *Pipeline) WorkMagic() ([]*Result, error) {
+func (p *Pipeline) Run() ([]*Result, error) {
 
 	resultMap := make(map[string]*Result, 0)
 
@@ -103,28 +65,22 @@ func (p *Pipeline) WorkMagic() ([]*Result, error) {
 		resultMap[stage.Name] = &Result{&m, c, "", nil}
 	}
 
+	m := make(chan bool, len(p.Stages))
+
 	for _, stage := range p.Stages {
 		deps := stage.GetDependencies()
 		r := resultMap[stage.Name]
 
-		if len(deps) == 0 {
-			go func(r *Result, stage *Stage) {
+		go func(r *Result, stage *Stage, deps []string) {
+			if len(deps) == 0 {
 				r.m.Lock()
-				key, err := p.ExecuteStage(stage)
-				r.Key = key
-				r.Error = err
-				//resultMap[stage.Name] = &Result{l, key, err}
-				r.m.Unlock()
+				r.Key, r.Error = p.ExecuteStage(stage)
 				r.c.Broadcast()
+				r.m.Unlock()
 
-			}(r, stage)
-		} else {
-			m := make(chan bool, len(deps)-1)
-
-			for _, dep := range deps {
-				r := resultMap[dep]
-				go func(r *Result, stage *Stage, dep string) {
-
+			} else {
+				for _, dep := range deps {
+					r := resultMap[dep]
 					r.m.Lock()
 
 					for r.Key == "" {
@@ -132,39 +88,28 @@ func (p *Pipeline) WorkMagic() ([]*Result, error) {
 					}
 
 					stage.ReplaceArg(dep, r.Key)
-					m <- true
-				}(r, stage, dep)
-			}
+					r.m.Unlock()
+				}
 
-			//		PARALLELIZE FOR LOOP:
-
-			for i := 0; i < len(deps); i++ {
-				<-m
-			}
-
-			go func(r *Result, stage *Stage) {
 				r.m.Lock()
-
 				r.Key, r.Error = p.ExecuteStage(stage)
-
-				r.m.Unlock()
 				r.c.Broadcast()
+				r.m.Unlock()
+			}
 
-			}(r, stage)
+			m <- true
+		}(r, stage, deps)
+	}
 
-		}
+	for i := 0; i < len(p.Stages); i++ {
+		<-m
 	}
 
 	results := []*Result{}
 	for _, stage := range p.Stages {
 		r := resultMap[stage.Name]
-		if r.Key == "" {
-			r.m.Lock()
-		}
-		for r.Key == "" {
-			r.c.Wait()
-		}
 		results = append(results, r)
+
 	}
 
 	return results, nil
@@ -212,28 +157,6 @@ func (p *Pipeline) GetResult(format string) string {
 	lastStage := p.Stages[len(p.Stages)-1]
 	res, _ := lastStage.Session.GetResult(p.Kompute, format)
 	return res
-}
-
-func (p *Pipeline) Run() error {
-
-	for _, stage := range p.Stages {
-
-		args := stage.GetArguments()
-		fun := stage.GetFullFunctionName()
-
-		s, err := p.Kompute.Call(fun, args)
-		if err != nil {
-			s, err = p.Kompute.Call(fun, args)
-			if err != nil {
-				fmt.Println("ERROR", err)
-				return err
-			}
-		}
-
-		stage.Session = s
-	}
-
-	return nil
 }
 
 func (p *Pipeline) Save() error {
