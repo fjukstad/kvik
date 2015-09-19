@@ -58,16 +58,13 @@ type Result struct {
 func (p *Pipeline) Run() ([]*Result, error) {
 
 	resultMap := make(map[string]*Result, 0)
+	done := make(chan bool, len(p.Stages))
 
 	for _, stage := range p.Stages {
 		m := sync.Mutex{}
 		c := sync.NewCond(&m)
 		resultMap[stage.Name] = &Result{&m, c, "", nil}
-	}
 
-	m := make(chan bool, len(p.Stages))
-
-	for _, stage := range p.Stages {
 		deps := stage.GetDependencies()
 		r := resultMap[stage.Name]
 
@@ -97,19 +94,18 @@ func (p *Pipeline) Run() ([]*Result, error) {
 				r.m.Unlock()
 			}
 
-			m <- true
+			done <- true
 		}(r, stage, deps)
 	}
 
 	for i := 0; i < len(p.Stages); i++ {
-		<-m
+		<-done
 	}
 
 	results := []*Result{}
 	for _, stage := range p.Stages {
 		r := resultMap[stage.Name]
 		results = append(results, r)
-
 	}
 
 	return results, nil
@@ -142,17 +138,6 @@ func (p *Pipeline) ExecuteStage(stage *Stage) (string, error) {
 	return s.Key, nil
 }
 
-func (s Stage) GetDependencies() []string {
-	deps := []string{}
-	for _, arg := range s.Arguments {
-		if strings.Contains(arg, "from:") {
-			argname := strings.Split(arg, "from:")[1]
-			deps = append(deps, argname)
-		}
-	}
-	return deps
-}
-
 func (p *Pipeline) GetResult(format string) string {
 	lastStage := p.Stages[len(p.Stages)-1]
 	res, _ := lastStage.Session.GetResult(p.Kompute, format)
@@ -182,16 +167,12 @@ func (s *Stage) GetFullFunctionName() string {
 }
 
 func (s *Stage) GetArguments() string {
-
 	str := ""
 	i := 0
-
 	for k, v := range s.Arguments {
-
 		if strings.Contains(v, "/") || strings.Contains(v, ".") {
 			v = "\"" + v + "\""
 		}
-
 		str = str + k + "=" + v
 		if i < len(s.Arguments)-1 {
 			str = str + "&"
@@ -200,6 +181,16 @@ func (s *Stage) GetArguments() string {
 	}
 
 	return str
+}
+func (s Stage) GetDependencies() []string {
+	deps := []string{}
+	for _, arg := range s.Arguments {
+		if strings.Contains(arg, "from:") {
+			argname := strings.Split(arg, "from:")[1]
+			deps = append(deps, argname)
+		}
+	}
+	return deps
 }
 
 func (s *Stage) Print() {
