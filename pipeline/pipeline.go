@@ -69,13 +69,7 @@ func (p *Pipeline) Run() ([]*Result, error) {
 		r := resultMap[stage.Name]
 
 		go func(r *Result, stage *Stage, deps []string) {
-			if len(deps) == 0 {
-				r.m.Lock()
-				r.Key, r.Error = p.ExecuteStage(stage)
-				r.c.Broadcast()
-				r.m.Unlock()
-
-			} else {
+			if len(deps) != 0 {
 				for _, dep := range deps {
 					r := resultMap[dep]
 					r.m.Lock()
@@ -87,12 +81,13 @@ func (p *Pipeline) Run() ([]*Result, error) {
 					stage.ReplaceArg(dep, r.Key)
 					r.m.Unlock()
 				}
-
-				r.m.Lock()
-				r.Key, r.Error = p.ExecuteStage(stage)
-				r.c.Broadcast()
-				r.m.Unlock()
 			}
+			r.m.Lock()
+			for r.Key == "" {
+				r.Key, r.Error = p.ExecuteStage(stage)
+			}
+			r.c.Broadcast()
+			r.m.Unlock()
 
 			done <- true
 		}(r, stage, deps)
