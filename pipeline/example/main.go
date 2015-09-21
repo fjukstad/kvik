@@ -18,7 +18,7 @@ func main() {
 
 	p := pipeline.NewPipeline("pied piper", k)
 
-	numStages := 50
+	numStages := 5
 
 	for i := 0; i < numStages; i++ {
 		name := "stage-" + strconv.Itoa(i)
@@ -28,15 +28,17 @@ func main() {
 		args := []string{"200", "400"}
 		s := pipeline.NewStage(name, function, pkg, argnames, args)
 		p.AddStage(s)
-	}
 
-	name := "final stage"
-	function := "+"
-	pkg := "base"
-	argnames := []string{"e1", "e2"}
-	args := []string{"from:stage-0", "from:stage-1"}
-	s := pipeline.NewStage(name, function, pkg, argnames, args)
-	p.AddStage(s)
+		if i > 0 {
+			name := "final stage"
+			function := "+"
+			pkg := "base"
+			argnames := []string{"e1", "e2"}
+			args := []string{"from:stage-" + strconv.Itoa(i-1), "from:stage-" + strconv.Itoa(i)}
+			s := pipeline.NewStage(name, function, pkg, argnames, args)
+			p.AddStage(s)
+		}
+	}
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
