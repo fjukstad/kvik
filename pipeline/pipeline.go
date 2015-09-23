@@ -1,28 +1,31 @@
 package pipeline
 
 import (
-	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strings"
 	"sync"
+
+	"gopkg.in/yaml.v2"
 
 	"github.com/fjukstad/kvik/kompute"
 )
 
 type Stage struct {
-	Name      string
-	Package   string
-	Function  string
-	Arguments map[string]string
-	Depends   []Stage
-	Session   *kompute.Session
+	Name      string            "name,omitempty"
+	Package   string            "package,omitempty"
+	Function  string            "function,omitempty"
+	Arguments map[string]string "arguments,omitempty"
+	Depends   []string          "depends,omitempty"
+	Session   *kompute.Session  "session,omitempty"
 }
 
 type Pipeline struct {
-	Name    string
-	Kompute *kompute.Kompute
-	Stages  []*Stage
+	Name    string           "name,omitempty"
+	Kompute *kompute.Kompute "kompute,omitempty"
+
+	Stages []*Stage "stages,omitempty"
 }
 
 func NewPipeline(name string, k *kompute.Kompute) Pipeline {
@@ -43,9 +46,25 @@ func NewStage(name, function, pkg string, argnames, args []string) Stage {
 		argmap[argname] = arg
 	}
 
-	s := Stage{name, pkg, function, argmap, []Stage{}, nil}
+	s := Stage{name, pkg, function, argmap, []string{}, nil}
 
 	return s
+}
+
+func ImportPipeline(filename string) (Pipeline, error) {
+	p := Pipeline{}
+
+	in, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return Pipeline{}, err
+	}
+
+	err = yaml.Unmarshal(in, &p)
+	if err != nil {
+		return Pipeline{}, err
+	}
+	return p, nil
+
 }
 
 type Result struct {
@@ -67,6 +86,7 @@ func (p *Pipeline) Run() ([]*Result, error) {
 
 		deps := stage.GetDependencies()
 		r := resultMap[stage.Name]
+		stage.Depends = deps
 
 		go func(r *Result, stage *Stage, deps []string) {
 			if len(deps) != 0 {
@@ -130,6 +150,8 @@ func (p *Pipeline) ExecuteStage(stage *Stage) (string, error) {
 			return "", err
 		}
 	}
+
+	stage.Session = s
 	return s.Key, nil
 }
 
@@ -140,12 +162,12 @@ func (p *Pipeline) GetResult(format string) string {
 }
 
 func (p *Pipeline) Save() error {
-	file, err := os.OpenFile(p.Name+".json", os.O_RDWR|os.O_CREATE, 0660)
+	file, err := os.OpenFile(p.Name+".yaml", os.O_RDWR|os.O_CREATE, 0660)
 	if err != nil {
 		return err
 	}
 
-	b, err := json.Marshal(p)
+	b, err := yaml.Marshal(p)
 	if err != nil {
 		return err
 	}
@@ -188,10 +210,28 @@ func (s Stage) GetDependencies() []string {
 	return deps
 }
 
+func (p *Pipeline) Print() {
+	for _, stage := range p.Stages {
+		stage.Print()
+		fmt.Println()
+	}
+}
+
+func (p *Pipeline) Results(resultType string) (string, error) {
+	stage := p.Stages[len(p.Stages)-1]
+
+	if resultType == "png" || resultType == "pdf" {
+		return "", stage.Session.DownloadPlot(resultType, p.Name+"."+resultType)
+	}
+
+	return stage.Session.GetResult(p.Kompute, resultType)
+}
+
 func (s *Stage) Print() {
 	fmt.Println("\tName:", s.Name)
 	fmt.Println("\tPackage", s.Package)
 	fmt.Println("\tFunction", s.Function)
+	fmt.Println("\tDepends on:", s.Depends)
 	fmt.Println("\tArguments:")
 	for k, v := range s.Arguments {
 		fmt.Println("\t\t", k, "\t", v)
@@ -200,5 +240,4 @@ func (s *Stage) Print() {
 		fmt.Println("\tSession: ", s.Session.Key)
 		fmt.Println("\tURL: /ocpu/tmp/" + s.Session.Key + "/R/")
 	}
-
 }

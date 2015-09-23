@@ -1,0 +1,24 @@
+name: x-y plot
+stages:
+- name: x-numbers
+  package: stats
+  function: rnorm
+  arguments:
+    mean: 50
+    n: 100
+    sd: 10
+
+- name: y-numbers
+  package: stats
+  function: rnorm
+  arguments:
+    mean: 0
+    n: 100
+    sd: 10
+      
+- name: plot
+  package: graphics
+  function: plot
+  arguments:
+    x: from:x-numbers
+    y: from:y-numbers

@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"runtime"
-	"strconv"
 
 	"github.com/fjukstad/kvik/kompute"
 	"github.com/fjukstad/kvik/pipeline"
@@ -15,30 +14,13 @@ func main() {
 	password := "password"
 
 	k := kompute.NewKompute(addr, username, password)
-
-	p := pipeline.NewPipeline("pied piper", k)
-
-	numStages := 5
-
-	for i := 0; i < numStages; i++ {
-		name := "stage-" + strconv.Itoa(i)
-		function := "+"
-		pkg := "base"
-		argnames := []string{"e1", "e2"}
-		args := []string{"200", "400"}
-		s := pipeline.NewStage(name, function, pkg, argnames, args)
-		p.AddStage(s)
-
-		if i > 0 {
-			name := "final stage"
-			function := "+"
-			pkg := "base"
-			argnames := []string{"e1", "e2"}
-			args := []string{"from:stage-" + strconv.Itoa(i-1), "from:stage-" + strconv.Itoa(i)}
-			s := pipeline.NewStage(name, function, pkg, argnames, args)
-			p.AddStage(s)
-		}
+	p, err := pipeline.ImportPipeline("pipeline.yaml")
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
+
+	p.Kompute = k
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
@@ -53,5 +35,12 @@ func main() {
 
 	p.Save()
 
-	fmt.Println("done")
+	p.Print()
+
+	_, err = p.Results("png")
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
 }
