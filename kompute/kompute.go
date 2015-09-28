@@ -31,6 +31,10 @@ func (k *Kompute) Plot(fun, args, filetype, filename string) error {
 		return err
 	}
 
+	return s.DownloadPlot(filetype, filename)
+}
+
+func (s *Session) DownloadPlot(filetype, filename string) error {
 	url := s.Graphics + "/" + filetype
 	resp, err := http.Get(url)
 
@@ -64,8 +68,6 @@ func (k *Kompute) Rpc(fun, args, format string) (string, error) {
 	s, err := k.Call(fun, args)
 
 	if err != nil {
-
-		fmt.Println("Call error != nil", err)
 		s, err = k.Call(fun, args)
 		if err != nil {
 			fmt.Println("failed a second time...", err)
@@ -165,6 +167,10 @@ func (k *Kompute) Call(fun, args string) (s *Session, err error) {
 }
 
 func (k *Kompute) getUrl(fun string) string {
+	if strings.Contains(fun, "github.com") {
+		fun = strings.TrimLeft(fun, "github.com/")
+		return k.Addr + "/ocpu/github/" + fun
+	}
 	return k.Addr + "/ocpu/library/" + fun
 }
 
@@ -239,9 +245,6 @@ func (s *Session) GetResult(k *Kompute, format string) (string, error) {
 	}
 
 	if resp.StatusCode != 200 {
-		fmt.Println(url)
-		fmt.Println(req)
-		fmt.Println(resp)
 		error, _ := ioutil.ReadAll(resp.Body)
 		errorText := string(error)
 		fmt.Println("Status code not 200 in GetResult", string(error))
