@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"runtime"
 
@@ -9,12 +10,17 @@ import (
 )
 
 func main() {
-	addr := "192.168.99.100:8004"
+	//addr := "192.168.99.100:8004"
+	addr := "public.opencpu.org"
 	username := "user"
 	password := "password"
 
+	var filename = flag.String("pipeline", "pipeline.yaml", "the pipeline description")
+
+	flag.Parse()
+
 	k := kompute.NewKompute(addr, username, password)
-	p, err := pipeline.ImportPipeline("pipeline.yaml")
+	p, err := pipeline.ImportPipeline(*filename)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -24,13 +30,9 @@ func main() {
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	res, err := p.Run()
+	_, err = p.Run()
 	if err != nil {
 		fmt.Println(err)
-	}
-
-	for _, r := range res {
-		fmt.Println(r.Key)
 	}
 
 	p.Save()

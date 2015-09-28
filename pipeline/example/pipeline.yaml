@@ -4,18 +4,18 @@ stages:
   package: stats
   function: rnorm
   arguments:
-    mean: 50
     n: 100
+    mean: 50
     sd: 10
 
 - name: y-numbers
   package: stats
   function: rnorm
   arguments:
-    mean: 0
     n: 100
+    mean: 0
     sd: 10
-      
+
 - name: plot
   package: graphics
   function: plot
