@@ -19,13 +19,13 @@ type Stage struct {
 	Arguments map[string]string "arguments,omitempty"
 	Depends   []string          "depends,omitempty"
 	Session   *kompute.Session  "session,omitempty"
+	Output    string            "output,omitempty"
 }
 
 type Pipeline struct {
 	Name    string           "name,omitempty"
 	Kompute *kompute.Kompute "kompute,omitempty"
-
-	Stages []*Stage "stages,omitempty"
+	Stages  []*Stage         "stages,omitempty"
 }
 
 func NewPipeline(name string, k *kompute.Kompute) Pipeline {
@@ -46,7 +46,7 @@ func NewStage(name, function, pkg string, argnames, args []string) Stage {
 		argmap[argname] = arg
 	}
 
-	s := Stage{name, pkg, function, argmap, []string{}, nil}
+	s := Stage{name, pkg, function, argmap, []string{}, nil, ""}
 
 	return s
 }
@@ -151,6 +151,8 @@ func (p *Pipeline) ExecuteStage(stage *Stage) (string, error) {
 		}
 	}
 
+	fmt.Println("Stage", stage.Name, "completed")
+
 	stage.Session = s
 	return s.Key, nil
 }
@@ -212,6 +214,8 @@ func (s Stage) GetDependencies() []string {
 
 func (p *Pipeline) Print() {
 	for _, stage := range p.Stages {
+		res, _ := p.Kompute.Get(stage.Session.Key, "")
+		stage.Output = string(res)
 		stage.Print()
 		fmt.Println()
 	}
@@ -239,5 +243,6 @@ func (s *Stage) Print() {
 	if s.Session != nil {
 		fmt.Println("\tSession: ", s.Session.Key)
 		fmt.Println("\tURL: /ocpu/tmp/" + s.Session.Key + "/R/")
+		fmt.Println("\tOutput:\n", s.Output)
 	}
 }
