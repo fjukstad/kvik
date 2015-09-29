@@ -129,7 +129,7 @@ func (p *Pipeline) Run() ([]*Result, error) {
 func (s *Stage) ReplaceArg(oldarg string, newarg string) {
 	for i, arg := range s.Arguments {
 		if strings.Contains(arg, oldarg) {
-			s.Arguments[i] = newarg
+			s.Arguments[i] = strings.Replace(s.Arguments[i], "from:"+oldarg, newarg, -1)
 			return
 		}
 	}
@@ -205,17 +205,35 @@ func (s Stage) GetDependencies() []string {
 	deps := []string{}
 	for _, arg := range s.Arguments {
 		if strings.Contains(arg, "from:") {
-			argname := strings.Split(arg, "from:")[1]
-			deps = append(deps, argname)
+			args := strings.Split(arg, "from:")
+			var argname string
+
+			// if argument is list of from: s
+			if len(args) > 2 {
+				for _, a := range args {
+					if len(a) > 1 {
+						a = strings.TrimRight(a, ",")
+						a = strings.TrimRight(a, "]")
+						deps = append(deps, a)
+					}
+				}
+			} else {
+				argname = strings.Split(arg, "from:")[1]
+				argname = strings.TrimRight(argname, "]")
+				deps = append(deps, argname)
+			}
 		}
 	}
+
 	return deps
 }
 
 func (p *Pipeline) Print() {
 	for _, stage := range p.Stages {
-		res, _ := p.Kompute.Get(stage.Session.Key, "")
-		stage.Output = string(res)
+		if stage.Session != nil {
+			res, _ := p.Kompute.Get(stage.Session.Key, "")
+			stage.Output = string(res)
+		}
 		stage.Print()
 		fmt.Println()
 	}
