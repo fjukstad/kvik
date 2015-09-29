@@ -24,9 +24,10 @@ func main() {
 	pkg := "github.com/fjukstad/boots"
 	argnames := []string{"nsamples", "class", "noisevars"}
 	args := []string{
-		"1050",
-		"T",
-		"9000",
+		//	"1050",
+		//	"T",
+		//	"9000",
+		"10", "T", "10",
 	}
 	s := pipeline.NewStage(name, function, pkg, argnames, args)
 	p.AddStage(s)
@@ -51,7 +52,7 @@ func main() {
 	s = pipeline.NewStage(name, function, pkg, argnames, args)
 	p.AddStage(s)
 
-	numBoots := 3
+	numBoots := 10
 
 	for i := 0; i < numBoots; i++ {
 		name = "boots-" + strconv.Itoa(i)
@@ -62,13 +63,28 @@ func main() {
 
 		s = pipeline.NewStage(name, function, pkg, argnames, args)
 		p.AddStage(s)
+
+		name = "results-" + strconv.Itoa(i)
+		pkg = "base"
+		if i > 1 {
+			function = "append"
+			argnames = []string{"x", "values"}
+			args = []string{"from:results-" + strconv.Itoa(i-1), "from:boots-" + strconv.Itoa(i)}
+		} else {
+			function = "as.vector"
+			argnames = []string{"x"}
+			args = []string{"from:boots-" + strconv.Itoa(i)}
+		}
+
+		s = pipeline.NewStage(name, function, pkg, argnames, args)
+		p.AddStage(s)
 	}
 
 	p.Run()
-
-	p.Print()
-	fmt.Println("done...")
-
+	//p.Print()
 	p.Save()
+
+	json, _ := p.Results("print")
+	fmt.Println("Final results: \n", json)
 
 }
