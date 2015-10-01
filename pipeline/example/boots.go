@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	addr := "192.168.99.100:8004"
+	addr := "192.168.99.100:32805"
 	//addr := "public.opencpu.org:80"
 	username := "user"
 	password := "password"
@@ -24,10 +24,10 @@ func main() {
 	pkg := "github.com/fjukstad/boots"
 	argnames := []string{"nsamples", "class", "noisevars"}
 	args := []string{
-		//	"1050",
-		//	"T",
-		//	"9000",
-		"10", "T", "10",
+		"1050",
+		"T",
+		"9000",
+		//"10", "T", "10",
 	}
 	s := pipeline.NewStage(name, function, pkg, argnames, args)
 	p.AddStage(s)
@@ -52,7 +52,7 @@ func main() {
 	s = pipeline.NewStage(name, function, pkg, argnames, args)
 	p.AddStage(s)
 
-	numBoots := 10
+	numBoots := 3
 
 	for i := 0; i < numBoots; i++ {
 		name = "boots-" + strconv.Itoa(i)
