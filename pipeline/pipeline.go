@@ -1,3 +1,4 @@
+// Package for building an execution pipeline and executing it.
 package pipeline
 
 import (
@@ -12,6 +13,14 @@ import (
 	"github.com/fjukstad/kvik/kompute"
 )
 
+// A pipeline stage.
+// Name: A unique name for each stage.
+// Function: Function name, e.g. plot.
+// Package: Which statistical package the function comes from, e.g. graphics for plot().
+// Arguments: A name:value map for arguments to the function.
+// Depends: List of stages it depends on.
+// Session: Reference to the OpenCPU session used to compute the results from this stage.
+// Output: String for storing output from pipeline stage execution.
 type Stage struct {
 	Name      string            "name,omitempty"
 	Package   string            "package,omitempty"
@@ -22,21 +31,28 @@ type Stage struct {
 	Output    string            "output,omitempty"
 }
 
+// The pipeline. A name, reference to an opencpu server and list of pipeline
+// stages.
 type Pipeline struct {
 	Name    string           "name,omitempty"
 	Kompute *kompute.Kompute "kompute,omitempty"
 	Stages  []*Stage         "stages,omitempty"
 }
 
+// Set up new pipeline with the given name and reference to kompute server
 func NewPipeline(name string, k *kompute.Kompute) Pipeline {
 	p := Pipeline{name, k, nil}
 	return p
 }
 
+// Appends a pipeline stage to to the end of the pipeline.
 func (p *Pipeline) AddStage(s Stage) {
 	p.Stages = append(p.Stages, &s)
 }
 
+// Creates a new pipeline stage. Argnames is an array of argument names, args
+// are the values for each of the arguments.  Assumes that argnames and args are
+// of the same length.
 func NewStage(name, function, pkg string, argnames, args []string) Stage {
 
 	argmap := make(map[string]string, 0)
@@ -50,6 +66,18 @@ func NewStage(name, function, pkg string, argnames, args []string) Stage {
 
 	return s
 }
+
+// Imports a pipeline from a pipeline description in yaml. It should follow this
+// format:
+//
+//	 name: PIPELINE NAME
+//	 stages:
+//	 - name: STAGE NAME
+//	   package: PACKAGE NAME
+//	   function: FUNCTION NAME
+//	   arguments:
+//	     ARGUMENT NAME: ARGUMENT VALUE
+//	     ...
 
 func ImportPipeline(filename string) (Pipeline, error) {
 	p := Pipeline{}
@@ -67,6 +95,8 @@ func ImportPipeline(filename string) (Pipeline, error) {
 
 }
 
+// For storing the result of a pipeline stage. Key can be used to retrieve
+// plots/results later using the kompute package.
 type Result struct {
 	m     *sync.Mutex
 	c     *sync.Cond
@@ -74,6 +104,9 @@ type Result struct {
 	Error error
 }
 
+// Exectues a pipeline. Uses a go routine per pipeline stage making it possible
+// to execute multiple stages simultaneously. Returns a list of results, one per
+// stage.
 func (p *Pipeline) Run() ([]*Result, error) {
 
 	resultMap := make(map[string]*Result, 0)
@@ -126,6 +159,7 @@ func (p *Pipeline) Run() ([]*Result, error) {
 	return results, nil
 }
 
+// Replace any "from:stage-name" argument values into opencpu references
 func (s *Stage) ReplaceArg(oldarg string, newarg string) {
 	for i, arg := range s.Arguments {
 		if strings.Contains(arg, oldarg) {
@@ -135,6 +169,7 @@ func (s *Stage) ReplaceArg(oldarg string, newarg string) {
 	}
 }
 
+// Executes a pipeline stage.
 func (p *Pipeline) ExecuteStage(stage *Stage) (string, error) {
 
 	args := stage.GetArguments()
@@ -157,12 +192,14 @@ func (p *Pipeline) ExecuteStage(stage *Stage) (string, error) {
 	return s.Key, nil
 }
 
+// Get the final result from the last stage in a pipeline.
 func (p *Pipeline) GetResult(format string) string {
 	lastStage := p.Stages[len(p.Stages)-1]
 	res, _ := lastStage.Session.GetResult(p.Kompute, format)
 	return res
 }
 
+// Stores a pipeline as a pipeline description yaml file.
 func (p *Pipeline) Save() error {
 	file, err := os.OpenFile(p.Name+".yaml", os.O_RDWR|os.O_CREATE, 0660)
 	if err != nil {
@@ -181,10 +218,13 @@ func (p *Pipeline) Save() error {
 	return nil
 }
 
+// Returns the full function name to be used with the kompute package.
 func (s *Stage) GetFullFunctionName() string {
 	return s.Package + "/R/" + s.Function
 }
 
+// Create a string of arguments for usage by the Call method in the kompute
+// package
 func (s *Stage) GetArguments() string {
 	str := ""
 	i := 0
@@ -201,6 +241,8 @@ func (s *Stage) GetArguments() string {
 
 	return str
 }
+
+// Returns all dependencies for a stage.
 func (s Stage) GetDependencies() []string {
 	deps := []string{}
 	for _, arg := range s.Arguments {
@@ -228,6 +270,7 @@ func (s Stage) GetDependencies() []string {
 	return deps
 }
 
+// Print a pipeline stage.
 func (p *Pipeline) Print() {
 	for _, stage := range p.Stages {
 		if stage.Session != nil {
@@ -239,16 +282,21 @@ func (p *Pipeline) Print() {
 	}
 }
 
+// Return pipeline results, i.e. result of last pipeline stage.
 func (p *Pipeline) Results(resultType string) (string, error) {
 	stage := p.Stages[len(p.Stages)-1]
 
 	if resultType == "png" || resultType == "pdf" {
-		return "", stage.Session.DownloadPlot(resultType, p.Name+"."+resultType)
+
+		a := "/Users/bjorn/Dropbox/go/src/github.com/fjukstad/kvik/pipeline/example/x-y/"
+
+		return "", stage.Session.DownloadPlot(resultType, a+p.Name+"."+resultType)
 	}
 
 	return stage.Session.GetResult(p.Kompute, resultType)
 }
 
+// Print a pipeline stage.
 func (s *Stage) Print() {
 	fmt.Println("\tName:", s.Name)
 	fmt.Println("\tPackage", s.Package)
