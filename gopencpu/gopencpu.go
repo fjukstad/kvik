@@ -1,4 +1,4 @@
-package kompute
+package gopencpu
 
 import (
 	"errors"
@@ -6,30 +6,37 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
-	//"time"
 )
 
-type Kompute struct {
+type GoOpenCPU struct {
 	Addr     string
 	Username string
 	Password string
 }
 
-func NewKompute(addr, username, password string) *Kompute {
-	komp := new(Kompute)
-	komp.Addr = "http://" + addr
-	komp.Username = username
-	komp.Password = password
-	return komp
+// Initializes gopencpu instance located at addr using the username/password
+// combination.
+func NewGoOpenCPU(addr, username, password string) *GoOpenCPU {
+	opencpu := new(GoOpenCPU)
+	opencpu.Addr = "http://" + addr
+	opencpu.Username = username
+	opencpu.Password = password
+	return opencpu
 }
 
-// Plots and stores to file
-func (k *Kompute) Plot(fun, args, filetype, filename string) error {
-	s, err := k.Call(fun, args)
+// Executes a plotting function, downloads the plot and stores it with the
+// given filename
+func (g *GoOpenCPU) Plot(fun, args, filetype, filename string) error {
+	s, err := g.Call(fun, args)
 	if err != nil {
 		return err
 	}
 
+	return s.DownloadPlot(filetype, filename)
+}
+
+// Downloads a plot from a running session and stores it with the given filename
+func (s *Session) DownloadPlot(filetype, filename string) error {
 	url := s.Graphics + "/" + filetype
 	resp, err := http.Get(url)
 
@@ -56,16 +63,14 @@ func (k *Kompute) Plot(fun, args, filetype, filename string) error {
 
 // Execcutes the command and returns the results formatted in the specified
 // format e.g. json or csv
-func (k *Kompute) Rpc(fun, args, format string) (string, error) {
+func (g *GoOpenCPU) Rpc(fun, args, format string) (string, error) {
 
 	//	fmt.Println("-H \"Content-Type: application/json\" -d '", args, "'")
 
-	s, err := k.Call(fun, args)
+	s, err := g.Call(fun, args)
 
 	if err != nil {
-
-		fmt.Println("Call error != nil", err)
-		s, err = k.Call(fun, args)
+		s, err = g.Call(fun, args)
 		if err != nil {
 			fmt.Println("failed a second time...", err)
 			return "", err
@@ -75,17 +80,19 @@ func (k *Kompute) Rpc(fun, args, format string) (string, error) {
 
 	//	time.Sleep(100 * time.Millisecond)
 
-	res, err := s.GetResult(k, format)
+	res, err := s.GetResult(g, format)
 	if err != nil {
-		res, err = s.GetResult(k, format)
+		res, err = s.GetResult(g, format)
 		fmt.Println("Get result error second time ")
 	}
 	return res, err
 }
 
-func (k *Kompute) Call(fun, args string) (s *Session, err error) {
+// Executes the functions with the given arguments. Returns as session which can
+// be used to get the output and plots etc. from.
+func (g *GoOpenCPU) Call(fun, args string) (s *Session, err error) {
 
-	url := k.getUrl(fun)
+	url := g.getUrl(fun)
 	postArgs := strings.NewReader(args)
 
 	fmt.Println(url, postArgs)
@@ -97,14 +104,24 @@ func (k *Kompute) Call(fun, args string) (s *Session, err error) {
 		return nil, err
 	}
 
+	var contentType string
+	if strings.Contains(args, "{") {
+		contentType = "application/json"
+	} else {
+		contentType = "application/x-www-form-urlencoded"
+	}
+
 	header := map[string][]string{
-		"Content-Type": {"application/json"},
+		"Content-Type": {contentType},
 	}
 
 	req.Header = header
-	req.SetBasicAuth(k.Username, k.Password)
+	req.SetBasicAuth(g.Username, g.Password)
 
-	resp, err := client.Do(req)
+	defer req.Body.Close()
+
+	var resp *http.Response
+	resp, err = client.Do(req)
 
 	//resp, err := http.Post(url, "application/json", postArgs)
 	if err != nil {
@@ -113,6 +130,7 @@ func (k *Kompute) Call(fun, args string) (s *Session, err error) {
 	}
 
 	fmt.Println("OpenCPU cache", resp.Header.Get("X-ocpu-cache"))
+	//defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -134,19 +152,19 @@ func (k *Kompute) Call(fun, args string) (s *Session, err error) {
 	for _, line := range output {
 		switch {
 		case strings.Contains(line, ".val"):
-			s.val = k.Addr + line
+			s.val = g.Addr + line
 		case strings.Contains(line, "stdout"):
-			s.stdout = k.Addr + line
+			s.stdout = g.Addr + line
 		case strings.Contains(line, "source"):
-			s.source = k.Addr + line
+			s.source = g.Addr + line
 		case strings.Contains(line, "info"):
-			s.info = k.Addr + line
+			s.info = g.Addr + line
 		case strings.Contains(line, "DESCRIPTION"):
-			s.description = k.Addr + line
+			s.description = g.Addr + line
 		case strings.Contains(line, "console"):
-			s.console = k.Addr + line
+			s.console = g.Addr + line
 		case strings.Contains(line, "graphics"):
-			s.Graphics = k.Addr + line
+			s.Graphics = g.Addr + line
 		}
 	}
 
@@ -154,16 +172,22 @@ func (k *Kompute) Call(fun, args string) (s *Session, err error) {
 
 }
 
-func (k *Kompute) getUrl(fun string) string {
-	return k.Addr + "/ocpu/library/" + fun
+func (g *GoOpenCPU) getUrl(fun string) string {
+	if strings.Contains(fun, "github.com") {
+		fun = strings.TrimLeft(fun, "github.com/")
+		return g.Addr + "/ocpu/github/" + fun
+	}
+	return g.Addr + "/ocpu/library/" + fun
 }
 
-func (k *Kompute) Get(key, filetype string) ([]byte, error) {
+// Returns any output files that was generated by the session with the given
+// key. Examples of filetypes are pdf, csv, png.
+func (g *GoOpenCPU) Get(key, filetype string) ([]byte, error) {
 	var url string
 	if strings.Contains(filetype, "png") || strings.Contains(filetype, "pdf") {
-		url = k.Addr + "/ocpu/tmp/" + key + "/graphics/last/" + filetype
+		url = g.Addr + "/ocpu/tmp/" + key + "/graphics/last/" + filetype
 	} else {
-		url = k.Addr + "/ocpu/tmp/" + key + "/R/.val/" + filetype
+		url = g.Addr + "/ocpu/tmp/" + key + "/R/.val/" + filetype
 	}
 
 	client := &http.Client{}
@@ -173,7 +197,7 @@ func (k *Kompute) Get(key, filetype string) ([]byte, error) {
 		return nil, err
 	}
 
-	req.SetBasicAuth(k.Username, k.Password)
+	req.SetBasicAuth(g.Username, g.Password)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -189,6 +213,8 @@ func (k *Kompute) Get(key, filetype string) ([]byte, error) {
 	return body, err
 }
 
+// The OpenCPU session. Read more about it at
+// https://www.opencpu.org/api.html#api-session
 type Session struct {
 	Key         string
 	Url         string
@@ -202,11 +228,13 @@ type Session struct {
 	source      string
 }
 
+// Get url for OpenCPU session. Format is fileformat, e.g. json
 func (s *Session) GetUrl(format string) (url string) {
 	return s.val + "/" + format
 }
 
-func (s *Session) GetResult(k *Kompute, format string) (string, error) {
+// Fetches the result from a Session in the given format.
+func (s *Session) GetResult(g *GoOpenCPU, format string) (string, error) {
 	url := s.GetUrl(format)
 
 	client := &http.Client{}
@@ -224,7 +252,7 @@ func (s *Session) GetResult(k *Kompute, format string) (string, error) {
 	}
 
 	req.Header = header
-	req.SetBasicAuth(k.Username, k.Password)
+	req.SetBasicAuth(g.Username, g.Password)
 
 	resp, err := client.Do(req)
 
@@ -234,9 +262,6 @@ func (s *Session) GetResult(k *Kompute, format string) (string, error) {
 	}
 
 	if resp.StatusCode != 200 {
-		fmt.Println(url)
-		fmt.Println(req)
-		fmt.Println(resp)
 		error, _ := ioutil.ReadAll(resp.Body)
 		errorText := string(error)
 		fmt.Println("Status code not 200 in GetResult", string(error))
