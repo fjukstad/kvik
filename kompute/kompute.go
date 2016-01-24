@@ -108,8 +108,11 @@ func (k *Kompute) Call(fun, args string) (s *Session, err error) {
 
 	//resp, err := http.Post(url, "application/json", postArgs)
 	if err != nil {
+		fmt.Println("call failed", err)
 		return nil, err
 	}
+
+	fmt.Println("OpenCPU cache", resp.Header.Get("X-ocpu-cache"))
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -177,7 +180,12 @@ func (k *Kompute) Get(key, filetype string) ([]byte, error) {
 		fmt.Println("Could not get", err)
 		return nil, err
 	}
+
 	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Could not read from body", err)
+	}
+
 	return body, err
 }
 
