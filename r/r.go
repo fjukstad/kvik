@@ -18,7 +18,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fjukstad/r"
 	"github.com/gorilla/mux"
 )
 
@@ -206,7 +205,7 @@ type Server struct {
 func (s *Server) Call(pkg, fun, args string) (string, error) {
 	url := "http://" + s.Addr + "/call"
 
-	c := R.RCall{pkg, fun, args}
+	c := RCall{pkg, fun, args}
 
 	b, err := json.Marshal(c)
 	if err != nil {
