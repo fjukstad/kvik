@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"os"
@@ -30,10 +31,48 @@ type RCall struct {
 	Arguments string
 }
 
-func Init(dir string) {
+func Init(dir, packages string) error {
 	r = rand.New(rand.NewSource(time.Now().UnixNano()))
 	rootDir = dir
-	return
+
+	if packages != "" {
+		err := installPackages(packages)
+		return err
+	}
+	return nil
+}
+
+// Installs the given packages on the server. packages is a space
+// separated list with the packages.
+func installPackages(packages string) error {
+	cmd := exec.Command("R", "-q", "-e", "install.packages(c("+packages+"),  repos='http://cran.us.r-project.org')")
+
+	var out bytes.Buffer
+	cmd.Stdout = &out
+
+	fmt.Println(out.String())
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println("Could not install packages:", out.String())
+		return err
+	}
+	return nil
+}
+
+func InstallPackageFromSource(src string) (string, error) {
+
+	cmd := exec.Command("R", "CMD", "INSTALL", src)
+
+	var out bytes.Buffer
+	cmd.Stdout = &out
+
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println("Could not install local package:", out.String())
+		return "", err
+	}
+	return out.String(), nil
+
 }
 
 // Executes function. Returns tmp key for use in Get
@@ -62,30 +101,34 @@ func Call(pkg, fun, args string) (*Session, error) {
 	// calls before running cmd
 
 	argList := strings.Split(args, ",")
-	finalArgs := []string{}
 	loadArgs := []string{}
 
-	for _, arg := range argList {
-		argName := strings.Split(arg, "=")[0]
-		argVal := strings.Split(arg, "=")[1]
-		if strings.HasPrefix(argVal, ".s") {
-			loadArgs = append(loadArgs, "load('"+rootDir+"/"+argVal+"/.RData');")
+	if argList[0] != "" {
+		finalArgs := []string{}
 
-			argVal = strings.TrimPrefix(argVal, ".")
+		for _, arg := range argList {
+			argName := strings.Split(arg, "=")[0]
+			argVal := strings.Split(arg, "=")[1]
+			if strings.HasPrefix(argVal, ".s") {
+				loadArgs = append(loadArgs, "load('"+rootDir+"/"+argVal+"/.RData');")
 
+				argVal = strings.TrimPrefix(argVal, ".")
+
+			}
+			finalArgs = append(finalArgs, argName+"="+argVal)
 		}
-		finalArgs = append(finalArgs, argName+"="+argVal)
+
+		args = strings.Join(finalArgs, ",")
 	}
 
-	args = strings.Join(finalArgs, ",")
 	varName := strings.TrimPrefix(key, ".")
-
 	command := varName + "=" + pkg + "::" + fun + "(" + args + "); " + varName
 
 	if len(loadArgs) > 0 {
 		loadString := strings.Join(loadArgs, "")
 		command = loadString + command
 	}
+
 	cmd := exec.Command("R", "--save", "-q", "-e", command)
 	cmd.Dir = wd
 
