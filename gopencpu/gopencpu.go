@@ -16,7 +16,7 @@ type GoOpenCPU struct {
 
 // Initializes gopencpu instance located at addr using the username/password
 // combination.
-func NewGoOpenCPU(addr, username, password string) *GoOpenCPU {
+func NewConnection(addr, username, password string) *GoOpenCPU {
 	opencpu := new(GoOpenCPU)
 	opencpu.Addr = "http://" + addr
 	opencpu.Username = username

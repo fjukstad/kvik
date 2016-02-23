@@ -10,7 +10,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/fjukstad/kvik/kompute"
+	"github.com/fjukstad/kvik/gopencpu"
 )
 
 // A pipeline stage.
@@ -27,20 +27,20 @@ type Stage struct {
 	Function  string            "function,omitempty"
 	Arguments map[string]string "arguments,omitempty"
 	Depends   []string          "depends,omitempty"
-	Session   *kompute.Session  "session,omitempty"
+	Session   *gopencpu.Session "session,omitempty"
 	Output    string            "output,omitempty"
 }
 
 // The pipeline. A name, reference to an opencpu server and list of pipeline
 // stages.
 type Pipeline struct {
-	Name    string           "name,omitempty"
-	Kompute *kompute.Kompute "kompute,omitempty"
-	Stages  []*Stage         "stages,omitempty"
+	Name      string              "name,omitempty"
+	GoOpenCPU *gopencpu.GoOpenCPU "gopencpu,omitempty"
+	Stages    []*Stage            "stages,omitempty"
 }
 
-// Set up new pipeline with the given name and reference to kompute server
-func NewPipeline(name string, k *kompute.Kompute) Pipeline {
+// Set up new pipeline with the given name and reference to gopencpu server
+func NewPipeline(name string, k *gopencpu.GoOpenCPU) Pipeline {
 	p := Pipeline{name, k, nil}
 	return p
 }
@@ -96,7 +96,7 @@ func ImportPipeline(filename string) (Pipeline, error) {
 }
 
 // For storing the result of a pipeline stage. Key can be used to retrieve
-// plots/results later using the kompute package.
+// plots/results later using the gopencpu package.
 type Result struct {
 	m     *sync.Mutex
 	c     *sync.Cond
@@ -159,6 +159,36 @@ func (p *Pipeline) Run() ([]*Result, error) {
 	return results, nil
 }
 
+func (p *Pipeline) RunSequential() ([]*Result, error) {
+	resultMap := make(map[string]*Result, 0)
+
+	for _, stage := range p.Stages {
+		resultMap[stage.Name] = &Result{nil, nil, "", nil}
+
+		deps := stage.GetDependencies()
+		r := resultMap[stage.Name]
+
+		for _, dep := range deps {
+			r := resultMap[dep]
+			stage.ReplaceArg(dep, r.Key)
+		}
+
+		for r.Key == "" {
+			r.Key, r.Error = p.ExecuteStage(stage)
+		}
+
+	}
+
+	results := []*Result{}
+	for _, stage := range p.Stages {
+		r := resultMap[stage.Name]
+		results = append(results, r)
+	}
+
+	return results, nil
+
+}
+
 // Replace any "from:stage-name" argument values into opencpu references
 func (s *Stage) ReplaceArg(oldarg string, newarg string) {
 	for i, arg := range s.Arguments {
@@ -175,10 +205,10 @@ func (p *Pipeline) ExecuteStage(stage *Stage) (string, error) {
 	args := stage.GetArguments()
 	fun := stage.GetFullFunctionName()
 
-	s, err := p.Kompute.Call(fun, args)
+	s, err := p.GoOpenCPU.Call(fun, args)
 
 	if err != nil {
-		s, err = p.Kompute.Call(fun, args)
+		s, err = p.GoOpenCPU.Call(fun, args)
 
 		if err != nil {
 			fmt.Println("ERROR", err)
@@ -195,7 +225,7 @@ func (p *Pipeline) ExecuteStage(stage *Stage) (string, error) {
 // Get the final result from the last stage in a pipeline.
 func (p *Pipeline) GetResult(format string) string {
 	lastStage := p.Stages[len(p.Stages)-1]
-	res, _ := lastStage.Session.GetResult(p.Kompute, format)
+	res, _ := lastStage.Session.GetResult(p.GoOpenCPU, format)
 	return res
 }
 
@@ -218,12 +248,12 @@ func (p *Pipeline) Save() error {
 	return nil
 }
 
-// Returns the full function name to be used with the kompute package.
+// Returns the full function name to be used with the gopencpu package.
 func (s *Stage) GetFullFunctionName() string {
 	return s.Package + "/R/" + s.Function
 }
 
-// Create a string of arguments for usage by the Call method in the kompute
+// Create a string of arguments for usage by the Call method in the gopencpu
 // package
 func (s *Stage) GetArguments() string {
 	str := ""
@@ -274,7 +304,7 @@ func (s Stage) GetDependencies() []string {
 func (p *Pipeline) Print() {
 	for _, stage := range p.Stages {
 		if stage.Session != nil {
-			res, _ := p.Kompute.Get(stage.Session.Key, "")
+			res, _ := p.GoOpenCPU.Get(stage.Session.Key, "")
 			stage.Output = string(res)
 		}
 		stage.Print()
@@ -293,7 +323,7 @@ func (p *Pipeline) Results(resultType string) (string, error) {
 		return "", stage.Session.DownloadPlot(resultType, a+p.Name+"."+resultType)
 	}
 
-	return stage.Session.GetResult(p.Kompute, resultType)
+	return stage.Session.GetResult(p.GoOpenCPU, resultType)
 }
 
 // Print a pipeline stage.
