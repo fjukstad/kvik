@@ -143,11 +143,8 @@ func Call(pkg, fun, args string) (*Session, error) {
 	cmd.Stdout = &out
 
 	err = cmd.Run()
-	if err != nil {
-		return nil, err
-	}
 
-	return &Session{key, wd, out.String(), command}, nil
+	return &Session{key, wd, out.String(), command}, err
 }
 
 // get results for a func call
@@ -155,12 +152,11 @@ func Get(key, format string) ([]byte, error) {
 
 	dir := rootDir + "/" + key
 	err := os.Chdir(dir)
-
-	varName := strings.TrimPrefix(key, ".")
-
 	if err != nil {
 		return nil, err
 	}
+
+	varName := strings.TrimPrefix(key, ".")
 
 	extension := "." + format
 	_, err = os.Stat("output" + extension)
@@ -188,6 +184,7 @@ func Get(key, format string) ([]byte, error) {
 	err = cmd.Run()
 
 	if err != nil {
+		fmt.Println("ERROR", out.String())
 		return nil, err
 	}
 
@@ -303,6 +300,7 @@ func CallHandler(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		fmt.Fprintf(w, "Call failed %s", err)
 		fmt.Println(err)
 		return
 	}
@@ -310,6 +308,7 @@ func CallHandler(w http.ResponseWriter, r *http.Request) {
 	call := RCall{}
 	err = json.Unmarshal(body, &call)
 	if err != nil {
+		fmt.Fprintf(w, "Call failed. %s", body)
 		fmt.Println(err)
 		return
 	}
@@ -330,7 +329,9 @@ func CallHandler(w http.ResponseWriter, r *http.Request) {
 
 	s, err := Call(call.Package, call.Function, call.Arguments)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("ERROR", err)
+		fmt.Println(s.Output)
+		fmt.Fprintf(w, "Call failed. %s returned %s", s.Output, err)
 		return
 	}
 
@@ -356,6 +357,7 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		fmt.Println(err)
+		fmt.Println(string(res))
 		w.Write([]byte(err.Error()))
 		return
 	}
