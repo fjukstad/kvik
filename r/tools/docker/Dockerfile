@@ -7,7 +7,9 @@ RUN apt-get update && \
     gcc \
     gfortran \
     libreadline-dev \
-    perl 
+    perl \
+    vim \
+    xpdf 
 
 RUN echo 'deb http://cran.rstudio.com/bin/linux/debian jessie-cran3/' >> /etc/apt/sources.list && \
     apt-key adv --keyserver keys.gnupg.net --recv-key 381BA480 && \ 
