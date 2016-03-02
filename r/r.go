@@ -114,6 +114,15 @@ func Call(pkg, fun, args string) (*Session, error) {
 		finalArgs := []string{}
 
 		for _, arg := range argList {
+
+			// special case when we use a column vector as argument value
+			// e,g. d = c(2,1,3,4) only d=c(2, is added. we need to
+			// append the rest to get the full vector.
+			if len(strings.Split(arg, "=")) == 1 {
+				finalArgs[len(finalArgs)-1] = finalArgs[len(finalArgs)-1] + "," + arg
+				continue
+			}
+
 			argName := strings.Split(arg, "=")[0]
 			argVal := strings.Split(arg, "=")[1]
 			if strings.HasPrefix(argVal, ".s") {
@@ -166,11 +175,24 @@ func Get(key, format string) ([]byte, error) {
 
 	var command string
 	if format == "csv" {
-		command = "write.csv(" + varName + ", sep=',', file='output" + extension + "')"
+		command = "write.table(" + varName + ", sep=',', row.names=FALSE, file='output" + extension + "')"
 	} else if format == "json" {
 		command = "js=jsonlite::toJSON(" + varName + "); write(js, file='output" + extension + "')"
 	} else if format == "pdf" {
 		return ioutil.ReadFile(dir + "/Rplots.pdf")
+	} else if format == "png" {
+		cmd := exec.Command("pdftoppm", "-png", dir+"/Rplots.pdf", "plot")
+
+		var out bytes.Buffer
+		cmd.Stdout = &out
+
+		err := cmd.Run()
+		if err != nil {
+			fmt.Println("Could not convert rplot to png:", out.String())
+			return nil, err
+		}
+
+		return ioutil.ReadFile(dir + "/plot-1.png")
 	} else {
 		return nil, errors.New("Unknown format")
 	}
@@ -220,6 +242,10 @@ func (s *Server) Call(pkg, fun, args string) (string, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
+	}
+
+	if strings.Contains(string(body), "exit status 1") {
+		return "exit status 1", errors.New(string(body))
 	}
 
 	return string(body), nil
