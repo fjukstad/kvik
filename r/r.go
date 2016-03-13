@@ -43,6 +43,21 @@ func Init(dir, packages string) error {
 
 	if packages != "" {
 		err := installPackages(packages)
+		if err != nil {
+			fmt.Println("could not install packages")
+			return err
+		}
+	}
+
+	pkgs, err := InstalledPackages()
+	if err != nil {
+		fmt.Println("Could not get installed packages")
+		return err
+	}
+
+	err = ioutil.WriteFile(dir+"/r-packages.json", pkgs, 0755)
+	if err != nil {
+		fmt.Println("Could not write r packages file")
 		return err
 	}
 	return nil
@@ -212,6 +227,50 @@ func Get(key, format string) ([]byte, error) {
 
 	return ioutil.ReadFile(dir + "/output" + extension)
 
+}
+
+func InstalledPackages() ([]byte, error) {
+
+	pkg := "utils"
+	fun := "installed.packages"
+	args := ""
+
+	s, err := Call(pkg, fun, args)
+	if err != nil {
+		fmt.Println("could not get installed packages")
+		return nil, err
+	}
+
+	pkg = "base"
+	fun = "as.data.frame"
+	args = "x=" + s.Key
+
+	s, err = Call(pkg, fun, args)
+	if err != nil {
+		fmt.Println("could not get installed packages")
+		return nil, err
+	}
+
+	return Get(s.Key, "json")
+}
+
+type PackageInfo struct {
+	Package               string
+	LibPath               string
+	Version               string
+	Priority              string
+	Depends               string
+	Imports               string
+	LinkingTo             string
+	Suggests              string
+	Enhances              string
+	Licence               string
+	License_is_FOSS       string
+	Licence_restricts_use string
+	OS_type               string
+	MD5sum                string
+	NeedsCompilation      string
+	Built                 string
 }
 
 type Server struct {
