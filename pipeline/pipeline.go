@@ -10,7 +10,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/fjukstad/kvik/gopencpu"
+	"github.com/fjukstad/kvik/r"
 )
 
 // A pipeline stage.
@@ -27,21 +27,21 @@ type Stage struct {
 	Function  string            "function,omitempty"
 	Arguments map[string]string "arguments,omitempty"
 	Depends   []string          "depends,omitempty"
-	Session   *gopencpu.Session "session,omitempty"
+	Session   string            "session,omitempty"
 	Output    string            "output,omitempty"
 }
 
 // The pipeline. A name, reference to an opencpu server and list of pipeline
 // stages.
 type Pipeline struct {
-	Name      string              "name,omitempty"
-	GoOpenCPU *gopencpu.GoOpenCPU "gopencpu,omitempty"
-	Stages    []*Stage            "stages,omitempty"
+	Name    string    "name,omitempty"
+	RServer *r.Server "r-server,omitempty"
+	Stages  []*Stage  "stages,omitempty"
 }
 
 // Set up new pipeline with the given name and reference to gopencpu server
-func NewPipeline(name string, k *gopencpu.GoOpenCPU) Pipeline {
-	p := Pipeline{name, k, nil}
+func NewPipeline(name string, r *r.Server) Pipeline {
+	p := Pipeline{name, r, nil}
 	return p
 }
 
@@ -62,7 +62,7 @@ func NewStage(name, function, pkg string, argnames, args []string) Stage {
 		argmap[argname] = arg
 	}
 
-	s := Stage{name, pkg, function, argmap, []string{}, nil, ""}
+	s := Stage{name, pkg, function, argmap, []string{}, "", ""}
 
 	return s
 }
@@ -203,12 +203,11 @@ func (s *Stage) ReplaceArg(oldarg string, newarg string) {
 func (p *Pipeline) ExecuteStage(stage *Stage) (string, error) {
 
 	args := stage.GetArguments()
-	fun := stage.GetFullFunctionName()
 
-	s, err := p.GoOpenCPU.Call(fun, args)
+	s, err := p.RServer.Call(stage.Package, stage.Function, args)
 
 	if err != nil {
-		s, err = p.GoOpenCPU.Call(fun, args)
+		s, err = p.RServer.Call(stage.Package, stage.Function, args)
 
 		if err != nil {
 			fmt.Println("ERROR", err)
@@ -219,14 +218,14 @@ func (p *Pipeline) ExecuteStage(stage *Stage) (string, error) {
 	fmt.Println("Stage", stage.Name, "completed")
 
 	stage.Session = s
-	return s.Key, nil
+	return s, nil
 }
 
 // Get the final result from the last stage in a pipeline.
 func (p *Pipeline) GetResult(format string) string {
 	lastStage := p.Stages[len(p.Stages)-1]
-	res, _ := lastStage.Session.GetResult(p.GoOpenCPU, format)
-	return res
+	res, _ := p.RServer.Get(lastStage.Session, format)
+	return string(res)
 }
 
 // Stores a pipeline as a pipeline description yaml file.
@@ -248,11 +247,6 @@ func (p *Pipeline) Save() error {
 	return nil
 }
 
-// Returns the full function name to be used with the gopencpu package.
-func (s *Stage) GetFullFunctionName() string {
-	return s.Package + "/R/" + s.Function
-}
-
 // Create a string of arguments for usage by the Call method in the gopencpu
 // package
 func (s *Stage) GetArguments() string {
@@ -260,11 +254,11 @@ func (s *Stage) GetArguments() string {
 	i := 0
 	for k, v := range s.Arguments {
 		if strings.Contains(v, "/") || strings.Contains(v, ".") {
-			v = "\"" + v + "\""
+			v = "" + v + ""
 		}
 		str = str + k + "=" + v
 		if i < len(s.Arguments)-1 {
-			str = str + "&"
+			str = str + ","
 		}
 		i++
 	}
@@ -303,8 +297,8 @@ func (s Stage) GetDependencies() []string {
 // Print a pipeline stage.
 func (p *Pipeline) Print() {
 	for _, stage := range p.Stages {
-		if stage.Session != nil {
-			res, _ := p.GoOpenCPU.Get(stage.Session.Key, "")
+		if stage.Session != "" {
+			res, _ := p.RServer.Get(stage.Session, "")
 			stage.Output = string(res)
 		}
 		stage.Print()
@@ -313,17 +307,10 @@ func (p *Pipeline) Print() {
 }
 
 // Return pipeline results, i.e. result of last pipeline stage.
-func (p *Pipeline) Results(resultType string) (string, error) {
+func (p *Pipeline) Results(resultType string) ([]byte, error) {
 	stage := p.Stages[len(p.Stages)-1]
+	return p.RServer.Get(stage.Session, resultType)
 
-	if resultType == "png" || resultType == "pdf" {
-
-		a := "/Users/bjorn/Dropbox/go/src/github.com/fjukstad/kvik/pipeline/example/x-y/"
-
-		return "", stage.Session.DownloadPlot(resultType, a+p.Name+"."+resultType)
-	}
-
-	return stage.Session.GetResult(p.GoOpenCPU, resultType)
 }
 
 // Print a pipeline stage.
@@ -336,9 +323,5 @@ func (s *Stage) Print() {
 	for k, v := range s.Arguments {
 		fmt.Println("\t\t", k, "\t", v)
 	}
-	if s.Session != nil {
-		fmt.Println("\tSession: ", s.Session.Key)
-		fmt.Println("\tURL: /ocpu/tmp/" + s.Session.Key + "/R/")
-		fmt.Println("\tOutput:\n", s.Output)
-	}
+	fmt.Println("\tSession: ", s.Session)
 }

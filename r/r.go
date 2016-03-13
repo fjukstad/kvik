@@ -377,6 +377,31 @@ func (s *Server) UploadPackage(src string) error {
 	return nil
 }
 
+func (s *Server) InstalledPackages() ([]byte, error) {
+	pkg := "utils"
+	fun := "installed.packages"
+	args := ""
+
+	session, err := s.Call(pkg, fun, args)
+	if err != nil {
+		fmt.Println("could not get installed packages")
+		return nil, err
+	}
+
+	pkg = "base"
+	fun = "as.data.frame"
+	args = "x=" + session
+
+	session, err = s.Call(pkg, fun, args)
+	if err != nil {
+		fmt.Println("could not get installed packages")
+		return nil, err
+	}
+
+	return s.Get(session, "json")
+
+}
+
 var cache map[string]string
 var logTime = "02-01-2006 15:04:05.000"
 

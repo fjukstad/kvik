@@ -34,6 +34,7 @@ func main() {
 	_, err = p.Run()
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	p.Save()
@@ -44,8 +45,17 @@ func main() {
 
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	ioutil.WriteFile("output.pdf", re, 0755)
+
+	pkgs, err := s.InstalledPackages()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	ioutil.WriteFile("pkgs.json", pkgs, 0755)
 
 }
