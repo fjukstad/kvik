@@ -4,7 +4,7 @@ stages:
   package: stats
   function: rnorm
   arguments:
-    n: 100
+    n: 1000
     mean: 50
     sd: 10
 
@@ -12,7 +12,7 @@ stages:
   package: stats
   function: rnorm
   arguments:
-    n: 100
+    n: 1000
     mean: 0
     sd: 10
 
