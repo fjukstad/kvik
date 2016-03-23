@@ -66,7 +66,7 @@ func Init(dir, packages string) error {
 // Installs the given packages on the server. packages is a space
 // separated list with the packages.
 func installPackages(packages string) error {
-	cmd := exec.Command("R", "-q", "-e", "install.packages(c("+packages+"),  repos='http://cran.us.r-project.org')")
+	cmd := exec.Command("R", "-q", "-e", "install.packages(c("+packages+"),  repos='http://cran.us.r-project.org'), dependencies=TRUE")
 
 	var out bytes.Buffer
 	cmd.Stdout = &out
@@ -97,9 +97,7 @@ func InstallPackageFromSource(src string) (string, error) {
 
 }
 
-// Executes function. Returns tmp key for use in Get
-func Call(pkg, fun, args string) (*Session, error) {
-
+func newCall() (string, string, error) {
 	h := md5.New()
 	k := h.Sum([]byte(strconv.Itoa(r.Int())))
 
@@ -109,11 +107,23 @@ func Call(pkg, fun, args string) (*Session, error) {
 	wd := rootDir + "/" + key
 	err := os.MkdirAll(wd, 0755)
 	if err != nil {
-		return nil, err
+		return "", "", err
 	}
 
 	err = os.Chdir(wd)
 
+	if err != nil {
+		return "", "", err
+	}
+
+	return key, wd, nil
+
+}
+
+// Executes function. Returns tmp key for use in Get
+func Call(pkg, fun, args string) (*Session, error) {
+
+	key, wd, err := newCall()
 	if err != nil {
 		return nil, err
 	}
@@ -229,6 +239,83 @@ func Get(key, format string) ([]byte, error) {
 
 }
 
+func ScriptHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("script handler")
+	_, wd, err := newCall()
+	if err != nil {
+		fmt.Println("new call fail:", err)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	file, _, err := r.FormFile("file")
+	defer file.Close()
+
+	if err != nil {
+		fmt.Fprintln(w, err)
+		return
+	}
+
+	fmt.Println("workdir", wd)
+
+	fileLoc := wd + "/script.R"
+
+	out, err := os.Create(fileLoc)
+	if err != nil {
+		fmt.Fprintf(w, "Failed to open the file for writing")
+		return
+	}
+	defer out.Close()
+	_, err = io.Copy(out, file)
+	if err != nil {
+		fmt.Fprintln(w, err)
+		return
+	}
+
+	_, err = executeScript(wd)
+
+	cmd := exec.Command("zip", "-r", "-q", "output.zip", ".")
+	cmd.Dir = wd
+
+	var outbuffer bytes.Buffer
+	cmd.Stdout = &outbuffer
+
+	err = cmd.Run()
+
+	if err != nil {
+		fmt.Println("ERROR", outbuffer.String())
+		w.Write([]byte("Could not zip output file"))
+		return
+	}
+
+	http.ServeFile(w, r, "output.zip")
+
+	return
+
+}
+
+func executeScript(wd string) (string, error) {
+
+	filename := wd + "/script.R"
+
+	cmd := exec.Command("R", "--save", "-f", filename)
+	cmd.Dir = wd
+
+	fmt.Println(cmd)
+
+	var out bytes.Buffer
+	cmd.Stdout = &out
+
+	err := cmd.Run()
+
+	if err != nil {
+		fmt.Println("ERROR", out.String())
+		return "", err
+	}
+
+	return out.String(), nil
+}
+
 func InstalledPackages() ([]byte, error) {
 
 	pkg := "utils"
@@ -327,8 +414,9 @@ func (s *Server) Get(key, format string) ([]byte, error) {
 
 }
 
-// Uploads and installs package to remote R Server
-func (s *Server) UploadPackage(src string) error {
+// Uploads something to a  remote R Server. Something can be e.g. a package to
+// install or script to execute.
+func (s *Server) Upload(src, path string) error {
 	file, err := os.Open(src)
 	if err != nil {
 		return err
@@ -354,7 +442,7 @@ func (s *Server) UploadPackage(src string) error {
 		return err
 	}
 
-	url := "http://" + s.Addr + "/install"
+	url := "http://" + s.Addr + "/" + path
 
 	request, err := http.NewRequest("POST", url, body)
 	if err != nil {
@@ -532,6 +620,7 @@ func StartServer(port, tmpDir string) error {
 	r.HandleFunc("/call", CallHandler)
 	r.HandleFunc("/get/{key}/{format}", GetHandler)
 	r.HandleFunc("/install", InstallHandler)
+	r.HandleFunc("/script", ScriptHandler)
 
 	http.Handle("/", r)
 
