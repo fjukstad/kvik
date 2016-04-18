@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 
 	"github.com/fjukstad/kvik/r"
@@ -8,7 +9,9 @@ import (
 
 func main() {
 
-	port := ":8181"
-	err := r.StartServer(port, "/tmp/kvik")
+	port := flag.String("port", ":8181", "runs server on specified port")
+	path := flag.String("dir", "/tmp/kvik", "tmp dir")
+	flag.Parse()
+	err := r.StartServer(*port, *path)
 	fmt.Println(err)
 }

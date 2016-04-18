@@ -35,7 +35,7 @@ RUN mkdir -p /go/src/github.com/fjukstad
 
 VOLUME /go/src/github.com/fjukstad/kvik 
 
-EXPOSE 8181
+EXPOSE 80
 
 WORKDIR /go/src/github.com/fjukstad/kvik/r/tools
-#CMD go run server.go -packages "jsonlite"
+CMD go run server.go -port=":80" 

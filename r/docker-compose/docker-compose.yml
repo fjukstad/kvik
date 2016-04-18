@@ -1,0 +1,21 @@
+#data:
+#  build: /Users/bjorn/Dropbox/go/src/github.com/fjukstad/kvik/r/tools/docker/fileserver
+worker: 
+  build: /Users/bjorn/Dropbox/go/src/github.com/fjukstad/kvik/r/tools/docker/
+  expose: 
+    - "80" 
+  volumes:
+    - /tmp
+    - /Users/bjorn/Dropbox/go/src/github.com/fjukstad/kvik/:/go/src/github.com/fjukstad/kvik
+  volumes_from:
+    - data 
+haproxy:
+  image: tutum/haproxy
+  #build: /Users/bjorn/Dropbox/go/src/github.com/fjukstad/kvik/pipeline/docker/haproxy/
+  links:
+    - worker
+  ports:
+    - "80"
+    - "1936:1936"
+  environment:
+    - TIMEOUT=connect 5000, client 500000, server 500000
