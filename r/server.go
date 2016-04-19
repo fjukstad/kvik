@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math/rand"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -21,6 +22,9 @@ type Server struct {
 	Username string
 	Server   string
 }
+
+var cache map[string]string
+var cacheDir string
 
 // Remote call.
 func (s *Server) Call(pkg, fun, args string) (string, error) {
@@ -146,9 +150,6 @@ func (s *Server) InstalledPackages() ([]byte, error) {
 
 }
 
-var cache map[string]string
-var logTime = "02-01-2006 15:04:05.000"
-
 func CallHandler(w http.ResponseWriter, r *http.Request) {
 	printTime()
 
@@ -194,9 +195,52 @@ func CallHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cache[cacheKey] = s.Key
-
 	w.Write([]byte(s.Key))
 
+	writeCache()
+
+}
+
+type Cache struct {
+	Cache map[string]string
+}
+
+// Writes cache to disk.
+func writeCache() error {
+
+	filename := cacheDir + "/cache.json"
+
+	c := Cache{cache}
+	b, err := json.Marshal(c)
+	if err != nil {
+		fmt.Println("Could not marshal cache struct", err)
+		return err
+	}
+
+	err = ioutil.WriteFile(filename, b, 0755)
+	if err != nil {
+		fmt.Println("Could not write cache file", err)
+		return err
+	}
+	return nil
+}
+
+func readCache() error {
+	filename := cacheDir + "/cache.json"
+	b, err := ioutil.ReadFile(filename)
+	if err != nil {
+		fmt.Println("Could not read cachefile", err)
+		return err
+	}
+
+	c := Cache{}
+	err = json.Unmarshal(b, &c)
+	if err != nil {
+		fmt.Println("Could not unmarshal cache struct", err)
+		return err
+	}
+	cache = c.Cache
+	return nil
 }
 
 func GetHandler(w http.ResponseWriter, r *http.Request) {
@@ -260,11 +304,48 @@ func InstallHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func printTime() {
-	fmt.Print(time.Now().Format(logTime), " ")
+	fmt.Print(getTime(), " ")
+}
+
+var logTime = "02-01-2006 15:04:05.000"
+
+func getTime() string {
+	return time.Now().Format(logTime)
+}
+
+func initServer(dir, packages string) error {
+	r = rand.New(rand.NewSource(time.Now().UnixNano()))
+	rootDir = dir
+
+	if packages != "" {
+		err := installPackages(packages)
+		if err != nil {
+			fmt.Println("could not install packages")
+			return err
+		}
+	}
+
+	pkgs, err := InstalledPackages()
+	if err != nil {
+		fmt.Println("Could not get installed packages")
+		return err
+	}
+
+	err = ioutil.WriteFile(dir+"/r-packages.json", pkgs, 0755)
+	if err != nil {
+		fmt.Println("Could not write r packages file")
+		return err
+	}
+
+	err = readCache()
+	fmt.Println("Cache:", err)
+
+	return nil
 }
 
 func StartServer(port, tmpDir string) error {
-	err := Init("/tmp/kvik", "")
+	cacheDir = tmpDir
+	err := initServer(cacheDir, "")
 	if err != nil {
 		fmt.Println(err)
 		return err

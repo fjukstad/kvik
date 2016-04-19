@@ -14,7 +14,6 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
-	"time"
 )
 
 var r *rand.Rand
@@ -31,32 +30,6 @@ type RCall struct {
 	Package   string
 	Function  string
 	Arguments string
-}
-
-func Init(dir, packages string) error {
-	r = rand.New(rand.NewSource(time.Now().UnixNano()))
-	rootDir = dir
-
-	if packages != "" {
-		err := installPackages(packages)
-		if err != nil {
-			fmt.Println("could not install packages")
-			return err
-		}
-	}
-
-	pkgs, err := InstalledPackages()
-	if err != nil {
-		fmt.Println("Could not get installed packages")
-		return err
-	}
-
-	err = ioutil.WriteFile(dir+"/r-packages.json", pkgs, 0755)
-	if err != nil {
-		fmt.Println("Could not write r packages file")
-		return err
-	}
-	return nil
 }
 
 // Installs the given packages on the server. packages is a space
