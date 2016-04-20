@@ -76,53 +76,52 @@ func (s *Server) Get(key, format string) ([]byte, error) {
 
 // Uploads something to a  remote R Server. Something can be e.g. a package to
 // install or script to execute.
-func (s *Server) Upload(src, path string) error {
+func (s *Server) Upload(src, path string) ([]byte, error) {
 	file, err := os.Open(src)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	fileContents, err := ioutil.ReadAll(file)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	fi, err := file.Stat()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	file.Close()
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile("file", fi.Name())
 	if err != nil {
-		return err
+		return nil, err
 	}
 	part.Write(fileContents)
 	err = writer.Close()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	url := "http://" + s.Addr + "/" + path
 
 	request, err := http.NewRequest("POST", url, body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	request.Header.Add("Content-Type", writer.FormDataContentType())
 
 	client := &http.Client{}
 	resp, err := client.Do(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	responseBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	fmt.Println("Response:", string(responseBody))
-	return nil
+	return responseBody, nil
 }
 
 func (s *Server) InstalledPackages() ([]byte, error) {
