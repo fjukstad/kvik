@@ -1,0 +1,8 @@
+library(SparkR)
+Sys.setenv('SPARKR_SUBMIT_ARGS'='"--packages" "com.databricks:spark-csv_2.10:1.4.0" "sparkr-shell"')
+sc <- sparkR.init()
+sqlContext <- sparkRSQL.init(sc)
+df <- createDataFrame(sqlContext, iris)
+model <- glm(Sepal_Length ~ Sepal_Width + Species, data = df, family = "gaussian")
+predictions <- predict(model, newData=df) 
+write.df(predictions, "predictions", "com.databricks.spark.csv") 
