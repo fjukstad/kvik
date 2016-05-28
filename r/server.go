@@ -169,7 +169,7 @@ func CallHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("Call:", call.Package, call.Function, call.Arguments)
 
-	cacheKey := call.Package + call.Function + call.Arguments
+	cacheKey := call.Package + "::" + call.Function + "(" + call.Arguments + ")"
 
 	if cache[cacheKey] != "" {
 		printTime()
