@@ -104,9 +104,8 @@ function pathway(id, element, h, w){
                     // Click on pathway in vis
                     if(d.name.indexOf("path") >= 0){
                         var id = d.name.split("path:")[1];
-                        // if the pathway label was clicked show info panel
                         if(d.id < 1 || d.y == 58){ 
-                            pathwayInfo(id); 
+                            // TODO 
                         }
                         else { 
                             pathway(id, "content", 0, 0) 
@@ -119,7 +118,7 @@ function pathway(id, element, h, w){
                             return
                         } else { 
                             var url = "#" ;
-                             window.open(url, '_blank');
+                            //window.open(url, '_blank');
                         }
                     }
                 }) 
