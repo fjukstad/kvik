@@ -23,7 +23,7 @@ type Server struct {
 	Server   string
 }
 
-var cache map[string]string
+var cache map[string]CacheEntry
 var cacheDir string
 
 // Remote call.
@@ -170,11 +170,13 @@ func CallHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Call:", call.Package, call.Function, call.Arguments)
 
 	cacheKey := call.Package + "::" + call.Function + "(" + call.Arguments + ")"
+	entry := cache[cacheKey]
 
-	if cache[cacheKey] != "" {
+	if entry.Key != "" {
 		printTime()
 		fmt.Println("CACHE HIT")
-		w.Write([]byte(cache[cacheKey]))
+		ce := cache[cacheKey]
+		w.Write([]byte(ce.Key))
 		return
 	} else {
 		printTime()
@@ -190,10 +192,12 @@ func CallHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if cache == nil {
-		cache = make(map[string]string, 0)
+		cache = make(map[string]CacheEntry, 0)
 	}
 
-	cache[cacheKey] = s.Key
+	ce := CacheEntry{s.Key, s, time.Now(), r.RemoteAddr}
+
+	cache[cacheKey] = ce
 	w.Write([]byte(s.Key))
 
 	writeCache()
@@ -201,7 +205,14 @@ func CallHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 type Cache struct {
-	Cache map[string]string
+	Cache map[string]CacheEntry
+}
+
+type CacheEntry struct {
+	Key       string
+	Session   *Session
+	Timestamp time.Time
+	Caller    string
 }
 
 // Writes cache to disk.
