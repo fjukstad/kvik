@@ -311,17 +311,19 @@ func InstalledPackages() ([]byte, error) {
 
 	s, err := Call(pkg, fun, args)
 	if err != nil {
-		fmt.Println("could not get installed packages")
+		fmt.Println("Could not get installed packages")
+		fmt.Println(s.Output)
 		return nil, err
 	}
 
 	pkg = "base"
 	fun = "as.data.frame"
-	args = "x=" + s.Key
+	args = "x=" + s.Key + ",row.names=make.names(installed.packages(), unique=TRUE)"
 
 	s, err = Call(pkg, fun, args)
 	if err != nil {
-		fmt.Println("could not get installed packages")
+		fmt.Println("Could not get installed packages")
+		fmt.Println(s.Output)
 		return nil, err
 	}
 
