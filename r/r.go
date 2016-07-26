@@ -142,12 +142,24 @@ func Call(pkg, fun, args string) (*Session, error) {
 	cmd := exec.Command("R", "--save", "-q", "-e", command)
 	cmd.Dir = wd
 
-	var out bytes.Buffer
-	cmd.Stdout = &out
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
 
 	err = cmd.Run()
 
-	return &Session{key, wd, out.String(), command}, err
+	var output string
+	if err != nil {
+		output = stderr.String()
+		// remove kvik tmp key
+		output = strings.Replace(output, varName+"=", "", -1)
+	} else {
+		output = stdout.String()
+	}
+
+	return &Session{key, wd, output, command}, err
 }
 
 // get results for a func call
