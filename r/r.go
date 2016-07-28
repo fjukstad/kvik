@@ -2,8 +2,6 @@ package r
 
 import (
 	"bytes"
-	"crypto/md5"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -12,11 +10,10 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"strconv"
 	"strings"
 )
 
-var r *rand.Rand
+var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 var rootDir string
 
 type Session struct {
@@ -66,12 +63,17 @@ func InstallPackageFromSource(src string) (string, error) {
 
 }
 
-func newCall() (string, string, error) {
-	h := md5.New()
-	k := h.Sum([]byte(strconv.Itoa(r.Int())))
+func randSeq(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
+}
 
-	hash := hex.EncodeToString(k)
-	key := ".s" + hash
+func newCall() (string, string, error) {
+
+	key := "." + randSeq(5)
 
 	wd := rootDir + "/" + key
 	err := os.MkdirAll(wd, 0755)
@@ -116,18 +118,15 @@ func Call(pkg, fun, args string) (*Session, error) {
 				finalArgs[len(finalArgs)-1] = finalArgs[len(finalArgs)-1] + "," + arg
 				continue
 			}
-
 			argName := strings.Split(arg, "=")[0]
 			argVal := strings.Split(arg, "=")[1]
-			if strings.HasPrefix(argVal, ".s") {
+
+			if strings.HasPrefix(argVal, ".") {
 				loadArgs = append(loadArgs, "load('"+rootDir+"/"+argVal+"/.RData');")
-
 				argVal = strings.TrimPrefix(argVal, ".")
-
 			}
 			finalArgs = append(finalArgs, argName+"="+argVal)
 		}
-
 		args = strings.Join(finalArgs, ",")
 	}
 
