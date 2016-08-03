@@ -2,6 +2,8 @@ package gsea
 
 import (
 	"fmt"
+	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -17,12 +19,17 @@ func BriefDescription(geneset string) (briefdescription string, err error) {
 }
 
 func RetrieveFromGSEA(geneset, info string) (fromGSEA string, err error) {
-	url := "http://www.broadinstitute.org/gsea/msigdb/geneset_page.jsp?geneSetName=" + geneset
-	resp, err := gocache.Get(url)
+	URL := "http://www.broadinstitute.org/gsea/msigdb/geneset_page.jsp?geneSetName=" + geneset
+	resp, err := gocache.Get(URL)
 	if err != nil {
 		fmt.Println("Could not get abstract")
 		return "", err
 	}
+
+	//resp.Request.URL = url
+	resp.Request = &http.Request{}
+	u, _ := url.Parse(URL)
+	resp.Request.URL = u
 
 	doc, err := goquery.NewDocumentFromResponse(resp)
 	if err != nil {
