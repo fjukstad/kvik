@@ -324,9 +324,8 @@ func getTime() string {
 }
 
 func initServer(dir, packages string) error {
-	r = rand.New(rand.NewSource(time.Now().UnixNano()))
 	rootDir = dir
-
+	rand.Seed(time.Now().UTC().UnixNano())
 	if packages != "" {
 		err := installPackages(packages)
 		if err != nil {
