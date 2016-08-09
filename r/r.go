@@ -138,6 +138,10 @@ func Call(pkg, fun, args string) (*Session, error) {
 		command = loadString + command
 	}
 
+	// load desired package before calling function (makes sure
+	// that we load packages it depends on)
+	command = "library(" + pkg + ");" + command
+
 	cmd := exec.Command("R", "--save", "-q", "-e", command)
 	cmd.Dir = wd
 
@@ -188,12 +192,12 @@ func Get(key, format string) ([]byte, error) {
 	} else if format == "png" {
 		cmd := exec.Command("pdftoppm", "-png", dir+"/Rplots.pdf", "plot")
 
-		var out bytes.Buffer
-		cmd.Stdout = &out
+		var stderr bytes.Buffer
+		cmd.Stderr = &stderr
 
 		err := cmd.Run()
 		if err != nil {
-			fmt.Println("Could not convert rplot to png:", out.String())
+			fmt.Println("Could not convert rplot to png:", stderr.String())
 			return nil, err
 		}
 
@@ -205,14 +209,13 @@ func Get(key, format string) ([]byte, error) {
 	cmd := exec.Command("R", "--save", "-q", "-e", command)
 	cmd.Dir = dir
 
-	var out bytes.Buffer
-	cmd.Stdout = &out
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
 
 	err = cmd.Run()
 
 	if err != nil {
-		fmt.Println("ERROR", out.String())
-		return nil, err
+		return nil, errors.New(stderr.String())
 	}
 
 	return ioutil.ReadFile(dir + "/output" + extension)
@@ -322,7 +325,7 @@ func InstalledPackages() ([]byte, error) {
 	s, err = Call(pkg, fun, args)
 	if err != nil {
 		fmt.Println("Could not get installed packages")
-		fmt.Println(s.Output)
+		fmt.Println(s.Output, err)
 		return nil, err
 	}
 
