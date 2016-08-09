@@ -206,6 +206,7 @@ func Get(key, format string) ([]byte, error) {
 		return nil, errors.New("Unknown format")
 	}
 
+	fmt.Println("shit", command)
 	cmd := exec.Command("R", "--save", "-q", "-e", command)
 	cmd.Dir = dir
 
