@@ -15,7 +15,7 @@ import (
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 var rootDir string
-var timeout int64 = 4
+var timeout int64 = 600000
 
 type Session struct {
 	cmd    *exec.Cmd
@@ -158,7 +158,7 @@ func (rs *Session) Get(key, format string) ([]byte, error) {
 
 	_, err := io.WriteString(rs.stdin, cmd)
 	if err != nil {
-		fmt.Println("Could not set up for get")
+		fmt.Println("Could not write to R process", err)
 		return []byte{}, nil
 	}
 
@@ -189,8 +189,8 @@ func (rs *Session) Get(key, format string) ([]byte, error) {
 		}
 		return file, err
 	} else if format == "png" {
-		//cmd := exec.Command("pdftoppm", "-png", wd+"/Rplots.pdf", "plot.png")
-		cmd := exec.Command("convert", wd+"/Rplots.pdf", wd+"/plot-1.png")
+		cmd := exec.Command("pdftoppm", "-png", wd+"/Rplots.pdf", wd+"/plot")
+		//cmd := exec.Command("convert", wd+"/Rplots.pdf", wd+"/plot-1.png")
 
 		var stderr bytes.Buffer
 		cmd.Stderr = &stderr
