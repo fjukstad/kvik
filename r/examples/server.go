@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net/http"
 
@@ -9,7 +10,11 @@ import (
 )
 
 func main() {
-	s, err := r.InitServer(4, "/Users/bjorn/Dropbox/go/src/github.com/fjukstad/kvik/r/tmp/kvikr")
+	port := flag.String("port", ":8181", "runs server on specified port")
+	path := flag.String("dir", "/tmp/kvik", "tmp dir")
+	flag.Parse()
+
+	s, err := r.InitServer(4, *path)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -22,8 +27,6 @@ func main() {
 	router.HandleFunc("/get/{key}/{format}", s.GetHandler)
 	http.Handle("/", router)
 
-	port := ":8181"
-
-	fmt.Println(http.ListenAndServe(port, router))
+	fmt.Println(http.ListenAndServe(*port, router))
 
 }
