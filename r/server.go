@@ -11,8 +11,11 @@ import (
 
 type Server struct {
 	keys     chan string
-	sessions chan *RSession
+	sessions chan *Session
 }
+
+var cache map[string]string
+var cachingEnabled bool
 
 func (s *Server) Call(pkg, fun, args string) (string, error) {
 	session := <-s.sessions
@@ -45,7 +48,20 @@ func (s *Server) CallHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := s.Call(call.Pkg, call.Fun, call.Args)
+	log("Call:", call.Package, call.Function, call.Arguments)
+
+	if cachingEnabled {
+		key := call.cacheKey()
+		res := cache[key]
+		if res != "" {
+			log("Cache hit")
+			w.Write([]byte(res))
+			return
+		}
+		log("Cache miss")
+	}
+
+	res, err := s.Call(call.Package, call.Function, call.Arguments)
 	if err != nil {
 		fmt.Println("Call failed", err)
 		http.Error(w, "Call failed."+err.Error(), 500)
@@ -53,7 +69,17 @@ func (s *Server) CallHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write([]byte(res))
 
+	if cachingEnabled {
+		key := call.cacheKey()
+		cache[key] = res
+	}
+
 	return
+}
+
+func (s *Server) EnableCaching() {
+	cachingEnabled = true
+	cache = make(map[string]string, 0)
 }
 
 func (s *Server) GetHandler(w http.ResponseWriter, r *http.Request) {
@@ -62,14 +88,14 @@ func (s *Server) GetHandler(w http.ResponseWriter, r *http.Request) {
 	key := vars["key"]
 	format := vars["format"]
 
+	log("Get", key, format)
+
 	res, err := s.Get(key, format)
 	if err != nil {
 		fmt.Println("Get failed", err)
 		http.Error(w, "Get failed."+err.Error(), 500)
 		return
 	}
-
-	fmt.Println("Get handler", string(res))
 
 	w.Write(res)
 }

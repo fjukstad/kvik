@@ -17,7 +17,7 @@ var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 var rootDir string
 var timeout int64 = 4
 
-type RSession struct {
+type Session struct {
 	cmd    *exec.Cmd
 	stdin  io.WriteCloser
 	stdout io.ReadCloser
@@ -33,7 +33,7 @@ func randSeq(n int) string {
 	return string(b)
 }
 
-func (rs *RSession) Call(pkg, fun, args string) (string, error) {
+func (rs *Session) Call(pkg, fun, args string) (string, error) {
 
 	key := "." + randSeq(5)
 	wd := rootDir + "/" + key
@@ -89,8 +89,6 @@ func (rs *RSession) Call(pkg, fun, args string) (string, error) {
 		fmt.Println("io write string fail")
 	}
 
-	fmt.Println("ran command", command)
-
 	res, err := rs.getResult(key, wd+"/.RData")
 	if err != nil {
 		_, err = io.WriteString(rs.stdin, command)
@@ -103,7 +101,7 @@ func (rs *RSession) Call(pkg, fun, args string) (string, error) {
 	return res, err
 }
 
-func (rs *RSession) getResult(key, filename string) (string, error) {
+func (rs *Session) getResult(key, filename string) (string, error) {
 	keys := make(chan string)
 	errCh := make(chan string)
 
@@ -153,7 +151,7 @@ func (rs *RSession) getResult(key, filename string) (string, error) {
 	return key, nil
 }
 
-func (rs *RSession) Get(key, format string) ([]byte, error) {
+func (rs *Session) Get(key, format string) ([]byte, error) {
 	wd := rootDir + "/" + key
 
 	cmd := "rm(list=ls());" + "setwd(\"" + wd + "\");" + "load(\".RData\");\n"
@@ -226,10 +224,9 @@ func (rs *RSession) Get(key, format string) ([]byte, error) {
 		fmt.Println("Could not read fileinfo", err)
 		return []byte{}, nil
 	}
-	fmt.Println("Fileinfo", info, err)
 
+	// wait until file is written completely
 	size := int64(-1)
-
 	for size != info.Size() {
 
 		info, err = os.Stat(filename)
@@ -239,7 +236,6 @@ func (rs *RSession) Get(key, format string) ([]byte, error) {
 		}
 		size = info.Size()
 		time.Sleep(1 * time.Millisecond)
-
 	}
 
 	var b []byte
@@ -252,7 +248,7 @@ func (rs *RSession) Get(key, format string) ([]byte, error) {
 	return b, nil
 }
 
-func NewSession(id int) (*RSession, error) {
+func NewSession(id int) (*Session, error) {
 	cmd := exec.Command("R", "-q", "--save")
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
@@ -283,12 +279,12 @@ func NewSession(id int) (*RSession, error) {
 	// TODO: fix nasty hack.
 	time.Sleep(200 * time.Millisecond)
 
-	return &RSession{cmd, stdin, stdout, stderr, id}, nil
+	return &Session{cmd, stdin, stdout, stderr, id}, nil
 }
 
 func InitServer(numWorkers int, dir string) (Server, error) {
 	rootDir = dir
-	RSessions := make(chan *RSession, numWorkers)
+	Sessions := make(chan *Session, numWorkers)
 
 	for i := 0; i < numWorkers; i++ {
 		rs, err := NewSession(i)
@@ -296,17 +292,17 @@ func InitServer(numWorkers int, dir string) (Server, error) {
 			fmt.Println("Could not start R session")
 			return Server{}, err
 		}
-		RSessions <- rs
+		Sessions <- rs
 
 	}
 
 	keys := make(chan string)
 
-	return Server{keys, RSessions}, nil
+	return Server{keys, Sessions}, nil
 
 }
 
-func (rs *RSession) InstalledPackages() ([]byte, error) {
+func (rs *Session) InstalledPackages() ([]byte, error) {
 	pkg := "utils"
 	fun := "installed.packages"
 	args := ""
@@ -328,9 +324,13 @@ func (rs *RSession) InstalledPackages() ([]byte, error) {
 }
 
 type Call struct {
-	Pkg  string
-	Fun  string
-	Args string
+	Package   string
+	Function  string
+	Arguments string
+}
+
+func (c Call) cacheKey() string {
+	return c.Package + "::" + c.Function + "(" + c.Arguments + ")"
 }
 
 /*
