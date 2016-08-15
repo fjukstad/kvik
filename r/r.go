@@ -7,60 +7,22 @@ import (
 	"io"
 	"io/ioutil"
 	"math/rand"
-	"net/http"
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 var rootDir string
+var timeout int64 = 4
 
-type Session struct {
-	Key     string
-	Dir     string
-	Output  string
-	Command string
-}
-
-type RCall struct {
-	Package   string
-	Function  string
-	Arguments string
-}
-
-// Installs the given packages on the server. packages is a space
-// separated list with the packages.
-func installPackages(packages string) error {
-	cmd := exec.Command("R", "-q", "-e", "install.packages(c("+packages+"),  repos='http://cran.us.r-project.org'), dependencies=TRUE")
-
-	var out bytes.Buffer
-	cmd.Stdout = &out
-
-	fmt.Println(out.String())
-	err := cmd.Run()
-	if err != nil {
-		fmt.Println("Could not install packages:", out.String())
-		return err
-	}
-	return nil
-}
-
-// Installs the package found at src. Should be a tgz ball.
-func InstallPackageFromSource(src string) (string, error) {
-
-	cmd := exec.Command("R", "CMD", "INSTALL", src)
-
-	var out bytes.Buffer
-	cmd.Stdout = &out
-
-	err := cmd.Run()
-	if err != nil {
-		fmt.Println("Could not install local package:", out.String())
-		return "", err
-	}
-	return out.String(), nil
-
+type RSession struct {
+	cmd    *exec.Cmd
+	stdin  io.WriteCloser
+	stdout io.ReadCloser
+	stderr io.ReadCloser
+	id     int
 }
 
 func randSeq(n int) string {
@@ -71,37 +33,16 @@ func randSeq(n int) string {
 	return string(b)
 }
 
-func newCall() (string, string, error) {
+func (rs *RSession) Call(pkg, fun, args string) (string, error) {
 
 	key := "." + randSeq(5)
-
 	wd := rootDir + "/" + key
+	varName := strings.TrimPrefix(key, ".")
+
 	err := os.MkdirAll(wd, 0755)
 	if err != nil {
-		return "", "", err
+		return "", err
 	}
-
-	err = os.Chdir(wd)
-
-	if err != nil {
-		return "", "", err
-	}
-
-	return key, wd, nil
-
-}
-
-// Executes function. Returns tmp key for use in Get
-func Call(pkg, fun, args string) (*Session, error) {
-
-	key, wd, err := newCall()
-	if err != nil {
-		return nil, err
-	}
-
-	// Replace argument names with real argument names using the
-	// keys from previous calls. Also load data from previous
-	// calls before running cmd
 
 	argList := strings.Split(args, ",")
 	loadArgs := []string{}
@@ -130,8 +71,7 @@ func Call(pkg, fun, args string) (*Session, error) {
 		args = strings.Join(finalArgs, ",")
 	}
 
-	varName := strings.TrimPrefix(key, ".")
-	command := varName + "=" + pkg + "::" + fun + "(" + args + "); " + varName
+	command := varName + "=" + pkg + "::" + fun + "(" + args + ");"
 
 	if len(loadArgs) > 0 {
 		loadString := strings.Join(loadArgs, "")
@@ -142,55 +82,117 @@ func Call(pkg, fun, args string) (*Session, error) {
 	// that we load packages it depends on)
 	command = "library(" + pkg + ");" + command
 
-	cmd := exec.Command("R", "--save", "-q", "-e", command)
-	cmd.Dir = wd
+	command = "rm(list=ls());" + "setwd(\"" + wd + "\");pdf();" + command + "save.image();dev.off();\n"
 
-	var stdout bytes.Buffer
-	var stderr bytes.Buffer
-
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	err = cmd.Run()
-
-	var output string
+	_, err = io.WriteString(rs.stdin, command)
 	if err != nil {
-		output = stderr.String()
-		// remove kvik tmp key
-		output = strings.Replace(output, varName+"=", "", -1)
-	} else {
-		output = stdout.String()
+		fmt.Println("io write string fail")
 	}
 
-	return &Session{key, wd, output, command}, err
+	fmt.Println("ran command", command)
+
+	res, err := rs.getResult(key, wd+"/.RData")
+	if err != nil {
+		_, err = io.WriteString(rs.stdin, command)
+		if err != nil {
+			fmt.Println("io write fail")
+			return "", err
+		}
+		res, err = rs.getResult(key, wd+"/.RData")
+	}
+	return res, err
 }
 
-// get results for a func call
-func Get(key, format string) ([]byte, error) {
+func (rs *RSession) getResult(key, filename string) (string, error) {
+	keys := make(chan string)
+	errCh := make(chan string)
 
-	dir := rootDir + "/" + key
-	err := os.Chdir(dir)
+	go func(ch chan string, filename, key string) {
+		for {
+			finfo, err := os.Stat(filename)
+			if err == nil && finfo.Size() > 0 {
+				ch <- key
+				return
+			}
+		}
+	}(keys, filename, key)
+
+	go func(ch chan string, stderr io.ReadCloser) {
+		buf := new(bytes.Buffer)
+		for {
+			buf.ReadFrom(stderr)
+			errmsg := buf.String()
+			if errmsg != "" {
+				ch <- errmsg
+				return
+			}
+		}
+	}(errCh, rs.stderr)
+
+	for {
+		select {
+		// call successful no errors
+		case k := <-keys:
+			return k, nil
+		// Execution of R code went wrong. Restart a new session
+		case o := <-errCh:
+			rs.cmd.Process.Kill()
+			newSession, _ := NewSession(rs.id)
+			rs.cmd = newSession.cmd
+			rs.stdin = newSession.stdin
+			rs.stdout = newSession.stdout
+			rs.stderr = newSession.stderr
+			rs.id = newSession.id
+			return "", errors.New(o)
+		case <-time.After(time.Duration(timeout) * time.Second):
+			return "", errors.New("R Call timeout.")
+
+		}
+	}
+
+	return key, nil
+}
+
+func (rs *RSession) Get(key, format string) ([]byte, error) {
+	wd := rootDir + "/" + key
+
+	cmd := "rm(list=ls());" + "setwd(\"" + wd + "\");" + "load(\".RData\");\n"
+
+	_, err := io.WriteString(rs.stdin, cmd)
 	if err != nil {
-		return nil, err
+		fmt.Println("Could not set up for get")
+		return []byte{}, nil
 	}
 
 	varName := strings.TrimPrefix(key, ".")
 
-	extension := "." + format
-	_, err = os.Stat("output" + extension)
-	if err == nil {
-		return ioutil.ReadFile(dir + "/output" + extension)
-	}
+	filename := wd + "/output." + format
 
 	var command string
-	if format == "csv" {
-		command = "write.table(" + varName + ", sep=',', row.names=FALSE, file='output" + extension + "')"
-	} else if format == "json" {
-		command = "js=jsonlite::toJSON(" + varName + "); write(js, file='output" + extension + "')"
+	if format == "json" {
+		command = "js=jsonlite::toJSON(" + varName + "); write(js, file='" + filename + "');\n"
+	} else if format == "csv" {
+		command = "write.table(" + varName + ", sep=',', row.names=FALSE, file='" + filename + "');\n"
 	} else if format == "pdf" {
-		return ioutil.ReadFile(dir + "/Rplots.pdf")
+		file, err := ioutil.ReadFile(wd + "/Rplots.pdf")
+		if err != nil {
+			fmt.Println("Could not read pdf file", err)
+			return nil, err
+		}
+		// if file contains magic end return it, if not wait
+		// for R to complete writing the file.
+		for !strings.Contains(string(file), "%%EOF") {
+			time.Sleep(500 * time.Millisecond)
+			file, err = ioutil.ReadFile(wd + "/Rplots.pdf")
+			if err != nil {
+				fmt.Println("Could not read pdf file", err)
+				return nil, err
+			}
+		}
+		return file, err
 	} else if format == "png" {
-		cmd := exec.Command("pdftoppm", "-png", dir+"/Rplots.pdf", "plot")
+		//cmd := exec.Command("pdftoppm", "-png", wd+"/Rplots.pdf", "plot.png")
+		cmd := exec.Command("convert", wd+"/Rplots.pdf", wd+"/plot-1.png")
 
 		var stderr bytes.Buffer
 		cmd.Stderr = &stderr
@@ -198,156 +200,179 @@ func Get(key, format string) ([]byte, error) {
 		err := cmd.Run()
 		if err != nil {
 			fmt.Println("Could not convert rplot to png:", stderr.String())
+			fmt.Println("Check that you have Xpdf installed.")
 			return nil, err
 		}
 
-		return ioutil.ReadFile(dir + "/plot-1.png")
+		return ioutil.ReadFile(wd + "/plot-1.png")
 	} else {
-		return nil, errors.New("Unknown format")
+		return nil, errors.New("Unknown format:" + format)
 	}
 
-	fmt.Println("shit", command)
-	cmd := exec.Command("R", "--save", "-q", "-e", command)
-	cmd.Dir = dir
-
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
-
-	err = cmd.Run()
-
+	_, err = io.WriteString(rs.stdin, command)
 	if err != nil {
-		return nil, errors.New(stderr.String())
+		fmt.Println("Could not write to R process", err)
+		return []byte{}, err
 	}
 
-	return ioutil.ReadFile(dir + "/output" + extension)
+	_, err = rs.getResult(key, filename)
+	if err != nil {
+		fmt.Println("Get failed")
+		return []byte{}, err
+	}
+
+	info, err := os.Stat(filename)
+	if err != nil {
+		fmt.Println("Could not read fileinfo", err)
+		return []byte{}, nil
+	}
+	fmt.Println("Fileinfo", info, err)
+
+	size := int64(-1)
+
+	for size != info.Size() {
+
+		info, err = os.Stat(filename)
+		if err != nil {
+			fmt.Println("Could not read file", err)
+			return []byte{}, nil
+		}
+		size = info.Size()
+		time.Sleep(1 * time.Millisecond)
+
+	}
+
+	var b []byte
+	b, err = ioutil.ReadFile(filename)
+	if err != nil {
+		fmt.Println("Could not read results from file")
+		return []byte{}, err
+	}
+
+	return b, nil
+}
+
+func NewSession(id int) (*RSession, error) {
+	cmd := exec.Command("R", "-q", "--save")
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+
+	}
+
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	err = cmd.Start()
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	// ensures that the R session has started before returning to caller
+	// TODO: fix nasty hack.
+	time.Sleep(200 * time.Millisecond)
+
+	return &RSession{cmd, stdin, stdout, stderr, id}, nil
+}
+
+func InitServer(numWorkers int, dir string) (Server, error) {
+	rootDir = dir
+	RSessions := make(chan *RSession, numWorkers)
+
+	for i := 0; i < numWorkers; i++ {
+		rs, err := NewSession(i)
+		if err != nil {
+			fmt.Println("Could not start R session")
+			return Server{}, err
+		}
+		RSessions <- rs
+
+	}
+
+	keys := make(chan string)
+
+	return Server{keys, RSessions}, nil
 
 }
 
-func ScriptHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("script handler")
-	_, wd, err := newCall()
-	if err != nil {
-		fmt.Println("new call fail:", err)
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	file, _, err := r.FormFile("file")
-	defer file.Close()
-
-	if err != nil {
-		fmt.Fprintln(w, err)
-		return
-	}
-
-	fmt.Println("workdir", wd)
-
-	fileLoc := wd + "/script.R"
-
-	out, err := os.Create(fileLoc)
-	if err != nil {
-		fmt.Fprintf(w, "Failed to open the file for writing")
-		return
-	}
-	defer out.Close()
-	_, err = io.Copy(out, file)
-	if err != nil {
-		fmt.Fprintln(w, err)
-		return
-	}
-
-	output, err := executeScript(wd)
-	if err != nil {
-		w.Write([]byte("ERROR, could not execute script. Output:\n" + output))
-		return
-	}
-
-	cmd := exec.Command("zip", "-r", "-q", "output.zip", ".")
-	cmd.Dir = wd
-
-	var outbuffer bytes.Buffer
-	cmd.Stdout = &outbuffer
-
-	err = cmd.Run()
-
-	if err != nil {
-		fmt.Println("ERROR", outbuffer.String())
-		w.Write([]byte("Could not zip output file"))
-		return
-	}
-
-	http.ServeFile(w, r, "output.zip")
-
-	return
-
-}
-
-func executeScript(wd string) (string, error) {
-
-	filename := wd + "/script.R"
-
-	cmd := exec.Command("R", "--save", "-f", filename)
-	cmd.Dir = wd
-
-	fmt.Println(cmd)
-
-	var out bytes.Buffer
-	cmd.Stdout = &out
-
-	err := cmd.Run()
-
-	if err != nil {
-
-		errMessage := out.String()
-		fmt.Println("ERROR", errMessage)
-		return errMessage, err
-	}
-
-	return out.String(), nil
-}
-
-func InstalledPackages() ([]byte, error) {
-
+func (rs *RSession) InstalledPackages() ([]byte, error) {
 	pkg := "utils"
 	fun := "installed.packages"
 	args := ""
 
-	s, err := Call(pkg, fun, args)
+	s, err := rs.Call(pkg, fun, args)
 	if err != nil {
-		fmt.Println("Could not get installed packages")
-		fmt.Println(s.Output)
+		fmt.Println("Could not get installed packages", err)
 		return nil, err
 	}
 
 	pkg = "base"
 	fun = "as.data.frame"
-	args = "x=" + s.Key + ",row.names=make.names(installed.packages(), unique=TRUE)"
+	args = "x=" + s + ",row.names=make.names(installed.packages(), unique=TRUE)"
 
-	s, err = Call(pkg, fun, args)
+	s, err = rs.Call(pkg, fun, args)
+
+	return rs.Get(s, "json")
+
+}
+
+type Call struct {
+	Pkg  string
+	Fun  string
+	Args string
+}
+
+/*
+
+func main() {
+	s, err := InitServer(10, "/Users/bjorn/Dropbox/go/src/github.com/fjukstad/kvik/r/tmp/kvikr")
+
 	if err != nil {
-		fmt.Println("Could not get installed packages")
-		fmt.Println(s.Output, err)
-		return nil, err
+		return
+	}
+	for i := 0; i < 10; i++ {
+		key, err := s.Call("stats", "rnorm", "n=100")
+		if err != nil {
+			fmt.Println("Call fail", err)
+			return
+		} else {
+			fmt.Println("Call success!", key)
+		}
 	}
 
-	return Get(s.Key, "json")
-}
+	for i := 0; i < 50; i++ {
+		key, err := s.Call("stats", "rnorm", "n=100")
 
-type PackageInfo struct {
-	Package               string
-	LibPath               string
-	Version               string
-	Priority              string
-	Depends               string
-	Imports               string
-	LinkingTo             string
-	Suggests              string
-	Enhances              string
-	Licence               string
-	License_is_FOSS       string
-	Licence_restricts_use string
-	OS_type               string
-	MD5sum                string
-	NeedsCompilation      string
-	Built                 string
+		fmt.Println("keys", key, err)
+		if err == nil {
+			res, err := s.Call("graphics", "plot", "x="+key)
+			fmt.Println("results:", string(res), err)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			file, err := s.Get(res, "pdf")
+			err = ioutil.WriteFile("pdf.pdf", file, 0777)
+
+			fmt.Println("SHITPDF", err)
+			fmt.Println(len(file))
+		} else {
+			fmt.Println("##############################################")
+			return
+		}
+	}
+
 }
+*/
