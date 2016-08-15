@@ -77,11 +77,6 @@ func (s *Server) CallHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (s *Server) EnableCaching() {
-	cachingEnabled = true
-	cache = make(map[string]string, 0)
-}
-
 func (s *Server) GetHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -98,4 +93,20 @@ func (s *Server) GetHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write(res)
+}
+
+func (s *Server) EnableCaching() {
+	cachingEnabled = true
+	cache = make(map[string]string, 0)
+}
+
+func (s *Server) Start(port string) error {
+
+	router := mux.NewRouter()
+	router.HandleFunc("/call", s.CallHandler)
+	router.HandleFunc("/get/{key}/{format}", s.GetHandler)
+	http.Handle("/", router)
+
+	return http.ListenAndServe(port, router)
+
 }
