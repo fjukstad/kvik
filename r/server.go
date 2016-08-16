@@ -59,6 +59,8 @@ func (s *Server) CallHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		log("Cache miss")
+	} else {
+		log("No cache")
 	}
 
 	res, err := s.Call(call.Package, call.Function, call.Arguments)
