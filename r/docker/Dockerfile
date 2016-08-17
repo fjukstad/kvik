@@ -10,7 +10,9 @@ RUN apt-get update && \
     perl \
     vim \
     libxml2-dev \ 
-    xpdf 
+    xpdf \
+    libcurl4-openssl-dev \
+    libssl-dev
 
 RUN echo 'deb http://cran.rstudio.com/bin/linux/debian jessie-cran3/' >> /etc/apt/sources.list && \
     apt-key adv --keyserver keys.gnupg.net --recv-key 381BA480 && \ 
@@ -30,5 +32,5 @@ VOLUME /go/src/github.com/fjukstad/kvik
 
 EXPOSE 80
 
-WORKDIR /go/src/github.com/fjukstad/kvik/r/tools
+WORKDIR /go/src/github.com/fjukstad/kvik/r/examples
 CMD go run server.go -port=":80" 
