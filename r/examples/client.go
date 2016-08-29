@@ -17,9 +17,11 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+
 	res, err := c.Get(key, "json")
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	fmt.Println(string(res))

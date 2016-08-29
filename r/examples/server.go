@@ -14,7 +14,7 @@ func main() {
 	path := flag.String("dir", "/tmp/kvik", "tmp dir")
 	flag.Parse()
 
-	s, err := r.InitServer(4, *path)
+	s, err := r.InitServer(10, *path)
 	if err != nil {
 		fmt.Println(err)
 	}
