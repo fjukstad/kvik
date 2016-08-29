@@ -2,6 +2,7 @@ package r
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -30,6 +31,10 @@ func (c *Client) Call(pkg, fun, args string) (string, error) {
 	if err != nil {
 		fmt.Println("Could not read body", body, err)
 		return "", err
+	}
+
+	if resp.StatusCode != 200 {
+		return "", errors.New(string(body))
 	}
 
 	return string(body), nil
