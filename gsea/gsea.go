@@ -44,6 +44,9 @@ func PublicationURL(pubmedID string) string {
 
 func RelatedGeneSets(geneset string) ([]string, error) {
 	gs, err := RetrieveFromGSEA(geneset, "Related gene sets")
+	if err != nil {
+		return []string{}, err
+	}
 	lines := strings.Split(gs, "\n")
 	geneSets := []string{}
 	for _, line := range lines {
@@ -69,6 +72,24 @@ func SourcePlatform(geneset string) (string, error) {
 
 func CompendiumURL(geneset, compendium string) string {
 	return "http://software.broadinstitute.org/gsea/msigdb/compendium.jsp?geneSetName=" + geneset + "&compendiumId=" + compendium
+}
+
+func DatasetReference(geneset string) ([]string, error) {
+	res, err := RetrieveFromGSEA(geneset, "Dataset references")
+	if err != nil {
+		return []string{}, err
+	}
+	lines := strings.Split(res, "\n")
+	geneSets := []string{}
+	for _, line := range lines {
+		if !strings.Contains(line, "(") {
+			line = strings.Trim(line, " ")
+			if line != "" {
+				geneSets = append(geneSets, line)
+			}
+		}
+	}
+	return geneSets, nil
 }
 
 func RetrieveFromGSEA(geneset, info string) (fromGSEA string, err error) {

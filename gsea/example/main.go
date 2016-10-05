@@ -39,4 +39,7 @@ func main() {
 	novartisHuman := gsea.CompendiumURL("PID_HES_HEY_PATHWAY", "novartisHuman")
 	fmt.Println(novartisHuman)
 
+	dsref, err := gsea.DatasetReference("GSE3982_CTRL_VS_LPS_4H_MAC_UP")
+	fmt.Println(dsref, err)
+
 }
