@@ -67,6 +67,10 @@ func SourcePlatform(geneset string) (string, error) {
 	return RetrieveFromGSEA(geneset, "Source platform")
 }
 
+func CompendiumURL(geneset, compendium string) string {
+	return "http://software.broadinstitute.org/gsea/msigdb/compendium.jsp?geneSetName=" + geneset + "&compendiumId=" + compendium
+}
+
 func RetrieveFromGSEA(geneset, info string) (fromGSEA string, err error) {
 	URL := "http://www.broadinstitute.org/gsea/msigdb/geneset_page.jsp?geneSetName=" + geneset
 	resp, err := gocache.Get(URL)

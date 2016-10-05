@@ -33,4 +33,10 @@ func main() {
 	platform, err := gsea.SourcePlatform("PID_HES_HEY_PATHWAY")
 	fmt.Println(platform, err)
 
+	cellLines := gsea.CompendiumURL("PID_HES_HEY_PATHWAY", "cancerCellLines")
+	fmt.Println(cellLines)
+
+	novartisHuman := gsea.CompendiumURL("PID_HES_HEY_PATHWAY", "novartisHuman")
+	fmt.Println(novartisHuman)
+
 }
