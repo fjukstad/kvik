@@ -11,7 +11,7 @@ import (
 func main() {
 	t0 := time.Now()
 
-	s := r.Server{"docker0.bci.mcgill.ca:8787", "", ""}
+	s := r.Server{"localhost:80", "", ""}
 	var out string
 	var err error
 	out, err = s.Call("stats", "rnorm", "n=100")
