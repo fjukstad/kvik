@@ -1,1 +1,0 @@
-docker run -p 8787:80 -v /home/core/kvik/:/go/src/github.com/fjukstad/kvik/ --name kvikr kvikr
