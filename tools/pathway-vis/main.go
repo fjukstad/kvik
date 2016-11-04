@@ -36,7 +36,6 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(filename)
 	http.ServeFile(w, r, filename)
-	w.Write([]byte("shit"))
 	return
 }
 
