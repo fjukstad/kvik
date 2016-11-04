@@ -23,7 +23,7 @@ RUN echo 'deb http://cran.rstudio.com/bin/linux/debian jessie-cran3/' >> /etc/ap
 RUN R -e 'install.packages("jsonlite", repos="http://cran.rstudio.org")'
 
 RUN go get github.com/gorilla/mux 
-RUN go get github.com/fjukstad/kvik
+RUN go get github.com/fjukstad/kvik/r
 
 EXPOSE 80
 
