@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	g := gopencpu.GoOpenCPU{"http://docker0.bci.mcgill.ca:8004", "", ""}
+	g := gopencpu.GoOpenCPU{"http://localhost:8004", "", ""}
 
 	t0 := time.Now()
 	a, err := g.Call("stats/R/rnorm", `{"n":100}`)

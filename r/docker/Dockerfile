@@ -23,12 +23,7 @@ RUN echo 'deb http://cran.rstudio.com/bin/linux/debian jessie-cran3/' >> /etc/ap
 RUN R -e 'install.packages("jsonlite", repos="http://cran.rstudio.org")'
 
 RUN go get github.com/gorilla/mux 
-RUN mkdir -p /go/src/github.com/fjukstad
-
-# when the kvik repo is publically available we'll simply do a 
-# go get ... to fetch the source code. 
-# RUN go get github.com/fjukstad/kvik
-VOLUME /go/src/github.com/fjukstad/kvik 
+RUN go get github.com/fjukstad/kvik
 
 EXPOSE 80
 

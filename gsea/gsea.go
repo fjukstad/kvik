@@ -33,8 +33,19 @@ func Collection(geneset string) ([]string, error) {
 // Get pubmed id of source publication
 func SourcePublication(geneset string) (string, error) {
 	pub, err := RetrieveFromGSEA(geneset, "Source publication")
+	if err != nil {
+		return "", err
+	}
+	if pub == " " {
+		return "", err
+	}
 	// get pub id
-	pub = strings.Split(pub, " ")[1]
+	id := strings.Split(pub, " ")
+	if len(pub) > 0 {
+		pub = id[1]
+	}
+	pub = strings.Split(pub, "   ")[0]
+
 	return pub, err
 }
 
