@@ -2,7 +2,7 @@ package gsea
 
 import (
 	"bufio"
-	"log"
+	"fmt"
 	"os"
 	"strings"
 
@@ -15,11 +15,14 @@ type GeneSet struct {
 	Genes []string
 }
 
+// Parses a GMT file from msigdb
+// (http://software.broadinstitute.org/gsea/downloads.jsp) and returns the gene
+// sets found.
 func ParseGMT(filename string) ([]GeneSet, error) {
 
 	file, err := os.Open(filename)
 	if err != nil {
-		log.Fatal(err)
+		return []GeneSet{}, errors.Wrap(err, "Could not open GMT file")
 	}
 	defer file.Close()
 
@@ -45,4 +48,24 @@ func ParseGMT(filename string) ([]GeneSet, error) {
 	}
 
 	return geneSets, nil
+}
+
+// Write genesets to GMT file following the MSigDB format.
+func WriteGMT(genesets []GeneSet, filename string) error {
+
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	w := bufio.NewWriter(file)
+
+	for _, geneset := range genesets {
+		genes := strings.Join(geneset.Genes, "\t")
+		line := strings.Join([]string{geneset.Name, geneset.Url, genes}, "\t")
+		fmt.Fprintln(w, line)
+	}
+
+	return w.Flush()
 }
