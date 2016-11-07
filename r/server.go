@@ -71,7 +71,10 @@ func (s *Server) CallHandler(w http.ResponseWriter, r *http.Request) {
 
 	if cachingEnabled {
 		key := call.cacheKey()
+		cacheMutex.Lock()
 		res := cache[key]
+		cacheMutex.Unlock()
+
 		if res != "" {
 			log("Cache hit")
 			w.Write([]byte(res))
