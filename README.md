@@ -1,4 +1,3 @@
-![Example application](screenshot.png)
 
 # Kvik
 A framework for developing interactive data exploration applications in genomics
@@ -11,6 +10,14 @@ pipelines; and iii) interface with online databases such as
 visualizing KEGG pathways using [d3](http://d3js.org). 
 
 Kvik is in continuous development. 
+
+## Example Applications
+### [Matched Interaction Across Tissues (MIxT)](http://github.com/fjukstad/mixt)
+![MixT](https://raw.githubusercontent.com/fjukstad/mixt/master/public/img/screenshot.png)
+
+### Kvik Pathways
+![Example application](screenshot.png)
+
 
 ## Name
 The project is named after [Fridtjof
