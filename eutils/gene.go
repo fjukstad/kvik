@@ -32,7 +32,7 @@ type LocationHistType struct {
 
 var geneEndpoint = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gene&id="
 
-func GetDocumentSummary(id string) (*DocumentSummary, error) {
+func GeneSummary(id string) (*DocumentSummary, error) {
 	u := geneEndpoint + id
 	resp, err := http.Get(u)
 
@@ -52,7 +52,7 @@ func GetDocumentSummary(id string) (*DocumentSummary, error) {
 		return nil, err
 	}
 
-	if result.DocumentSummarySet.Status != "OK" {
+	if len(result.DocumentSummarySet.DocumentSummary) == 0 {
 		return nil, errors.New("Could not get information about gene with entrez id " + id)
 	}
 
