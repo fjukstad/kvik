@@ -32,7 +32,9 @@ type Doc struct {
 
 var baseUrl = "http://rest.genenames.org/"
 
-// Fetches information about a gene with the given gene symbol
+// Fetches information about a gene with the given gene symbol.
+// Warning: fetch might return more than one result, but we're returning
+// only the first.
 func GetDoc(symbol string) (Doc, error) {
 	u := baseUrl + "fetch/symbol/" + symbol
 
@@ -55,6 +57,10 @@ func GetDoc(symbol string) (Doc, error) {
 
 	if err != nil {
 		return Doc{}, errors.Wrap(err, "Could not unmarshal json from genenames: "+string(body))
+	}
+
+	if len(result.Response.Docs) == 0 {
+		return Doc{}, errors.New("Could not get doc for gene with symbol " + symbol)
 	}
 
 	return result.Response.Docs[0], nil
