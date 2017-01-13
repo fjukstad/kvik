@@ -1,6 +1,11 @@
 /*
-Package r provides an interface to the R statistical programming language. It
-can either be run as a single R session:
+Package r provides an interface to the R statistical programming language. Users
+can interface with R through three methods: Call, Get or Rpc. Call executes a
+function call and returns a unique key that can be used in subseqent calls to
+Get to retrieve the results. Get can return results in json, csv, png or pdf.
+Rpc can be used to bundle Call and Get in a single function call.
+
+As a single R session:
 
 	session, err := r.NewSession()
 	...
@@ -11,7 +16,7 @@ can either be run as a single R session:
 	res, err = session.Rpc("stats", "rnorm", "n=100", "json")
 	...
 
-standalone server that accepts HTTP requests (e.g. from the Client):
+standalone server that accepts HTTP requests (e.g. from the Client or curl)
 
 	s, err := r.Server(4, "/tmp/kvik")
 	...
@@ -26,13 +31,6 @@ or a client if there is a server running somewhere:
 	...
 	res, err := client.Rpc("stats","rnorm","n=100","json")
 	...
-
-The server starts up a number of R sessions that it communicates with to execute
-R functions and retrieve results. The server exposes a HTTP interface with three
-methods Call, Get and Rpc. Call executes an R function and returns a temporary key
-that can be used in subsequent Get requests. Get requests can return json, csv,
-png or pdf files. Rpc combines a call to Call following a Get to get the
-results.
 
 */
 package r
