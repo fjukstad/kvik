@@ -101,6 +101,67 @@ func (s *Server) CallHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func parseRequest(r *http.Request) (Call, error) {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return Call{}, errors.Wrap(err, "Could not read client http input body")
+	}
+
+	call := Call{}
+	err = json.Unmarshal(body, &call)
+	return call, err
+
+}
+
+func (s *Server) RpcHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	format := vars["format"]
+
+	call, err := parseRequest(r)
+	if err != nil {
+		http.Error(w, "Rpc failed"+err.Error(), 500)
+		return
+	}
+	log("Rpc:", call.Package, call.Function, call.Arguments)
+
+	var res string
+	if cachingEnabled {
+		key := call.cacheKey()
+		cacheMutex.Lock()
+		res = cache[key]
+		cacheMutex.Unlock()
+		if res != "" {
+			log("Cache hit")
+		}
+	} else {
+		log("No cache")
+	}
+
+	if res == "" {
+		log("Cache miss")
+
+		res, err := s.Call(call.Package, call.Function, call.Arguments)
+		if err != nil {
+			http.Error(w, "Rpc failed: "+err.Error(), 500)
+			return
+		}
+		if cachingEnabled {
+			key := call.cacheKey()
+			cacheMutex.Lock()
+			cache[key] = res
+			cacheMutex.Unlock()
+		}
+	}
+
+	result, err := s.Get(res, format)
+	if err != nil {
+		fmt.Println("Rpc failed", err)
+		http.Error(w, "Rpc failed."+err.Error(), 500)
+		return
+	}
+	w.Write(result)
+}
+
 func (s *Server) GetHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -128,6 +189,7 @@ func (s *Server) Start(port string) error {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/call", s.CallHandler)
+	router.HandleFunc("/rpc/{format}", s.RpcHandler)
 	router.HandleFunc("/get/{key}/{format}", s.GetHandler)
 	http.Handle("/", router)
 
