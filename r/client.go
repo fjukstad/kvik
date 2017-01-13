@@ -55,3 +55,12 @@ func (c *Client) Get(key, format string) ([]byte, error) {
 
 	return body, nil
 }
+
+// Call and get in one call
+func (c *Client) Rpc(pkg, fun, args, format string) ([]byte, error) {
+	key, err := c.Call(pkg, fun, args)
+	if err != nil {
+		return []byte{}, err
+	}
+	return c.Get(key, format)
+}

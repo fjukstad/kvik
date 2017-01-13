@@ -3,10 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"net/http"
 
 	"github.com/fjukstad/kvik/r"
-	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -20,13 +18,5 @@ func main() {
 	}
 
 	s.EnableCaching()
-
-	router := mux.NewRouter()
-
-	router.HandleFunc("/call", s.CallHandler)
-	router.HandleFunc("/get/{key}/{format}", s.GetHandler)
-	http.Handle("/", router)
-
-	fmt.Println(http.ListenAndServe(*port, router))
-
+	fmt.Println(s.Start(*port))
 }

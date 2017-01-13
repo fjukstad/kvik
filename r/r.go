@@ -16,7 +16,7 @@ import (
 )
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-var rootDir string
+var rootDir = "/tmp"
 var timeout int64 = 600000
 
 type Session struct {
@@ -232,6 +232,14 @@ func (rs *Session) Get(key, format string) ([]byte, error) {
 	}
 
 	return b, nil
+}
+
+func (s *Session) Rpc(pkg, fun, args, format string) ([]byte, error) {
+	key, err := s.Call(pkg, fun, args)
+	if err != nil {
+		return []byte{}, err
+	}
+	return s.Get(key, format)
 }
 
 func NewSession(id int) (*Session, error) {
