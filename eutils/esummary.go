@@ -4,9 +4,10 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/fjukstad/gocache"
 )
 
 type PubMedPubDate struct {
@@ -43,7 +44,7 @@ func Summary(r *SearchResult) (*SummaryResult, error) {
 
 	fmt.Println(baseUrl, ids, url)
 
-	resp, err := http.Get(url)
+	resp, err := gocache.Get(url)
 
 	if err != nil {
 		fmt.Println(err)

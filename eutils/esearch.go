@@ -4,8 +4,9 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"strings"
+
+	"github.com/fjukstad/gocache"
 )
 
 type SearchResult struct {
@@ -40,7 +41,7 @@ func Search(terms []string) (*SearchResult, error) {
 
 	url := baseUrl + searchTerms + "+AND+breast+cancer"
 
-	resp, err := http.Get(url)
+	resp, err := gocache.Get(url)
 
 	if err != nil {
 		fmt.Println(err)

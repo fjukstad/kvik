@@ -5,7 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"net/http"
+
+	"github.com/fjukstad/gocache"
 )
 
 type GenomicInfo struct {
@@ -34,7 +35,7 @@ var geneEndpoint = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?d
 
 func GeneSummary(id string) (*DocumentSummary, error) {
 	u := geneEndpoint + id
-	resp, err := http.Get(u)
+	resp, err := gocache.Get(u)
 
 	if err != nil {
 		fmt.Println(err)
