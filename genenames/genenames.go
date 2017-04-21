@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/fjukstad/gocache"
 	"github.com/pkg/errors"
 )
 
@@ -38,11 +39,10 @@ var baseUrl = "http://rest.genenames.org/"
 func GetDoc(symbol string) (Doc, error) {
 	u := baseUrl + "fetch/symbol/" + symbol
 
-	client := &http.Client{}
 	req, err := http.NewRequest("GET", u, nil)
 	req.Header.Add("Accept", "application/json")
 
-	resp, err := client.Do(req)
+	resp, err := gocache.Do(req)
 	if err != nil {
 		return Doc{}, errors.Wrap(err, "Could not download information about gene "+symbol)
 	}
